@@ -2,7 +2,7 @@
 #include "debug.h"
 
 #include <iostream>
-#include <stb_image.h>
+#include <STB_IMAGE/stb_image.h>
 
 Texture::Texture(const std::string filepath, GLenum format)
 {

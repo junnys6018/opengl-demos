@@ -1,34 +1,38 @@
 #define GLEW_BUILD
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <stb_image.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <STB_IMAGE/stb_image.h>
 
 #include <iostream>
+#include <vector>
 
 #include "Shader.h"
-#include "VertexBuffer.h"
 #include "VertexArray.h"
-#include "IndexBuffer.h"
 #include "Texture.h"
 #include "debug.h"
+#include "Object.h"
+#include "Camera.h"
+// Instantiate camera object
+Camera camera;
+bool isRotating = true; // TODO: REMOVE GLOBAL VARIABLE
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-	glViewport(0, 0, width, height);
-}
+#include "callback.h"
+
 void printBasicInfo()
 {
-	GLCall(glEnable(GL_DEPTH_TEST));
 	std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION) << std::endl;
 	std::cout << glGetString(GL_VERSION) << '\n';
 	int numAttributes;
 	GLCall(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numAttributes));
 	std::cout << "Maximum # of vertex attributes supported: " << numAttributes << '\n';
 }
+
+
+
 int main(void)
 {
 	GLFWwindow* window;
@@ -49,26 +53,12 @@ int main(void)
 	glfwMakeContextCurrent(window);
 	if (glewInit() != GLEW_OK)
 		std::cout << "GLEW init error\n";
-
+	
 	printBasicInfo();
+	// Set callback functions
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	// Setup square vertices
-	float vertices[] = {
-		 0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,   // top right
-		 0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,   // bottom right
-		-0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,   // bottom left
-		-0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f    // top left 
-	};
-	VertexBuffer vertex(vertices, sizeof(vertices));
-
-	unsigned int indexBuffer[] = {
-		0,1,2,
-		2,3,0
-	};
-	IndexBuffer index(indexBuffer, 6);
-
-	VertexArray SquareVA(vertex, GL_FLOAT, { 2,3,2 });
-	SquareVA.addIndexBuffer(index);
+	glfwSetCursorPosCallback(window, mouse_pos_callback);
+	glfwSetKeyCallback(window, key_callback);
 
 	// Setup cube vertices
 	float cube[] = {
@@ -118,64 +108,86 @@ int main(void)
 
 	VertexBuffer cubebuf(cube, sizeof(cube));
 	VertexArray CubeVA(cubebuf, GL_FLOAT, { 3,2 });
+	
+	// Setup sphere vertices
+	Object sphere("res/Objects/sphere.obj");
+	VertexArray sphereVA(sphere.vertexBuffer, GL_FLOAT, { 3 });
+	sphereVA.addIndexBuffer(sphere.indexBuffer);
+
 	// SHADERS
-	Shader exampleShader("res/shaders/Example.shader");
+	Shader simpleShader("res/Shaders/Simple.shader");
 	Shader cubeShader("res/shaders/Cube.shader");
+
 	// TEXTURES
 	Texture chris512("res/Textures/Chris512.jpg");
-	Texture chris567("res/Textures/Chris567.jpg");
-//	Texture chris571win("res/Textures/Chris571win.jpg");
-	Texture chris573("res/Textures/Chris573.jpg");
-		Texture face573("res/Textures/awesomeface573.png", GL_RGBA);
-//		Texture faceNET("res/Textures/awesomeface573paint.png", GL_RGBA);
 	chris512.Bind(0);
-	chris567.Bind(1);
-//	chris571win.Bind(2);
-	chris573.Bind(3);
-		face573.Bind(4);
-//		faceNET.Bind(5);
 	// Set shader uniforms
-	cubeShader.setInt("Texture1", 3);
+	cubeShader.setInt("Texture1", 0);
+
 	// Pre render loop preperation
-	glfwSwapInterval(1);
-	float theta = 0.0;
+	GLCall(glEnable(GL_DEPTH_TEST));
+	glfwSwapInterval(1);	// vsync
+
+	float theta = 0.0;	// angle of rotation for cube
 	float fov = 45.0f;
-	CubeVA.Bind();
-	cubeShader.Use();
+
+	
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
-		// input
+		/* Input */
 		if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS && fov < 170.0f)
 			fov += 0.3f;
 		else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS && fov > 10.0f)
 			fov -= 0.3f;
 
-		// MVP matrix
-		if (glfwGetKey(window, GLFW_KEY_3) == GLFW_RELEASE)
+		// camera movement
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+			camera.move(GLFW_KEY_W);
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+			camera.move(GLFW_KEY_S);
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+			camera.move(GLFW_KEY_A);
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+			camera.move(GLFW_KEY_D);
+
+		// if key 3 is pressed cubes will not rotate
+		if (isRotating)
 		{
-			glm::mat4 model = glm::mat4(1.0f);
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-			model = glm::rotate(model, glm::radians(theta), glm::vec3(0.5, 0.3, 0.0f));
-			cubeShader.setMat4("model", model);
 			if (theta > 360.0)
 				theta = 1.0f;
 			else
 				theta += 1.0f;
 		}
-		glm::mat4 view = glm::mat4(1.0f);
-		view = glm::translate(view, glm::vec3(0.0f, 0.0f, -3.0f));
-		cubeShader.setMat4("view", view);
+
+		/* MVP matrix init */
+		glm::mat4 model_cube = glm::mat4(1.0f);
+		model_cube = glm::rotate(model_cube, glm::radians(theta), glm::vec3(0.5f, 0.3f, 0.0f));
+
+		glm::mat4 model_sphere = glm::mat4(1.0f);
+		model_sphere = glm::translate(model_sphere, glm::vec3(2.0f, 0.0f, 2.0f));
+		model_sphere = glm::rotate(model_sphere, glm::radians(theta), glm::vec3(0.5f, 0.3f, 0.0f));
+
+		glm::mat4 view;
+		view = camera.getViewMatrix();
 
 		glm::mat4 proj = glm::mat4(1.0f);
 		int width, height;
 		glfwGetWindowSize(window, &width, &height);
 		proj = glm::perspective(glm::radians(fov), (float)(width) / height, 0.1f, 100.0f);
-		cubeShader.setMat4("proj", proj);
 
 		/* Render here */
 		GLCall(glClearColor(0.1f, 0.3f, 0.4f, 1.0f));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		simpleShader.Use();
+		simpleShader.setMat4("MVP", proj * view * model_sphere);
+		sphereVA.Bind();
+		GLCall(glDrawElements(GL_TRIANGLES, sphere.indexBuffer.getCount(), GL_UNSIGNED_INT, 0));
+
+		cubeShader.Use();
+		cubeShader.setMat4("MVP", proj * view * model_cube);
+		CubeVA.Bind();
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
 		/* Swap front and back buffers */

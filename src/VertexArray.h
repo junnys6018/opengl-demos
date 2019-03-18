@@ -12,7 +12,9 @@
 class VertexArray
 {
 public:
-	VertexArray(VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout);
+	VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout);
+	VertexArray(VertexArray&& other);
+	VertexArray& operator=(VertexArray&& other);
 	~VertexArray();
 	void Bind();
 	void unBind();

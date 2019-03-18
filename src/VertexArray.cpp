@@ -1,6 +1,6 @@
 #include "VertexArray.h"
 
-VertexArray::VertexArray(VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout)
+VertexArray::VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout)
 	:ID(0), typeSize(0), numAttribs(0), hasIndexBuffer(false)
 {
 	typeSize = getSize(type);
@@ -15,6 +15,7 @@ VertexArray::VertexArray(VertexBuffer &vBuf, GLenum type, std::initializer_list<
 
 		unsigned int stride = 0;
 		auto it = AttribLayout.begin();
+		// calculates stride of each vertex
 		for (/*NULL*/; it != AttribLayout.end(); ++it)
 			stride += *it * typeSize;
 		unsigned int offSet = 0;
@@ -29,10 +30,29 @@ VertexArray::VertexArray(VertexBuffer &vBuf, GLenum type, std::initializer_list<
 	}
 
 }
+
+VertexArray::VertexArray(VertexArray&& other)
+	: ID(other.ID), typeSize(other.typeSize), numAttribs(other.numAttribs), hasIndexBuffer(other.hasIndexBuffer)
+{
+	other.ID = 0;
+}
+
+VertexArray& VertexArray::operator=(VertexArray&& other)
+{
+	unsigned int id = ID;
+	ID = other.ID;
+	typeSize = other.typeSize;
+	numAttribs = other.numAttribs;
+	hasIndexBuffer = other.hasIndexBuffer;
+	other.ID = id;
+	return *this;
+}
+
 VertexArray::~VertexArray()
 {
 	GLCall(glDeleteVertexArrays(1, &ID));
 }
+//	Returns size of type in bytes
 unsigned int VertexArray::getSize(GLenum type)
 {
 	switch (type)
