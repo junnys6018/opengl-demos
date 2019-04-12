@@ -1,14 +1,9 @@
-#include <GL/glew.h>
-
-#include <string>
-#include <fstream>
-#include <iostream>
-
 #include "debug.h"
 #include "Shader.h"
 
 
-Shader::Shader(const char* shaderpath)
+Shader::Shader(const std::string& shaderpath)
+	:failedToLoad(false)
 {
 	// PARSE SHADER
 	std::string Shaders[2];
@@ -54,6 +49,7 @@ Shader::Shader(const char* shaderpath)
 			delete[] message;
 		}
 		GLCall(glDeleteProgram(ID));
+		failedToLoad = true;
 	}
 	else
 	{
@@ -70,7 +66,7 @@ Shader::~Shader()
 unsigned Shader::CompileShader(std::string source, GLenum type)
 {
 	// create shader object
-	GLCall(unsigned shader = glCreateShader(type));
+	GLCall(unsigned int shader = glCreateShader(type));
 	// load source code into shader object
 	const char *c_source = source.c_str();
 	GLCall(glShaderSource(shader, 1, &c_source, nullptr));
@@ -91,34 +87,87 @@ unsigned Shader::CompileShader(std::string source, GLenum type)
 				<< "SHADER!\n" << message << '\n';
 			delete[] message;
 		}
+		failedToLoad = true;
 	}
 	return shader;
 }
 
 void Shader::Use() const
 {
-	GLCall(glUseProgram(ID));
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+	}
 }
 unsigned int Shader::getID() const
 {
 	return ID;
 }
 // setter functions for shader uniforms
-void Shader::setInt(const std::string name, int value) const
+void Shader::setInt(const std::string &name, const int &value) const
 {
-	GLCall(glUseProgram(ID));
-	GLCall(glUniform1i(glGetUniformLocation(ID, name.c_str()), value));
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform1i(location, value));
+	}
 }
-void Shader::setBool(const std::string name, bool value) const
+void Shader::setBool(const std::string &name, const bool &value) const
 {
-	GLCall(glUseProgram(ID));
-	GLCall(glUniform1i(glGetUniformLocation(ID, name.c_str()), value));
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform1i(location, value));
+	}
 }
 void Shader::setMat4(const std::string &name, const glm::mat4 &mat) const
 {
-	GLCall(glUseProgram(ID));
-	GLCall(glUniformMatrix4fv(glGetUniformLocation(ID, name.c_str()), 1, GL_FALSE, &mat[0][0]));
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniformMatrix4fv(location, 1, GL_FALSE, &mat[0][0]));
+	}
 }
-
-
+void Shader::setVec3(const std::string &name, const float &x, const float &y, const float &z) const
+{
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform3f(location, x, y, z));
+	}
+}
+void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
+{
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform3f(location, value.x, value.y, value.z));
+	}
+}
+void Shader::setFloat(const std::string &name, const float &value) const
+{
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform1f(location, value));
+	}
+}
 

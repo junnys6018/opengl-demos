@@ -1,8 +1,8 @@
 #pragma once
 #include <GL\glew.h>
 
-/*	VertexBuffer class manages VBO's. Constructor generates a new buffer, binds it to GL_ARRAY_BUFFER
- *	and buffers the provided data to vram
+/*	VertexBuffer class manages a vertex buffer object. Constructor generates a new buffer, 
+ *	binds it to GL_ARRAY_BUFFER and buffers the provided data to vram
  */
 class VertexBuffer
 {

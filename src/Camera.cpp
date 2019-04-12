@@ -1,8 +1,10 @@
 #include "Camera.h"
 
+#include <iostream>
+
 Camera::Camera()
-	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f)
-	, m_sensitivity(0.07f), m_speed(0.1f), m_firstMouse(true), m_hasCursor(true)
+	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_FOV(45.0f)
+	, m_sensitivity(0.1f), m_speed(0.1f), m_firstMouse(true), m_InUse(false)
 {
 	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace
 	m_cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);	// direction the camera is facing relative to world space
@@ -29,10 +31,14 @@ glm::mat4 Camera::getViewMatrix() const
 {
 	return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
+void Camera::setSpeed(const float speed)
+{
+	m_speed = speed;
+}
 
 void Camera::mouse_callback(double xpos, double ypos)
 {
-	if (!m_hasCursor)	// if GLFW_CURSOR_DISABLED is set
+	if (m_InUse)
 	{
 		if (m_firstMouse) // this bool variable is initially set to true
 		{
@@ -45,9 +51,8 @@ void Camera::mouse_callback(double xpos, double ypos)
 		m_lastX = xpos;
 		m_lastY = ypos;
 		// scale down offset values
-		float sensitivity = 0.1f;	
-		xoffset *= sensitivity;
-		yoffset *= sensitivity;
+		xoffset *= m_sensitivity;
+		yoffset *= m_sensitivity;
 		// Update yaw and pitch
 		m_yaw += xoffset;
 		m_pitch += yoffset;
@@ -67,32 +72,38 @@ void Camera::key_callback(GLFWwindow *window, int key, int action)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
 	{
-		if (m_hasCursor)
+		if (m_InUse)
 		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			m_firstMouse = true;
 		}
 		else
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-		m_hasCursor = !m_hasCursor;
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_InUse = !m_InUse;
 	}
 }
 
-void Camera::move(int dir)
+// returns whether camera moved
+bool Camera::move(GLFWwindow* window)
 {
-	switch (dir)
+	bool activated = false;
+	if (m_InUse)
 	{
-	case GLFW_KEY_W:
-		m_cameraPos += m_speed * m_cameraForward;
-		break;
-	case GLFW_KEY_A:
-		m_cameraPos -= m_speed * m_cameraRight;
-		break;
-	case GLFW_KEY_S:
-		m_cameraPos -= m_speed * m_cameraForward;
-		break;
-	case GLFW_KEY_D:
-		m_cameraPos += m_speed * m_cameraRight;
-		break;
+		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && (activated = true))
+			m_cameraPos += m_speed * m_cameraForward;
+		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && (activated = true))
+			m_cameraPos -= m_speed * m_cameraForward;
+		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && (activated = true))
+			m_cameraPos -= m_speed * m_cameraRight;
+		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && (activated = true))
+			m_cameraPos += m_speed * m_cameraRight;
+		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (activated = true))
+			m_cameraPos -= m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
+		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && (activated = true))
+			m_cameraPos += m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
+		return activated;
 	}
+	else
+		return false;
+
 }

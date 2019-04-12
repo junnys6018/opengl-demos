@@ -1,5 +1,6 @@
 #include "VertexArray.h"
-
+#include "debug.h"
+// Vertex array object wrapper class
 VertexArray::VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout)
 	:ID(0), typeSize(0), numAttribs(0), hasIndexBuffer(false)
 {
@@ -52,7 +53,7 @@ VertexArray::~VertexArray()
 {
 	GLCall(glDeleteVertexArrays(1, &ID));
 }
-//	Returns size of type in bytes
+// Returns size of type in bytes
 unsigned int VertexArray::getSize(GLenum type)
 {
 	switch (type)

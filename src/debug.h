@@ -17,7 +17,7 @@ inline void GLLogCall(unsigned line, const char* file)
 {
 	while (GLenum err = glGetError())
 	{
-		std::cout << "[OPEN GL ERROR] (" << err << ") LINE: " << line << " FILE: "
+		std::cout << "[OPENGL ERROR] (" << err << ") LINE: " << line << " FILE: "
 			<< file << std::endl;
 	}
 }

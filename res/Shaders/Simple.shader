@@ -1,10 +1,9 @@
 #shader Vertex
-#version 330 core
+#version 440 core
 
 layout(location = 0) in vec3 v_position;
 out vec3 f_color;
 uniform mat4 MVP;
-
 
 void main()
 {
@@ -13,7 +12,7 @@ void main()
 }
 
 #shader Fragment
-#version 330 core
+#version 440 core
 
 in vec3 f_color;
 out vec4 color;

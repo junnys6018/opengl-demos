@@ -1,7 +1,7 @@
 #include "VertexBuffer.h"
 #include "debug.h"
-VertexBuffer::VertexBuffer()
-	:ID(0) {	}
+// Wrapper class for vertex buffer object
+VertexBuffer::VertexBuffer() = default;
 VertexBuffer::VertexBuffer(void *data, unsigned int size)
 {
 	GLCall(glGenBuffers(1, &ID));

@@ -1,14 +1,12 @@
 #ifndef VERTEX_ARRAY_H
 #define VERTEX_ARRAY_H
-#include <GL\glew.h>
-#include <initializer_list>
-#include <iostream>
 
-#include "debug.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
-
+#include <initializer_list>
+#include <iostream>
+// Vertex array object wrapper class
 class VertexArray
 {
 public:

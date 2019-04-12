@@ -3,7 +3,7 @@
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-#include <GLFW\glfw3.h>
+#include <GLFW/glfw3.h>
 
 class Camera
 {
@@ -16,17 +16,23 @@ public:
 
 	glm::mat4 getViewMatrix() const;
 
+	void setSpeed(const float speed);
+
+	bool InUse() const { return m_InUse; }
+
+	float m_FOV;
+
 	void key_callback(GLFWwindow *window, int key, int action);
 	void mouse_callback(double xpos, double ypos);
 	// moves position of camera based on key and cam dir
-	void move(int dir);
+	bool move(GLFWwindow* window);
 
 private:
 	float m_yaw, m_pitch;
 	float m_lastX, m_lastY;
 	float m_sensitivity, m_speed;
 	// m_hascursor is false when GLFW_CURSOR_DISABLED is true
-	bool m_firstMouse, m_hasCursor;
+	bool m_firstMouse, m_InUse;
 
 	glm::vec3 m_cameraPos;
 	glm::vec3 m_cameraDir;

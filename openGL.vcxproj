@@ -22,32 +22,32 @@
     <VCProjectVersion>15.0</VCProjectVersion>
     <ProjectGuid>{5FF2A917-AE19-47E5-882E-E7ED5F35F6AE}</ProjectGuid>
     <RootNamespace>openGL</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -91,11 +91,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);glfw3.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);glfw3_32.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -104,11 +106,13 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);glfw3.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);glfw3_64.lib;openGL32.lib;glew64s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -119,14 +123,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);glfw3.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);glfw3_32.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,14 +143,16 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
-      <AdditionalDependencies>%(AdditionalDependencies);glfw3.lib;openGL32.lib;glew32s.lib</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies);glfw3_64.lib;openGL32.lib;glew64s.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -153,16 +161,34 @@
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\tests\Test.cpp" />
+    <ClCompile Include="src\tests\testDepthTest.cpp" />
+    <ClCompile Include="src\tests\testLighting.cpp" />
+    <ClCompile Include="src\tests\testFrameBuf.cpp" />
+    <ClCompile Include="src\tests\testPlanets.cpp" />
+    <ClCompile Include="src\tests\testTriangle.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="Vendor\glm\detail\glm.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui_demo.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui_draw.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui_impl_glfw.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="Vendor\imgui-master\imgui_widgets.cpp" />
     <ClCompile Include="Vendor\STB_IMAGE\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shaders\Blastoise.shader" />
     <None Include="res\Shaders\Cube.shader" />
+    <None Include="res\Shaders\DepthTest.shader" />
     <None Include="res\Shaders\Example.shader" />
+    <None Include="res\Shaders\lamp.shader" />
+    <None Include="res\Shaders\lighting.shader" />
     <None Include="res\Shaders\Simple.shader" />
+    <None Include="res\Shaders\SingleColor.shader" />
+    <None Include="res\Shaders\Triangle.shader" />
     <None Include="Vendor\glm\detail\func_common.inl" />
     <None Include="Vendor\glm\detail\func_common_simd.inl" />
     <None Include="Vendor\glm\detail\func_exponential.inl" />
@@ -302,6 +328,12 @@
     <ClInclude Include="src\debug.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\tests\test.h" />
+    <ClInclude Include="src\tests\testDepthTest.h" />
+    <ClInclude Include="src\tests\testLighting.h" />
+    <ClInclude Include="src\tests\testFrameBuf.h" />
+    <ClInclude Include="src\tests\testPlanets.h" />
+    <ClInclude Include="src\tests\testTriangle.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
@@ -551,18 +583,32 @@
     <ClInclude Include="Vendor\GL\glew.h" />
     <ClInclude Include="Vendor\GL\glxew.h" />
     <ClInclude Include="Vendor\GL\wglew.h" />
+    <ClInclude Include="Vendor\imgui-master\imconfig.h" />
+    <ClInclude Include="Vendor\imgui-master\imgui.h" />
+    <ClInclude Include="Vendor\imgui-master\imgui_impl_glfw.h" />
+    <ClInclude Include="Vendor\imgui-master\imgui_impl_opengl3.h" />
+    <ClInclude Include="Vendor\imgui-master\imgui_internal.h" />
+    <ClInclude Include="Vendor\imgui-master\imstb_rectpack.h" />
+    <ClInclude Include="Vendor\imgui-master\imstb_textedit.h" />
+    <ClInclude Include="Vendor\imgui-master\imstb_truetype.h" />
     <ClInclude Include="Vendor\STB_IMAGE\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\awesomeface.png" />
     <Image Include="res\Textures\awesomeface573.png" />
     <Image Include="res\Textures\awesomeface573paint.png" />
+    <Image Include="res\Textures\blending_transparent_window.png" />
     <Image Include="res\Textures\Chris.jpg" />
     <Image Include="res\Textures\Chris512.jpg" />
     <Image Include="res\Textures\Chris567.jpg" />
     <Image Include="res\Textures\Chris571win.jpg" />
     <Image Include="res\Textures\Chris573.jpg" />
+    <Image Include="res\Textures\concrete.jpg" />
     <Image Include="res\Textures\container.jpg" />
+    <Image Include="res\Textures\container2.png" />
+    <Image Include="res\Textures\container2_specular.png" />
+    <Image Include="res\Textures\grass.png" />
+    <Image Include="res\Textures\matrix.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="res\Objects\cube.obj">
@@ -577,6 +623,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Font Include="res\Fonts\Consola.ttf" />
+    <Font Include="res\Fonts\DroidSans.ttf" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
