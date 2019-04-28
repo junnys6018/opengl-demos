@@ -53,7 +53,6 @@ Object::Object(const std::string& filepath)
 
 const std::vector<std::string> Object::parse_obj(const std::string filepath)
   // Parses .obj file,
-  // TODO: parse shading parameters in mtl file (Ka, Kd, Ks, Ns, Ni, d, Tf, illum)
   // TODO: support parsing for indicies where each component has a differnt index (e.g. 2/3/4)
   // 
   // we assume all indicies draw from the the position for v, vn and vt. ie. of the form
@@ -140,8 +139,14 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath)
 }
 
 void Object::parse_mtl(const std::string filepath)
+// TODO: parse shading parameters in mtl file (Ka, Kd, Ks, Ns, Ni, d, Tf, illum)
 {
 	std::ifstream mtlFile(filepath);
+	if (!mtlFile)
+	{
+		std::cout << "Failed to read " << filepath << std::endl;
+		return;
+	}
 	std::string line;
 	std::string rootDir = calc_root_dir(filepath);
 	while (std::getline(mtlFile, line))
@@ -166,17 +171,18 @@ inline std::string Object::calc_root_dir(std::string filepath)
 	// given "res/Objects/Pokemon/Pikachu.obj" returns "res/Objects/Pokemon/"
 {
 	unsigned int index = filepath.rfind('/');
-	assert(index < filepath.size());
-	return filepath.substr(0, index + 1);
+	if (index < filepath.size())
+		return filepath.substr(0, index + 1U);
+	else return "";
 }
 
-void Object::Draw(const Shader& shader)
+void Object::Draw(const Shader& shader, bool isTextured)
 {
 	vertexArray->Bind();
 	shader.Use();
 	for (auto& mat_ptr : mat_ptrs)
 	{
-		if (mat_ptr.m_mtlName != "")
+		if (mat_ptr.m_mtlName != "" && isTextured)
 		{
 			mat_ptr.m_material->m_texture->Bind();
 			shader.setInt("Texture1", 0);

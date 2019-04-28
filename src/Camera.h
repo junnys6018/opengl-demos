@@ -26,6 +26,7 @@ public:
 	void mouse_callback(double xpos, double ypos);
 	// moves position of camera based on key and cam dir
 	bool move(GLFWwindow* window);
+	void resetPos();
 
 private:
 	float m_yaw, m_pitch;

@@ -15,6 +15,7 @@ public:
 	virtual void OnUpdate() {}
 	virtual void OnImGuiRender() {};
 	virtual void key_callback(int key, int action) {}
+	virtual void framebuffer_size_callback(int width, int height) {}
 };
 
 class TestManager

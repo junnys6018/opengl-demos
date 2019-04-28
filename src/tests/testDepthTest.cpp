@@ -86,7 +86,7 @@ TestAdvancedGL::TestAdvancedGL(Camera& cam, GLFWwindow* win)
 
 	CrateTex = std::make_unique<Texture>("res/Textures/container.jpg");
 	FloorTex = std::make_unique<Texture>("res/Textures/concrete.jpg");
-	GrassTex = std::make_unique<Texture>("res/Textures/blending_transparent_window.png", GL_RGBA, GL_CLAMP_TO_BORDER);
+	GrassTex = std::make_unique<Texture>("res/Textures/blending_transparent_window.png", GL_CLAMP_TO_BORDER);
 
 	CrateTex->Bind(0);
 	FloorTex->Bind(1);
@@ -107,6 +107,7 @@ TestAdvancedGL::~TestAdvancedGL()
 {
 	GLCall(glDepthFunc(GL_LESS));
 	GLCall(glDisable(GL_STENCIL_TEST));
+	GLCall(glDisable(GL_BLEND));
 }
 
 void TestAdvancedGL::OnUpdate()
@@ -207,6 +208,7 @@ void TestAdvancedGL::OnImGuiRender()
 		ImGui::RadioButton("GL_GREATER" , &func_type, GL_GREATER );
 		ImGui::RadioButton("GL_NOTEQUAL", &func_type, GL_NOTEQUAL);
 		ImGui::RadioButton("GL_GEQUAL"  , &func_type, GL_GEQUAL  );	
+		// only update func_type if it changed
 		if (func_type != old_func_type)
 		{
 			old_func_type = func_type;

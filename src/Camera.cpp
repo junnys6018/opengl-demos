@@ -4,12 +4,9 @@
 
 Camera::Camera()
 	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_FOV(45.0f)
-	, m_sensitivity(0.1f), m_speed(0.1f), m_firstMouse(true), m_InUse(false)
+	, m_sensitivity(0.1f), m_speed(0.08f), m_firstMouse(true), m_InUse(false)
 {
-	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace
-	m_cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);	// direction the camera is facing relative to world space
-	m_cameraRight = glm::normalize(glm::cross(m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
-	m_cameraForward = glm::vec3(m_cameraRight.z, 0.0f, -m_cameraRight.x);
+	resetPos();
 }
 glm::vec3 Camera::getCameraPos() const
 {
@@ -35,7 +32,13 @@ void Camera::setSpeed(const float speed)
 {
 	m_speed = speed;
 }
-
+void Camera::resetPos()
+{
+	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace
+	m_cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);	// direction the camera is facing relative to world space
+	m_cameraRight = glm::normalize(glm::cross(m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
+	m_cameraForward = glm::vec3(m_cameraRight.z, 0.0f, -m_cameraRight.x);
+}
 void Camera::mouse_callback(double xpos, double ypos)
 {
 	if (m_InUse)
@@ -107,3 +110,4 @@ bool Camera::move(GLFWwindow* window)
 		return false;
 
 }
+

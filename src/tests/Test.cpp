@@ -42,10 +42,6 @@ void TestManager::registerTest(std::string name, std::function<Test*()> fp)
 
 void TestManager::OnImGuiRender()
 {
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
 
@@ -69,11 +65,6 @@ void TestManager::OnImGuiRender()
 				m_currentTest = e.second();
 			}
 	}
-	ImGui::Text("Application average %.3f ms/frame (%.1f FPS)",
-		1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 

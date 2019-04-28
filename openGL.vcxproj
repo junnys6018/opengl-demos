@@ -71,19 +71,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\</IntDir>
+    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -94,6 +94,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
@@ -109,6 +110,7 @@
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
@@ -124,7 +126,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -144,7 +146,7 @@
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)Vendor;$(ProjectDir)/src</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_MBCS;%(PreprocessorDefinitions);NDEBUG</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
     </ClCompile>
@@ -162,12 +164,15 @@
     <ClCompile Include="src\Object.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\tests\Test.cpp" />
+    <ClCompile Include="src\tests\testAdvGLSL.cpp" />
     <ClCompile Include="src\tests\testDepthTest.cpp" />
+    <ClCompile Include="src\tests\testInstancing.cpp" />
     <ClCompile Include="src\tests\testLighting.cpp" />
     <ClCompile Include="src\tests\testFrameBuf.cpp" />
     <ClCompile Include="src\tests\testPlanets.cpp" />
     <ClCompile Include="src\tests\testTriangle.cpp" />
     <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Utils\CubeMap.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="Vendor\glm\detail\glm.cpp" />
@@ -180,15 +185,28 @@
     <ClCompile Include="Vendor\STB_IMAGE\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shaders\Explode.shader" />
+    <None Include="res\Shaders\glFragCoord.shader" />
+    <None Include="res\Shaders\glFrontFacing.shader" />
     <None Include="res\Shaders\Blastoise.shader" />
     <None Include="res\Shaders\Cube.shader" />
+    <None Include="res\Shaders\CubeMap.shader" />
     <None Include="res\Shaders\DepthTest.shader" />
     <None Include="res\Shaders\Example.shader" />
+    <None Include="res\Shaders\Framebuf.shader" />
+    <None Include="res\Shaders\glPointSize.shader" />
     <None Include="res\Shaders\lamp.shader" />
     <None Include="res\Shaders\lighting.shader" />
+    <None Include="res\Shaders\Nidoqueen.shader" />
+    <None Include="res\Shaders\NormVisualize.shader" />
+    <None Include="res\Shaders\Planet.shader" />
+    <None Include="res\Shaders\Rocks.shader" />
+    <None Include="res\Shaders\QuadInstance.shader" />
     <None Include="res\Shaders\Simple.shader" />
     <None Include="res\Shaders\SingleColor.shader" />
+    <None Include="res\Shaders\SkyBox.shader" />
     <None Include="res\Shaders\Triangle.shader" />
+    <ClCompile Include="src\tests\testCubeMap.cpp" />
     <None Include="Vendor\glm\detail\func_common.inl" />
     <None Include="Vendor\glm\detail\func_common_simd.inl" />
     <None Include="Vendor\glm\detail\func_exponential.inl" />
@@ -329,12 +347,16 @@
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\tests\test.h" />
+    <ClInclude Include="src\tests\testAdvGLSL.h" />
+    <ClInclude Include="src\tests\testCubeMap.h" />
     <ClInclude Include="src\tests\testDepthTest.h" />
+    <ClInclude Include="src\tests\testInstancing.h" />
     <ClInclude Include="src\tests\testLighting.h" />
     <ClInclude Include="src\tests\testFrameBuf.h" />
     <ClInclude Include="src\tests\testPlanets.h" />
     <ClInclude Include="src\tests\testTriangle.h" />
     <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Utils\CubeMap.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="Vendor\GLFW\glfw3.h" />
@@ -597,6 +619,7 @@
     <Image Include="res\Textures\awesomeface.png" />
     <Image Include="res\Textures\awesomeface573.png" />
     <Image Include="res\Textures\awesomeface573paint.png" />
+    <Image Include="res\Textures\battleground.jpg" />
     <Image Include="res\Textures\blending_transparent_window.png" />
     <Image Include="res\Textures\Chris.jpg" />
     <Image Include="res\Textures\Chris512.jpg" />

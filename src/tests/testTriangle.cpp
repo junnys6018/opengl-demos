@@ -49,4 +49,5 @@ void TestTriangle::OnUpdate()
 void TestTriangle::OnImGuiRender()
 {
 	ImGui::ColorEdit3("Clear Color", (float*)&m_clearColor);
+	
 }

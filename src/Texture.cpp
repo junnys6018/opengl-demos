@@ -1,8 +1,10 @@
 #include "Texture.h"
 #include "debug.h"
 
+// Forward declaration
+std::string rel_to_abs_filepath(const std::string& relative);
 // Texture wrapper class
-Texture::Texture(const std::string& filepath, GLenum format, int wrap)
+Texture::Texture(const std::string& filepath, int wrap)
 {
 	stbi_set_flip_vertically_on_load(true);
 	GLCall(glGenTextures(1, &ID));
@@ -14,15 +16,21 @@ Texture::Texture(const std::string& filepath, GLenum format, int wrap)
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load and generate the ID
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);	// for some reason relative file path is not accepted
 	if (data)
 	{
-		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data));
+		GLenum fmt;
+		if (nrChannels == 3)
+			fmt = GL_RGB;
+		else if (nrChannels == 4)
+			fmt = GL_RGBA;
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, fmt, width, height, 0, fmt, GL_UNSIGNED_BYTE, data));
 		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 	else
 	{
-		std::cout << "Failed to load texture" << std::endl;
+		const char* log = stbi_failure_reason();
+		std::cout << "Failed to load texture at " << filepath << ' ' << log << std::endl;
 	}
 	stbi_image_free(data);
 }
@@ -42,4 +50,9 @@ void Texture::unBind() const
 unsigned int Texture::getID()
 {
 	return ID;
+}
+
+std::string rel_to_abs_filepath(const std::string& relative)
+{
+	return std::string("C:/Users/Jun Lim/source/repos/openGL/openGL/") + relative;
 }

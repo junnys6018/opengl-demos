@@ -31,7 +31,6 @@ private:
 	std::unique_ptr<VertexArray> m_cubeVA;
 
 	std::unique_ptr<Object> m_sphere;
-	std::unique_ptr<VertexArray> m_sphereVA;
 
 	std::unique_ptr<Shader> m_simpleShader;
 	std::unique_ptr<Shader> m_cubeShader;

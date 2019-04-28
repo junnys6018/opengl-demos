@@ -71,15 +71,15 @@ TestLighting::TestLighting(Camera& cam, GLFWwindow* win)
 	m_lightingShader->Use();
 	// load shader uniforms
 	m_lightingShader->setInt("material.shininess", 32);
-	m_diffMap = std::make_unique<Texture>("res/Textures/container2.png", GL_RGBA);
+	m_diffMap = std::make_unique<Texture>("res/Textures/container2.png");
 	m_lightingShader->setInt("material.diffuse", 0);
-	m_specMap = std::make_unique<Texture>("res/Textures/container2_specular.png", GL_RGBA);
+	m_specMap = std::make_unique<Texture>("res/Textures/container2_specular.png");
 	m_lightingShader->setInt("material.specular", 1);
 	m_emisMap = std::make_unique<Texture>("res/Textures/matrix.jpg");
 	m_lightingShader->setInt("material.emission", 2);
 
-	m_specMap->Bind(1);
 	m_diffMap->Bind(0);
+	m_specMap->Bind(1);
 	m_emisMap->Bind(2);
 	// directional lighting
 	m_lightingShader->setVec3("dirLight.ambient", 0.2f * m_dirLightColor);

@@ -7,6 +7,8 @@ void error_callback(int error, const char* description)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
+	if (test_mgr.m_currentTest)
+		test_mgr.m_currentTest->framebuffer_size_callback(width, height);
 }
 void mouse_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {

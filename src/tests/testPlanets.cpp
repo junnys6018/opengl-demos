@@ -54,8 +54,6 @@ TestPlanets::TestPlanets(Camera& cam, GLFWwindow* &win)
 	m_cubeVA = std::unique_ptr<VertexArray>(new VertexArray(*m_cubeBuf, GL_FLOAT, { 3,2 }));
 
 	m_sphere = std::make_unique<Object>("res/Objects/sphere.obj");
-	m_sphereVA = std::unique_ptr<VertexArray>(new VertexArray(*(m_sphere->vertexBuffer), GL_FLOAT, { 3,3,2 }));
-	m_sphereVA->addIndexBuffer(*(m_sphere->indexBuffer));
 
 	m_simpleShader = std::make_unique<Shader>("res/Shaders/Simple.shader");
 	m_cubeShader = std::make_unique<Shader>("res/shaders/Cube.shader");
@@ -98,7 +96,6 @@ void TestPlanets::OnUpdate()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	m_simpleShader->Use();
-	m_sphereVA->Bind();
 	for (int i = 0; i != 5; ++i)
 	{
 		glm::mat4 model_sphere = glm::mat4(1.0f);
@@ -108,7 +105,7 @@ void TestPlanets::OnUpdate()
 		model_sphere = glm::translate(model_sphere, glm::vec3(m_radii[i], 0.0f, 0.0f));
 		model_sphere = glm::scale(model_sphere, glm::vec3(m_size[i]));
 		m_simpleShader->setMat4("MVP", proj * view * model_sphere);
-		GLCall(glDrawElements(GL_TRIANGLES, m_sphere->indexBuffer->getCount(), GL_UNSIGNED_INT, 0));
+		m_sphere->Draw(*m_simpleShader);
 	}
 
 	m_cubeShader->Use();

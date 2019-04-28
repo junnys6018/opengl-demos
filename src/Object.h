@@ -27,7 +27,7 @@ struct Material
 	}
 	void genTexture(std::string texPath)
 	{
-		m_texture = std::make_unique<Texture>(texPath, GL_RGB, GL_REPEAT);
+		m_texture = std::make_unique<Texture>(texPath);
 	}
 };
 struct Material_ptr // assigns a block of indicies to a material
@@ -50,7 +50,7 @@ public:
 	std::unique_ptr<VertexBuffer> vertexBuffer;
 	std::unique_ptr<IndexBuffer> indexBuffer;
 	std::unique_ptr<VertexArray> vertexArray;
-	void Draw(const Shader& shader);
+	void Draw(const Shader& shader, bool isTextured = true);
 
 private:
 	std::vector<Material_ptr> mat_ptrs;

@@ -7,7 +7,7 @@ newmtl mat1
 	Ka 0.5 0.5 0.5
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
-	map_Kd Textures\PikachuDh.tga
+	map_Kd Textures/PikachuDh.tga
 
 newmtl mat2
 	Ns 10
@@ -18,7 +18,7 @@ newmtl mat2
 	Ka 0.5 0.5 0.5
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
-	map_Kd Textures\PikachuEyeDh.tga
+	map_Kd Textures/PikachuEyeDh.tga
 
 newmtl mat3
 	Ns 10
@@ -29,7 +29,7 @@ newmtl mat3
 	Ka 0.5 0.5 0.5
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
-	map_Kd Textures\PikachuHohoDh.tga
+	map_Kd Textures/PikachuHohoDh.tga
 
 newmtl mat4
 	Ns 10
@@ -40,7 +40,7 @@ newmtl mat4
 	Ka 0.5 0.5 0.5
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
-	map_Kd Textures\PikachuMouthDh.tga
+	map_Kd Textures/PikachuMouthDh.tga
 
 newmtl mat5
 	Ns 10
@@ -51,5 +51,5 @@ newmtl mat5
 	Ka 0.5 0.5 0.5
 	Kd 0.9 0.9 0.9
 	Ks 0.0 0.0 0.0
-	map_Kd Textures\PikachuDh.tga
+	map_Kd Textures/PikachuDh.tga
 

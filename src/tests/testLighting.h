@@ -21,8 +21,8 @@ public:
 	~TestLighting();
 
 	void OnUpdate() override;
-	void key_callback(int key, int action) override;
 	void OnImGuiRender() override;
+	void key_callback(int key, int action) override;
 private:
 	GLFWwindow *m_window;
 	Camera &m_camera;

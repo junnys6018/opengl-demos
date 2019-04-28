@@ -27,9 +27,6 @@
     <ClCompile Include="src\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Vendor\STB_IMAGE\stb_image.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Texture.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,10 +87,25 @@
     <ClCompile Include="Vendor\imgui-master\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\testFrameBuf.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Vendor\STB_IMAGE\stb_image.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="src\tests\testDepthTest.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\tests\testFrameBuf.cpp">
+    <ClCompile Include="src\tests\testCubeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\testAdvGLSL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\testInstancing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -500,6 +512,18 @@
     <None Include="res\Shaders\DepthTest.shader" />
     <None Include="res\Shaders\SingleColor.shader" />
     <None Include="res\Shaders\Blastoise.shader" />
+    <None Include="res\Shaders\Framebuf.shader" />
+    <None Include="res\Shaders\CubeMap.shader" />
+    <None Include="res\Shaders\SkyBox.shader" />
+    <None Include="res\Shaders\glFrontFacing.shader" />
+    <None Include="res\Shaders\glPointSize.shader" />
+    <None Include="res\Shaders\glFragCoord.shader" />
+    <None Include="res\Shaders\Explode.shader" />
+    <None Include="res\Shaders\NormVisualize.shader" />
+    <None Include="res\Shaders\Nidoqueen.shader" />
+    <None Include="res\Shaders\QuadInstance.shader" />
+    <None Include="res\Shaders\Rocks.shader" />
+    <None Include="res\Shaders\Planet.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -1330,6 +1354,18 @@
     <ClInclude Include="src\tests\testFrameBuf.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\tests\testCubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testAdvGLSL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testInstancing.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\CubeMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\container.jpg">
@@ -1375,6 +1411,9 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Textures\blending_transparent_window.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Textures\battleground.jpg">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

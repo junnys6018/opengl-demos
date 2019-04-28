@@ -6,12 +6,12 @@ Shader::Shader(const std::string& shaderpath)
 	:failedToLoad(false)
 {
 	// PARSE SHADER
-	std::string Shaders[2];
+	std::string Shaders[3];
 	enum class Mode
 	{
-		VOID = -1, VERTEX_SHADER = 0, FRAGMENT_SHADER = 1
+		VOID = -1, VERTEX_SHADER = 0, FRAGMENT_SHADER = 1, GEOMETRY_SHADER = 2
 	};
-	// Seperates .shader file into 2 strings, one holding the vertex shader, the other holding the fragment shader
+	// Seperates .shader file into 23strings, one holding the vertex shader, the other holding the fragment shader, the last holding geom shader
 	Mode mode = Mode::VOID;
 	std::ifstream file(shaderpath);
 	std::string line;
@@ -21,17 +21,26 @@ Shader::Shader(const std::string& shaderpath)
 			mode = Mode::VERTEX_SHADER;
 		else if (line == "#shader Fragment")
 			mode = Mode::FRAGMENT_SHADER;
+		else if (line == "#shader Geometry")
+			mode = Mode::GEOMETRY_SHADER;
 		else if (mode != Mode::VOID)
 			Shaders[(int)mode] += line + '\n';
 	}
 	// complies shader and returns ID to shader object.
-	unsigned VertexShader = CompileShader(Shaders[0], GL_VERTEX_SHADER);
-	unsigned FragmentShader = CompileShader(Shaders[1], GL_FRAGMENT_SHADER);
+	unsigned int VertexShader = CompileShader(Shaders[0], GL_VERTEX_SHADER);
+	unsigned int FragmentShader = CompileShader(Shaders[1], GL_FRAGMENT_SHADER);
+	unsigned int GeometryShader = 0;
+	if (Shaders[2] != "")
+		GeometryShader = CompileShader(Shaders[2], GL_GEOMETRY_SHADER);
 	// create program object
 	GLCall(ID = glCreateProgram());
 	// attach and link vertex and fragment shader
 	GLCall(glAttachShader(ID, VertexShader));
 	GLCall(glAttachShader(ID, FragmentShader));
+	if (Shaders[2] != "")
+	{
+		GLCall(glAttachShader(ID, GeometryShader));
+	}
 	GLCall(glLinkProgram(ID));
 	GLCall(glValidateProgram(ID));
 	// Error Handling for linking stage
@@ -39,13 +48,14 @@ Shader::Shader(const std::string& shaderpath)
 	GLCall(glGetProgramiv(ID, GL_LINK_STATUS, &status));
 	if (status == GL_FALSE)
 	{
+		std::cout << "Failed to link shaders!\n";
 		int length;
 		GLCall(glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &length));
 		if (length != 0)
 		{
 			char *message = new char[length];
 			GLCall(glGetProgramInfoLog(ID, length, nullptr, message));
-			std::cout << "Failed to link shaders!\n" << message << std::endl;
+			std::cout << message << std::endl;
 			delete[] message;
 		}
 		GLCall(glDeleteProgram(ID));
@@ -56,6 +66,10 @@ Shader::Shader(const std::string& shaderpath)
 		// Deletes intermediates
 		GLCall(glDeleteShader(VertexShader));
 		GLCall(glDeleteShader(FragmentShader));
+		if (Shaders[2] != "")
+		{
+			GLCall(glDeleteShader(GeometryShader));
+		}
 		GLCall(glUseProgram(ID));
 	}
 }
@@ -83,7 +97,8 @@ unsigned Shader::CompileShader(std::string source, GLenum type)
 		{
 			char *message = new char[length];
 			GLCall(glGetShaderInfoLog(shader, length, nullptr, message));
-			std::cout << "FAILED TO COMPLIE " << (type == GL_VERTEX_SHADER ? "VERTEX " : "FRAGMENT ")
+			std::cout << "FAILED TO COMPLIE " << (type == GL_VERTEX_SHADER ? "VERTEX " : 
+				(type == GL_FRAGMENT_SHADER ? "FRAGMENT" : "GEOMETRY"))
 				<< "SHADER!\n" << message << '\n';
 			delete[] message;
 		}
@@ -157,6 +172,28 @@ void Shader::setVec3(const std::string &name, const glm::vec3 &value) const
 		if (location == -1)
 			std::cout << name << " is not a valid uniform\n";
 		else GLCall(glUniform3f(location, value.x, value.y, value.z));
+	}
+}
+void Shader::setVec2(const std::string& name, const float& x, const float& y) const
+{
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform2f(location, x, y));
+	}
+}
+void Shader::setVec2(const std::string & name, const glm::vec2 & value) const
+{
+	if (!failedToLoad)
+	{
+		GLCall(glUseProgram(ID));
+		GLCall(int location = glGetUniformLocation(ID, name.c_str()));
+		if (location == -1)
+			std::cout << name << " is not a valid uniform\n";
+		else GLCall(glUniform2f(location, value.x, value.y));
 	}
 }
 void Shader::setFloat(const std::string &name, const float &value) const
