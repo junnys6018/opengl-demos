@@ -108,6 +108,15 @@
     <ClCompile Include="src\Utils\CubeMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\testAdvLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\UniformBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\testShadows.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -524,6 +533,11 @@
     <None Include="res\Shaders\QuadInstance.shader" />
     <None Include="res\Shaders\Rocks.shader" />
     <None Include="res\Shaders\Planet.shader" />
+    <None Include="res\Shaders\BlinnPhong.shader" />
+    <None Include="res\Shaders\lamp2.shader" />
+    <None Include="res\Shaders\Shadows\ShadowPass.shader" />
+    <None Include="res\Shaders\Shadows\RenderPass.shader" />
+    <None Include="res\Shaders\Shadows\DepthMap.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -1366,6 +1380,15 @@
     <ClInclude Include="src\Utils\CubeMap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\tests\testAdvLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\UniformBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testShadows.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Textures\container.jpg">
@@ -1414,6 +1437,12 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="res\Textures\battleground.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Textures\wood.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="res\Textures\toy_box_diffuse.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>

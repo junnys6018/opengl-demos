@@ -96,7 +96,8 @@ void TestCubeMap::OnUpdate()
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap));
 	m_shader->Use();
 	m_shader->setMat4("MVP", proj * view * model);
-	m_shader->setMat4("MV", view * model);
+	m_shader->setMat4("model", model);
+	m_shader->setVec3("camPos", m_camera.getCameraPos());
 	oBlastoise->Draw(*m_shader);
 
 	// skybox
@@ -107,10 +108,6 @@ void TestCubeMap::OnUpdate()
 	skyBoxShader->setMat4("VP", proj * glm::mat4(glm::mat3(m_camera.getViewMatrix())));
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
-}
-
-void TestCubeMap::OnImGuiRender()
-{
 }
 
 void TestCubeMap::loadCubeMap(std::vector<std::string> faces)

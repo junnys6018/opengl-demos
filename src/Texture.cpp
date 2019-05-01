@@ -4,7 +4,7 @@
 // Forward declaration
 std::string rel_to_abs_filepath(const std::string& relative);
 // Texture wrapper class
-Texture::Texture(const std::string& filepath, int wrap)
+Texture::Texture(const std::string& filepath, int wrap, bool is_sRGB_space)
 {
 	stbi_set_flip_vertically_on_load(true);
 	GLCall(glGenTextures(1, &ID));
@@ -19,12 +19,25 @@ Texture::Texture(const std::string& filepath, int wrap)
 	unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);	// for some reason relative file path is not accepted
 	if (data)
 	{
-		GLenum fmt;
-		if (nrChannels == 3)
+		GLenum internal_fmt, fmt;
+		if (nrChannels == 1)
+			fmt = GL_R;
+		else if (nrChannels == 3)
 			fmt = GL_RGB;
 		else if (nrChannels == 4)
 			fmt = GL_RGBA;
-		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, fmt, width, height, 0, fmt, GL_UNSIGNED_BYTE, data));
+		if (is_sRGB_space)
+		{
+			if (nrChannels == 3)
+				internal_fmt = GL_SRGB;
+			else if (nrChannels == 4)
+				internal_fmt = GL_SRGB_ALPHA;
+		}
+		else
+		{
+			internal_fmt = fmt;
+		}
+		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_fmt, width, height, 0, fmt, GL_UNSIGNED_BYTE, data));
 		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 	else

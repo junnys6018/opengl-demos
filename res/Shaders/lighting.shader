@@ -87,7 +87,7 @@ void main()
 	// phase 1: Directional lighting
 	vec3 result = CalcDirLight(dirLight, norm, viewDir);
 	// phase 2: Point lights
-	for (int i = 0; i != 4; ++i)
+	for (int i = 0; i != NR_POINT_LIGHTS; ++i)
 		result += CalcPointLight(pointLights[i], s_normal, s_fragPos, viewDir);
 	// phase 3: Emission maps
 	if (useEmission)

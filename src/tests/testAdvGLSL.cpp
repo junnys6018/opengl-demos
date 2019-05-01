@@ -31,25 +31,23 @@ TestAdvGLSL::TestAdvGLSL(Camera& cam, GLFWwindow* win)
 	s_glPointSize->setMat4("model", model);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 	s_glFragCoord->setMat4("model", model);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 	s_glFrontFacing->setMat4("model", model);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(3.0f, -0.5f, 7.0f));
+	model = glm::translate(model, glm::vec3(-3.0f, -0.5f, -7.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
-	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	s_ExplodeShader->setMat4("model", model);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-3.0f, -0.5f, 7.0f));
+	model = glm::translate(model, glm::vec3(3.0f, -0.5f, -7.0f));
 	model = glm::scale(model, glm::vec3(0.3f, 0.3f, 0.3f));
-	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	s_Nanosuit->setMat4("model", model);
 	s_NormVisualise->setMat4("model", model);
 

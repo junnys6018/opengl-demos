@@ -1,9 +1,8 @@
-#define GLEW_BUILD
+#define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
-
 
 #include "debug.h"
 #include "Camera.h"
@@ -16,6 +15,8 @@
 #include "tests/testCubeMap.h"
 #include "tests/testAdvGLSL.h"
 #include "tests/testInstancing.h"
+#include "tests/testAdvLight.h"
+#include "tests/testShadows.h"
 
 #include "imgui-master/imgui.h"
 #include "imgui-master/imgui_impl_glfw.h"
@@ -23,6 +24,7 @@
 
 Camera camera;
 TestManager test_mgr;
+extern uint16_t instances;
 
 // callback functions defined here
 #include "callback.h"
@@ -56,14 +58,16 @@ int main(int argc, char* argv[])
 	// Pre render loop preperation
 	glfwSwapInterval(1); // enable vsync
 
-	test_mgr.registerTest("triangle"    , [ ]()->Test* {return new TestTriangle(); }                  );
-	test_mgr.registerTest("planets"     , [&]()->Test* {return new TestPlanets(camera, window); }     );
-	test_mgr.registerTest("lighting"    , [&]()->Test* {return new TestLighting(camera, window); }    );
-	test_mgr.registerTest("advOpenGL"   , [&]()->Test* {return new TestAdvancedGL(camera, window); }  );
-	test_mgr.registerTest("frameBuf"    , [&]()->Test* {return new TestFrameBuf(camera, window); }    );
-	test_mgr.registerTest("cubeMap"     , [&]()->Test* {return new TestCubeMap(camera, window); }     );
-	test_mgr.registerTest("advGLSL"     , [&]()->Test* {return new TestAdvGLSL(camera, window); }     );
-	test_mgr.registerTest("Instancing"  , [&]()->Test* {return new TestInstancing(camera, window); }  );
+	test_mgr.registerTest("triangle"    , [ ]()->Test* {return new TestTriangle(); }                            );
+	test_mgr.registerTest("planets"     , [&]()->Test* {return new TestPlanets(camera, window); }               );
+	test_mgr.registerTest("lighting"    , [&]()->Test* {return new TestLighting(camera, window); }              );
+	test_mgr.registerTest("advOpenGL"   , [&]()->Test* {return new TestAdvancedGL(camera, window); }            );
+	test_mgr.registerTest("frameBuf"    , [&]()->Test* {return new TestFrameBuf(camera, window); }              );
+	test_mgr.registerTest("cubeMap"     , [&]()->Test* {return new TestCubeMap(camera, window); }               );
+	test_mgr.registerTest("advGLSL"     , [&]()->Test* {return new TestAdvGLSL(camera, window); }               );
+	test_mgr.registerTest("Instancing"  , [&]()->Test* {return new TestInstancing(camera, window, instances); } );
+	test_mgr.registerTest("advLight"    , [&]()->Test* {return new TestAdvLight(camera, window); }              );
+	test_mgr.registerTest("Shadows"     , [&]()->Test* {return new TestShadows(camera, window); });
 	// command line arg for default test
 	if (argc == 2)
 	{
@@ -95,7 +99,7 @@ int main(int argc, char* argv[])
 	{
 		double currentTime = glfwGetTime();
 		frameCount++;
-		if (currentTime - previousTime >= 1.0)
+		if (currentTime - previousTime >= 1.0) // 1 second
 		{
 			fps = frameCount;
 			frameCount = 0;
@@ -117,13 +121,12 @@ int main(int argc, char* argv[])
 			test_mgr.OnImGuiRender();
 
 		ImGui::SetNextWindowPos(ImVec2(10.0f,10.0f), ImGuiCond_Always);
-		//ImGui::SetNextWindowBgAlpha(0.3f); // Transparent background
+		ImGui::SetNextWindowBgAlpha(0.3f); // Transparent background
 		ImGui::Begin("Example: Simple overlay", NULL, ImGuiWindowFlags_NoMove |
 			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
 		
-		ImGui::Text("%.3f ms/frame (%i FPS)",
-			1000.0f / fps, fps);
+		ImGui::Text("%.3f ms/frame (%i FPS)", 1000.0f / fps, fps);
 		
 		ImGui::End();
 
@@ -133,7 +136,6 @@ int main(int argc, char* argv[])
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
-
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();

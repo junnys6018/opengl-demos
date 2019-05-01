@@ -95,6 +95,9 @@
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
@@ -111,6 +114,9 @@
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)dependencies\lib-vc2015;$(SolutionDir)dependencies</AdditionalLibraryDirectories>
@@ -129,6 +135,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -149,6 +158,9 @@
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <ExceptionHandling>Sync</ExceptionHandling>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -165,14 +177,17 @@
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\tests\Test.cpp" />
     <ClCompile Include="src\tests\testAdvGLSL.cpp" />
+    <ClCompile Include="src\tests\testAdvLight.cpp" />
     <ClCompile Include="src\tests\testDepthTest.cpp" />
     <ClCompile Include="src\tests\testInstancing.cpp" />
     <ClCompile Include="src\tests\testLighting.cpp" />
     <ClCompile Include="src\tests\testFrameBuf.cpp" />
     <ClCompile Include="src\tests\testPlanets.cpp" />
+    <ClCompile Include="src\tests\testShadows.cpp" />
     <ClCompile Include="src\tests\testTriangle.cpp" />
     <ClCompile Include="src\Texture.cpp" />
     <ClCompile Include="src\Utils\CubeMap.cpp" />
+    <ClCompile Include="src\Utils\UniformBuffer.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
     <ClCompile Include="Vendor\glm\detail\glm.cpp" />
@@ -185,6 +200,7 @@
     <ClCompile Include="Vendor\STB_IMAGE\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\Shaders\BlinnPhong.shader" />
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\glFragCoord.shader" />
     <None Include="res\Shaders\glFrontFacing.shader" />
@@ -196,12 +212,16 @@
     <None Include="res\Shaders\Framebuf.shader" />
     <None Include="res\Shaders\glPointSize.shader" />
     <None Include="res\Shaders\lamp.shader" />
+    <None Include="res\Shaders\lamp2.shader" />
     <None Include="res\Shaders\lighting.shader" />
     <None Include="res\Shaders\Nidoqueen.shader" />
     <None Include="res\Shaders\NormVisualize.shader" />
     <None Include="res\Shaders\Planet.shader" />
     <None Include="res\Shaders\Rocks.shader" />
     <None Include="res\Shaders\QuadInstance.shader" />
+    <None Include="res\Shaders\Shadows\DepthMap.shader" />
+    <None Include="res\Shaders\Shadows\RenderPass.shader" />
+    <None Include="res\Shaders\Shadows\ShadowPass.shader" />
     <None Include="res\Shaders\Simple.shader" />
     <None Include="res\Shaders\SingleColor.shader" />
     <None Include="res\Shaders\SkyBox.shader" />
@@ -348,15 +368,18 @@
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\tests\test.h" />
     <ClInclude Include="src\tests\testAdvGLSL.h" />
+    <ClInclude Include="src\tests\testAdvLight.h" />
     <ClInclude Include="src\tests\testCubeMap.h" />
     <ClInclude Include="src\tests\testDepthTest.h" />
     <ClInclude Include="src\tests\testInstancing.h" />
     <ClInclude Include="src\tests\testLighting.h" />
     <ClInclude Include="src\tests\testFrameBuf.h" />
     <ClInclude Include="src\tests\testPlanets.h" />
+    <ClInclude Include="src\tests\testShadows.h" />
     <ClInclude Include="src\tests\testTriangle.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Utils\CubeMap.h" />
+    <ClInclude Include="src\Utils\UniformBuffer.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="Vendor\GLFW\glfw3.h" />
@@ -632,6 +655,8 @@
     <Image Include="res\Textures\container2_specular.png" />
     <Image Include="res\Textures\grass.png" />
     <Image Include="res\Textures\matrix.jpg" />
+    <Image Include="res\Textures\toy_box_diffuse.png" />
+    <Image Include="res\Textures\wood.png" />
   </ItemGroup>
   <ItemGroup>
     <Object Include="res\Objects\cube.obj">

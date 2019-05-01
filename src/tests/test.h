@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 
+#include "imgui-master/imgui.h"
 #include <iostream> // remove after temp
 class Test
 {
@@ -13,7 +14,7 @@ public:
 	virtual ~Test() {}
 
 	virtual void OnUpdate() {}
-	virtual void OnImGuiRender() {};
+	virtual void OnImGuiRender() { ImGui::Text("Hello World!"); };
 	virtual void key_callback(int key, int action) {}
 	virtual void framebuffer_size_callback(int width, int height) {}
 };

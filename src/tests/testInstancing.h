@@ -14,7 +14,7 @@
 class TestInstancing : public Test
 {
 public:
-	TestInstancing(Camera& cam, GLFWwindow* win);
+	TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances);
 	~TestInstancing();
 
 	void OnUpdate() override;

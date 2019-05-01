@@ -1,8 +1,8 @@
 #include "testInstancing.h"
 #include "debug.h"
 
-TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), m_drawQuads(false), m_isWireFrame(false), m_amount(10000)
+TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
+	:m_camera(cam), m_window(win), m_drawQuads(false), m_isWireFrame(false), m_amount(instances)
 {
 	// Quad setup
 	float quadVertices[] = {
@@ -112,7 +112,7 @@ TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win)
 	GLCall(glVertexAttribDivisor(4, 1));
 	GLCall(glVertexAttribDivisor(5, 1));
 	GLCall(glVertexAttribDivisor(6, 1));
-
+	
 	m_camera.setSpeed(0.5f);
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
@@ -150,7 +150,6 @@ void TestInstancing::OnUpdate()
 		s_planet->setMat4("VP", proj * view);
 
 		o_Planet->Draw(*s_planet);
-
 
 		// draw meteorites
 		s_rock->Use();

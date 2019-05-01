@@ -18,7 +18,6 @@ public:
 	~TestCubeMap();
 
 	void OnUpdate() override;
-	void OnImGuiRender() override;
 private:
 	void loadCubeMap(std::vector<std::string> faces);
 	Camera& m_camera;
@@ -33,7 +32,6 @@ private:
 	std::unique_ptr<VertexArray> skyBoxVA;
 	
 	unsigned int m_cubeMap;
-
 };
 
 
