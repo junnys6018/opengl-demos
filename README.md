@@ -1,8 +1,15 @@
 # learn-openGL
 
-CONTROLS <br />
- <br />
-ESC - enable / disable mouse cursor <br />
-1   - increase FOV <br />
-2   - decrease FOV <br />
-3   - enable / disable rotation of rendered objects <br />
+Demo's and code examples I've written while learning OpenGL
+
+# Installation 
+
+1. Clone or download the repo onto your computer
+2. Download resources [here][site]. (textures, shaders, etc...)
+3. Extract contents of "res" into "OpenGL/res" directory
+4. Open solution in visual studio and build
+
+  [site]: https://www.dropbox.com/sh/jshliyx0iwjcr1c/AADhZai7CA_NxOCipyVPLpwBa?dl=0
+# Controls
+Press ESC to toggle menu  
+Scroll wheel changes FOV
