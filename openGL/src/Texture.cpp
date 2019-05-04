@@ -4,9 +4,12 @@
 // Forward declaration
 std::string rel_to_abs_filepath(const std::string& relative);
 // Texture wrapper class
-Texture::Texture(const std::string& filepath, int wrap, bool is_sRGB_space)
+Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags)
 {
-	stbi_set_flip_vertically_on_load(true);
+	if (flags & TEXTURE_INIT_FLAGS_NOFLIP)
+		stbi_set_flip_vertically_on_load(false);
+	else
+		stbi_set_flip_vertically_on_load(true);
 	GLCall(glGenTextures(1, &ID));
 	GLCall(glBindTexture(GL_TEXTURE_2D, ID));
 	// set the ID wrapping/filtering options (on the currently bound ID object)
@@ -26,7 +29,7 @@ Texture::Texture(const std::string& filepath, int wrap, bool is_sRGB_space)
 			fmt = GL_RGB;
 		else if (nrChannels == 4)
 			fmt = GL_RGBA;
-		if (is_sRGB_space)
+		if (flags & TEXTURE_INIT_FLAGS_GAMMA_CORRECT)
 		{
 			if (nrChannels == 3)
 				internal_fmt = GL_SRGB;

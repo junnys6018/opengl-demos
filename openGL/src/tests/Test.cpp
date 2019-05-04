@@ -67,7 +67,7 @@ void TestManager::OnImGuiRender()
 		ImGui::Checkbox("Demo Window", &show_demo_window);
 		for (int i = 0; i < maxButtonCol; ++i)
 		{
-			int index = i;
+			unsigned int index = i;
 			while (true)
 			{
 				// hack for testInstancing TODO: refactor test_mgr

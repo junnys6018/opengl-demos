@@ -11,7 +11,7 @@ Shader::Shader(const std::string& shaderpath)
 	{
 		VOID = -1, VERTEX_SHADER = 0, FRAGMENT_SHADER = 1, GEOMETRY_SHADER = 2
 	};
-	// Seperates .shader file into 23strings, one holding the vertex shader, the other holding the fragment shader, the last holding geom shader
+	// Seperates .shader file into 2 strings, one holding the vertex shader, the other holding the fragment shader, the last holding geom shader
 	Mode mode = Mode::VOID;
 	std::ifstream file(shaderpath);
 	std::string line;

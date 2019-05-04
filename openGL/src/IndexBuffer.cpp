@@ -1,5 +1,6 @@
 #include "IndexBuffer.h"
 #include "debug.h"
+
 IndexBuffer::IndexBuffer()
 	:ID(0), count(0) {	}
 IndexBuffer::IndexBuffer(unsigned int *data, unsigned int count)

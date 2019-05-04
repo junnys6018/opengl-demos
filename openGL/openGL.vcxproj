@@ -70,20 +70,20 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(SolutionDir)bin\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)bin\intermediates\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(Platform)-$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)bin-int\$(Platform)-$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -182,6 +182,7 @@
     <ClCompile Include="src\tests\testInstancing.cpp" />
     <ClCompile Include="src\tests\testLighting.cpp" />
     <ClCompile Include="src\tests\testFrameBuf.cpp" />
+    <ClCompile Include="src\tests\testNormalMap.cpp" />
     <ClCompile Include="src\tests\testPlanets.cpp" />
     <ClCompile Include="src\tests\testShadows.cpp" />
     <ClCompile Include="src\tests\testTriangle.cpp" />
@@ -207,6 +208,7 @@
     <None Include="res\Shaders\lamp2.shader" />
     <None Include="res\Shaders\lighting.shader" />
     <None Include="res\Shaders\Nidoqueen.shader" />
+    <None Include="res\Shaders\NormMap.shader" />
     <None Include="res\Shaders\NormVisualize.shader" />
     <None Include="res\Shaders\Planet.shader" />
     <None Include="res\Shaders\Rocks.shader" />
@@ -366,9 +368,11 @@
     <ClInclude Include="src\tests\testInstancing.h" />
     <ClInclude Include="src\tests\testLighting.h" />
     <ClInclude Include="src\tests\testFrameBuf.h" />
+    <ClInclude Include="src\tests\testNormalMap.h" />
     <ClInclude Include="src\tests\testPlanets.h" />
     <ClInclude Include="src\tests\testShadows.h" />
     <ClInclude Include="src\tests\testTriangle.h" />
+    <ClInclude Include="src\tests\__Test__.h" />
     <ClInclude Include="src\Texture.h" />
     <ClInclude Include="src\Utils\CubeMap.h" />
     <ClInclude Include="src\Utils\UniformBuffer.h" />

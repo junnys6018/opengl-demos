@@ -4,14 +4,8 @@
 #include <chrono>
 
 #define ENABLE_TIMING
-struct Vertex
-{
-	glm::vec3 position;
-	glm::vec3 normal;
-	glm::vec2 texCoord;
-};
 
-Object::Object(const std::string& filepath)
+Object::Object(const std::string& filepath, Object_Init_Flags flags)
 {
 #ifdef ENABLE_TIMING
 	auto a = std::chrono::steady_clock::now();
@@ -165,6 +159,11 @@ void Object::parse_mtl(const std::string filepath)
 			(materials.end() - 1)->genTexture(rootDir + id);
 		}
 	}
+}
+// Tangents have attrib location = 3
+void Object::genTangents(std::vector<Vertex> vBuf, std::vector<unsigned int> iBuf)
+{
+
 }
 
 inline std::string Object::calc_root_dir(std::string filepath)

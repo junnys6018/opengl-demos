@@ -20,7 +20,7 @@ TestAdvLight::TestAdvLight(Camera& cam, GLFWwindow* win)
 
 	floorVB = std::make_unique<VertexBuffer>(planeVertices, sizeof(planeVertices));
 	floorVA = std::unique_ptr<VertexArray>(new VertexArray(*floorVB, GL_FLOAT, { 3,3,2 }));
-	t_floor = std::make_unique<Texture>("res/Textures/wood.png", GL_REPEAT, true);
+	t_floor = std::make_unique<Texture>("res/Textures/wood.png", GL_REPEAT, TEXTURE_INIT_FLAGS_GAMMA_CORRECT);
 	t_floor->Bind(0);
 	s_blinnPhong = std::make_unique<Shader>("res/Shaders/BlinnPhong.shader");
 	s_blinnPhong->setInt("Texture1", 0);

@@ -7,16 +7,7 @@
 #include "debug.h"
 #include "Camera.h"
 
-#include "tests/testPlanets.h"
-#include "tests/testLighting.h"
-#include "tests/testTriangle.h"
-#include "tests/testDepthTest.h"
-#include "tests/testFrameBuf.h"
-#include "tests/testCubeMap.h"
-#include "tests/testAdvGLSL.h"
-#include "tests/testInstancing.h"
-#include "tests/testAdvLight.h"
-#include "tests/testShadows.h"
+#include "tests/__Test__.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -68,6 +59,7 @@ int main(int argc, char* argv[])
 	test_mgr.registerTest("Instancing"  , [&]()->Test* {return new TestInstancing(camera, window, instances); } );
 	test_mgr.registerTest("advLight"    , [&]()->Test* {return new TestAdvLight(camera, window); }              );
 	test_mgr.registerTest("Shadows"     , [&]()->Test* {return new TestShadows(camera, window); }               );
+	test_mgr.registerTest("NormMap"     , [&]()->Test* {return new TestNormMap(camera, window); }               );
 	// command line arg for default test
 	if (argc == 2)
 	{
