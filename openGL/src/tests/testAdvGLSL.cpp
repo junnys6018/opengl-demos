@@ -107,7 +107,7 @@ void TestAdvGLSL::OnUpdate()
 
 	o_Nanosuit->Draw(*s_Nanosuit);
 	if (m_hasNormals)
-		o_Nanosuit->Draw(*s_NormVisualise, false);
+		o_Nanosuit->Draw(*s_NormVisualise, DRAW_FLAGS_NONE);
 }
 
 void TestAdvGLSL::OnImGuiRender()

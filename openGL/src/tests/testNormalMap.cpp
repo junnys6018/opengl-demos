@@ -34,6 +34,8 @@ TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
 	t_DiffMap = std::make_unique<Texture>("res/Textures/brickwall.jpg");
 	t_NormMap = std::make_unique<Texture>("res/Textures/brickwall_normal.jpg");
 
+	o_NanoSuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded", OBJECT_INIT_FLAGS_GEN_TANGENT);
+
 	s_NormMap = std::make_unique<Shader>("res/Shaders/NormMap.shader");
 
 	s_NormMap->setVec3("light.position", glm::vec3(0.0f, 1.0f, 1.0f));
@@ -43,8 +45,9 @@ TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
 
 	s_NormMap->setInt("Texture1", 0);
 	s_NormMap->setInt("NormMap", 1);
-	t_DiffMap->Bind(0);
-	t_NormMap->Bind(1);
+	// Lamp
+	o_sphere = std::make_unique<Object>("res/Objects/sphere.obj");
+	s_lamp = std::make_unique<Shader>("res/Shaders/lamp.shader");
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
@@ -59,7 +62,6 @@ void TestNormMap::OnUpdate()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	glm::mat4 model = glm::mat4(1.0f);
-	//model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
@@ -70,10 +72,25 @@ void TestNormMap::OnUpdate()
 	s_NormMap->setMat4("model", model);
 	s_NormMap->setMat4("view", view);
 	s_NormMap->setMat4("proj", proj);
-
+	// Wall
 	s_NormMap->setVec3("camPos", m_camera.getCameraPos());
 	quadVA->Bind();
+	t_DiffMap->Bind(0);
+	t_NormMap->Bind(1);
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+	// Nanosuit
+	model = glm::mat4(1.0f);
+
+	model = glm::rotate(model, glm::radians(10.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.1f));
+	s_NormMap->setMat4("model", model);
+	o_NanoSuit->Draw(*s_NormMap, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_NORMAL);
+	// Lamp
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, 1.0f, 1.0f));
+	model = glm::scale(model, glm::vec3(0.2f));
+	s_lamp->setMat4("MVP", proj * view * model);
+	o_sphere->Draw(*s_lamp);
 }
 
 void TestNormMap::OnImGuiRender()

@@ -9,6 +9,13 @@ VertexBuffer::VertexBuffer(void *data, unsigned int size)
 	GLCall(glBufferData(GL_ARRAY_BUFFER, size, data, GL_STATIC_DRAW));
 }
 
+VertexBuffer::VertexBuffer(unsigned int size)
+{
+	GLCall(glGenBuffers(1, &ID));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, ID));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_STATIC_DRAW));
+}
+
 VertexBuffer::VertexBuffer(VertexBuffer&& other)
 	: ID(other.ID)
 {

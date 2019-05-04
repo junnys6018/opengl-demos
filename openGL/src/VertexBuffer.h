@@ -9,6 +9,7 @@ class VertexBuffer
 public:
 	VertexBuffer();
 	VertexBuffer(void *data, unsigned int size);
+	VertexBuffer(unsigned int size);
 	VertexBuffer(VertexBuffer&& other);
 	VertexBuffer& operator=(VertexBuffer&& other);
 	~VertexBuffer();
