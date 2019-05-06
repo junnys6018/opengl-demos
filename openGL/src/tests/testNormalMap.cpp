@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), useNormMap(false), visNormMap(false)
+	:m_camera(cam), m_window(win), useNormMap(false), visNormMap(false), drawLamp(true)
 {
 	float quadVertices[] = {
 		// positions        // Normals       // texture Coords
@@ -80,17 +80,19 @@ void TestNormMap::OnUpdate()
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	// Nanosuit
 	model = glm::mat4(1.0f);
-
-	model = glm::rotate(model, glm::radians(10.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, glm::radians(5.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.1f));
 	s_NormMap->setMat4("model", model);
 	o_NanoSuit->Draw(*s_NormMap, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_NORMAL);
 	// Lamp
-	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 1.0f, 1.0f));
-	model = glm::scale(model, glm::vec3(0.2f));
-	s_lamp->setMat4("MVP", proj * view * model);
-	o_sphere->Draw(*s_lamp);
+	if (drawLamp)
+	{
+		model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 1.0f));
+		model = glm::scale(model, glm::vec3(0.05f));
+		s_lamp->setMat4("MVP", proj * view * model);
+		o_sphere->Draw(*s_lamp);
+	}
 }
 
 void TestNormMap::OnImGuiRender()
@@ -99,4 +101,5 @@ void TestNormMap::OnImGuiRender()
 		s_NormMap->setBool("useNormMap", useNormMap);
 	if (ImGui::Checkbox("Visualise Normal Map", &visNormMap))
 		s_NormMap->setBool("visNormMap", visNormMap);
+	ImGui::Checkbox("Draw Lamp", &drawLamp);
 }

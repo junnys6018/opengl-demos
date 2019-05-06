@@ -8,6 +8,7 @@ Draw_Flags operator|(Draw_Flags lhs, Draw_Flags rhs)
 {
 	return (Draw_Flags)((int)lhs | (int)rhs);
 }
+
 Object::Object(const std::string& filepath, Object_Init_Flags flags)
 {
 #ifdef ENABLE_TIMING
@@ -29,12 +30,12 @@ Object::Object(const std::string& filepath, Object_Init_Flags flags)
 				matptr.m_material = &mat;
 				break;
 			}
-
 #ifdef ENABLE_TIMING
 	auto b = std::chrono::steady_clock::now();
 	std::chrono::duration<double, std::milli> work_time = b - a;
 	std::cout << "Loaded " << filepath << " in " << work_time.count() << "ms\n";
 #endif
+
 	if (flags & OBJECT_INIT_FLAGS_GEN_TANGENT)
 	{
 		vertexBuffer = std::make_unique<VertexBuffer>((sizeof(Vertex) + sizeof(glm::vec4)) * vBuf.size());
@@ -67,66 +68,109 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 	std::string rootDir = calc_root_dir(filepath);
 
 	std::ifstream file(filepath);
-	std::string line;
+	std::string linebuf;
 
 	unsigned int vnIndex = 0;
 	unsigned int vtIndex = 0;
 	unsigned int fIndex = 0; // points to 1 off the last index
-	while (std::getline(file, line))
+	while (std::getline(file, linebuf))
 	{
-		std::stringstream s(line);
-		std::string id;
-		s >> id;
-		if (id == "v")
+		// Trim trailing whitespace.
+		if (linebuf.size() > 0) {
+			linebuf = linebuf.substr(0, linebuf.find_last_not_of(" \t") + 1);
+		}
+
+		// Trim newline '\r\n' or '\n'
+		if (linebuf.size() > 0) {
+			if (linebuf[linebuf.size() - 1] == '\n')
+				linebuf.erase(linebuf.size() - 1);
+		}
+		if (linebuf.size() > 0) {
+			if (linebuf[linebuf.size() - 1] == '\r')
+				linebuf.erase(linebuf.size() - 1);
+		}
+
+		// Skip if empty line.
+		if (linebuf.empty()) {
+			continue;
+		}
+
+		// Skip leading space.
+		const char* token = linebuf.c_str();
+		token += strspn(token, " \t");
+
+		assert(token);
+		if (token[0] == '\0') continue;  // empty line
+		if (token[0] == '#') continue;  // comment line
+
+		if (token[0] == 'v' && IS_SPACE(token[1]))
 		{
 			Vertex data;
-			s >> data.position.x;
-			s >> data.position.y;
-			s >> data.position.z;
+			token += 2;
+			sscanf_s(token, "%f %f %f", &data.position.x, &data.position.y, &data.position.z);
 			vBuf.push_back(data);
+			continue;
 		}
-		else if (id == "vn")
+
+		if (token[0] == 'v' && token[1] == 'n' && IS_SPACE(token[2]))
 		{
 			assert(vnIndex < vBuf.size());
-			s >> vBuf[vnIndex].normal.x;
-			s >> vBuf[vnIndex].normal.y;
-			s >> vBuf[vnIndex].normal.z;
+			token += 3;
+			sscanf_s(token, "%f %f %f", &vBuf[vnIndex].normal.x, &vBuf[vnIndex].normal.y, &vBuf[vnIndex].normal.z);
 			++vnIndex;
+			continue;
 		}
-		else if (id == "vt")
+
+		if (token[0] == 'v' && token[1] == 't' && IS_SPACE(token[2]))
 		{
 			assert(vtIndex < vBuf.size());
-			s >> vBuf[vtIndex].texCoord.s;
-			s >> vBuf[vtIndex].texCoord.t;
+			token += 3;
+			sscanf_s(token, "%f %f", &vBuf[vtIndex].texCoord.s, &vBuf[vtIndex].texCoord.t);
 			++vtIndex;
+			continue;
 		}
-		else if (id == "f")
+	
+		if (token[0] == 'f' && IS_SPACE(token[1]))
 		{
-			std::string data;
-			while (s >> data)
+			token += 2;
+			while (token[0] != '\n' && token[0] != '\r' && token[0] != '\0')
 			{
-				int index = data.find('/');
+				unsigned int i;
+				sscanf_s(token, "%ui", &i);
+				iBuf.push_back(i - 1);
 
-				iBuf.push_back(std::stoul(data.substr(0, index)) - 1);
+				size_t n = strspn(token, "/1234567890");
+				token += n;
+				n = strspn(token, " \t\r");
+				token += n;
 			}
+
 			if (mat_ptrs.size() == 0) // if no material has been declared
 			{
 				mat_ptrs.emplace_back(-1, 0);
 			}
 			fIndex += 3;
+			continue;
 		}
-		else if (id == "usemtl")
+
+		if (strncmp(token, "usemtl", 6) == 0 && IS_SPACE(token[6]))
 		{
+			char name[512];
+			token += 7;
+			sscanf_s(token, "%s", name, 512);
 			if (mat_ptrs.size() != 0)
 				(mat_ptrs.end() - 1)->m_count = fIndex - (mat_ptrs.end() - 1)->m_offset;
-			s >> id;
-			mat_ptrs.emplace_back(-1, fIndex, id);
+			mat_ptrs.emplace_back(-1, fIndex, std::string(name));
+			continue;
 		}
-		else if (id == "mtllib")
+
+		if (strncmp(token, "mtllib", 6) == 0 && IS_SPACE(token[6]))
 		{
-			// we assume filepath is relative to directory containing .obj file
-			s >> id;
-			mtlPaths.push_back(rootDir + id);
+			char name[512];
+			token += 7;
+			sscanf_s(token, "%s", name, 512);
+			mtlPaths.push_back(rootDir + std::string(name));
+			continue;
 		}
 	}
 	(mat_ptrs.end() - 1)->m_count = fIndex - (mat_ptrs.end() - 1)->m_offset; // read last index	
@@ -142,31 +186,68 @@ void Object::parse_mtl(const std::string filepath)
 		std::cout << "Failed to read " << filepath << std::endl;
 		return;
 	}
-	std::string line;
+	std::string linebuf;
 	std::string rootDir = calc_root_dir(filepath);
-	while (std::getline(mtlFile, line))
+	while (std::getline(mtlFile, linebuf))
 	{
-		std::istringstream s(line);
-		std::string id;
-		s >> id;
-		if (id == "newmtl")
-		{
-			s >> id;
-			materials.push_back(Material(id));
+		// Trim trailing whitespace.
+		if (linebuf.size() > 0) {
+			linebuf = linebuf.substr(0, linebuf.find_last_not_of(" \t") + 1);
 		}
-		else if (id == "map_Kd")
-		{
-			s >> id;
-			(materials.end() - 1)->genTexture(rootDir + id);
+
+		// Trim newline '\r\n' or '\n'
+		if (linebuf.size() > 0) {
+			if (linebuf[linebuf.size() - 1] == '\n')
+				linebuf.erase(linebuf.size() - 1);
 		}
-		else if (id == "map_Bump")
+		if (linebuf.size() > 0) {
+			if (linebuf[linebuf.size() - 1] == '\r')
+				linebuf.erase(linebuf.size() - 1);
+		}
+
+		// Skip if empty line.
+		if (linebuf.empty()) {
+			continue;
+		}
+
+		// Skip leading space.
+		const char* token = linebuf.c_str();
+		token += strspn(token, " \t");
+
+		assert(token);
+		if (token[0] == '\0') continue;  // empty line
+		if (token[0] == '#') continue;  // comment line
+
+		if (strncmp(token, "newmtl", 6) == 0 && IS_SPACE(token[6]))
 		{
-			s >> id;
-			(materials.end() - 1)->genNormMap(rootDir + id);
+			char name[512];
+			token += 7;
+			sscanf_s(token, "%s", name, 512);
+			materials.push_back(Material(std::string(name)));
+			continue;
+		}
+		
+		if (strncmp(token, "map_Kd", 6) == 0 && IS_SPACE(token[6]))
+		{
+			char name[512];
+			token += 7;
+			sscanf_s(token, "%s", name, 512);
+			(materials.end() - 1)->genTexture(rootDir + std::string(name));
+			continue;
+		}
+
+		if (strncmp(token, "map_Bump", 8) == 0 && IS_SPACE(token[8]))
+		{
+			char name[512];
+			token += 9;
+			sscanf_s(token, "%s", name, 512);
+			(materials.end() - 1)->genNormMap(rootDir + std::string(name));
+			continue;
 		}
 	}
 }
 // Tangents have attrib location = 3
+// Algorithm described here: http://www.terathon.com/code/tangent.html
 void Object::genTangents(const std::vector<Vertex>& vBuf, const std::vector<unsigned int>& iBuf)
 {
 #ifdef ENABLE_TIMING
@@ -225,7 +306,7 @@ void Object::genTangents(const std::vector<Vertex>& vBuf, const std::vector<unsi
 		const glm::vec3& t = Tangnets[i];
 		// Gram-Schmidt orthogonalize
 		glm::vec4 Tangent = glm::vec4(glm::normalize(t - n * glm::dot(n, t)), 1.0f);
-		// Calculate biTan direction
+		// Calculate biTangent direction
 		Tangent.w = glm::dot(glm::cross(n, t), biTangents[i]) < 0.0f ? -1.0f : 1.0f;
 		finTangents.push_back(Tangent);
 	}

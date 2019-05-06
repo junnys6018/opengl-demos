@@ -63,7 +63,7 @@ void TestManager::OnImGuiRender()
 	}
 	else
 	{
-		int maxButtonCol = 8;
+		const int maxButtonCol = 8;
 		ImGui::Checkbox("Demo Window", &show_demo_window);
 		for (int i = 0; i < maxButtonCol; ++i)
 		{

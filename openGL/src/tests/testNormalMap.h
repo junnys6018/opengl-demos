@@ -16,7 +16,6 @@ public:
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
-	//void framebuffer_size_callback(int width, int height) override;
 private:
 	Camera& m_camera;
 	GLFWwindow* m_window;
@@ -32,6 +31,6 @@ private:
 	std::unique_ptr<Shader> s_NormMap;
 	std::unique_ptr<Shader> s_lamp;
 
-	bool useNormMap, visNormMap;
+	bool useNormMap, visNormMap, drawLamp;
 };
 #endif

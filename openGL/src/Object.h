@@ -15,6 +15,7 @@
 #include <memory>
 
 #include "glm/glm.hpp"
+#define IS_SPACE(x) (((x) == ' ') || ((x) == '\t'))
 enum Object_Init_Flags
 {
 	OBJECT_INIT_FLAGS_NONE = 0,

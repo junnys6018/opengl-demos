@@ -19,7 +19,7 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load and generate the ID
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);	// for some reason relative file path is not accepted
+	unsigned char* data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0); // for some reason relative file path is not accepted
 	if (data)
 	{
 		GLenum internal_fmt, fmt;
@@ -46,7 +46,7 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 	else
 	{
 		const char* log = stbi_failure_reason();
-		std::cout << "Failed to load texture at " << filepath << ' ' << log << std::endl;
+		std::cout << "Failed to load texture at " << filepath << ' ' << (log ? log : "") << std::endl;
 	}
 	stbi_image_free(data);
 }
