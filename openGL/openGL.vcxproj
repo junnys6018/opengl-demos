@@ -178,6 +178,7 @@
     <ClCompile Include="src\tests\Test.cpp" />
     <ClCompile Include="src\tests\testAdvGLSL.cpp" />
     <ClCompile Include="src\tests\testAdvLight.cpp" />
+    <ClCompile Include="src\tests\testBloom.cpp" />
     <ClCompile Include="src\tests\testDepthTest.cpp" />
     <ClCompile Include="src\tests\testInstancing.cpp" />
     <ClCompile Include="src\tests\testLighting.cpp" />
@@ -195,6 +196,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\BlinnPhong.shader" />
+    <None Include="res\Shaders\Bloom.shader" />
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\glFragCoord.shader" />
     <None Include="res\Shaders\glFrontFacing.shader" />
@@ -365,6 +367,7 @@
     <ClInclude Include="src\tests\test.h" />
     <ClInclude Include="src\tests\testAdvGLSL.h" />
     <ClInclude Include="src\tests\testAdvLight.h" />
+    <ClInclude Include="src\tests\testBloom.h" />
     <ClInclude Include="src\tests\testCubeMap.h" />
     <ClInclude Include="src\tests\testDepthTest.h" />
     <ClInclude Include="src\tests\testInstancing.h" />

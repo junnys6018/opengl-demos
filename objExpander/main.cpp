@@ -9,7 +9,7 @@
 #include <sstream>
 #include <map>
 #include <algorithm>
-
+#define BUF_SIZE 1024
 struct vec3
 {
 	float x, y, z;
@@ -19,7 +19,9 @@ struct vec3
 };
 std::ostream& operator<<(std::ostream& out, const vec3& vert)
 {
-	out << vert.x << ' ' << vert.y << ' ' << vert.z;
+	char buffer[BUF_SIZE];
+	snprintf(buffer, BUF_SIZE, "%.4f %.4f %.4f", vert.x, vert.y, vert.z);
+	out << buffer;
 	return out;
 }
 struct vec2
@@ -31,7 +33,9 @@ struct vec2
 };
 std::ostream& operator<<(std::ostream& out, const vec2& vert)
 {
-	out << vert.x << ' ' << vert.y;
+	char buffer[BUF_SIZE];
+	snprintf(buffer, BUF_SIZE, "%.4f %.4f", vert.x, vert.y);
+	out << buffer;
 	return out;
 }
 struct Index
@@ -89,31 +93,28 @@ bool write_to_file(const std::string& filename,
 
 int main()
 {
-	while (true)
-	{
-		std::string inputfile, outputfile;
-		std::cout << "Enter Input file:\n";
-		std::cin >> inputfile;
+	std::string inputfile, outputfile;
+	std::cout << "Enter Input file:\n";
+	std::cin >> inputfile;
 
-		std::chrono::steady_clock::time_point a = std::chrono::steady_clock::now();
-		std::vector<vec3> vPos;
-		std::vector<vec3> vNorm;
-		std::vector<vec2> vTex;
-		std::vector<Index> iBuf;
-		std::vector<std::string> mtlPaths;
-		std::vector<Material_ptr> mat_ptrs;
+	std::chrono::steady_clock::time_point a = std::chrono::steady_clock::now();
+	std::vector<vec3> vPos;
+	std::vector<vec3> vNorm;
+	std::vector<vec2> vTex;
+	std::vector<Index> iBuf;
+	std::vector<std::string> mtlPaths;
+	std::vector<Material_ptr> mat_ptrs;
 
-		buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
+	buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
 
-		std::vector<Vertex> vertexBuffer;
-		std::vector<unsigned int> indexBuffer;
-		expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
-		write_to_file(inputfile + ".expanded", vertexBuffer, indexBuffer, mtlPaths, mat_ptrs);
+	std::vector<Vertex> vertexBuffer;
+	std::vector<unsigned int> indexBuffer;
+	expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
+	write_to_file(inputfile + ".expanded", vertexBuffer, indexBuffer, mtlPaths, mat_ptrs);
 
-		std::chrono::steady_clock::time_point b = std::chrono::steady_clock::now();
-		std::chrono::duration<double, std::milli> time = b - a;
-		std::cout << time.count() << "ms\n";
-	}
+	std::chrono::steady_clock::time_point b = std::chrono::steady_clock::now();
+	std::chrono::duration<double, std::milli> time = b - a;
+	std::cout << time.count() << "ms\n";
 	return 0;
 }
 
@@ -156,11 +157,26 @@ bool buffer_obj(const std::string& filepath,
 		else if (id == "f")
 		{
 			std::string data;
+			int iterations = 0;
 			while (s >> data)
 			{
 				unsigned int v, vt, vn;
 				std::sscanf(data.c_str(), "%i/%i/%i", &v, &vt, &vn);
 				iBuf.emplace_back(v - 1, vt - 1, vn - 1);
+				iterations++;
+			}
+			if (iterations == 4) // Rectangle was specified, assume points are specifed in ACW winding order
+			{
+				int begin = iBuf.size() - 4;
+				Index i1 = iBuf[begin];
+				Index i2 = iBuf[begin + 1];
+				Index i3 = iBuf[begin + 2];
+				Index i4 = iBuf[begin + 3];
+				// reorder quad into 2 triangles
+				iBuf[begin + 3] = i1;
+				iBuf.push_back(i3);
+				iBuf.push_back(i4);
+				fIndex += 3; // extra triangle was added
 			}
 			if (mat_ptrs.size() == 0) // if no material has been declared
 			{

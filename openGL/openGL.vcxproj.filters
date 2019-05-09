@@ -84,6 +84,9 @@
     <ClCompile Include="src\tests\testParallaxMap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\testBloom.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -507,6 +510,7 @@
     <None Include="res\Shaders\Shadows\DepthMap.shader" />
     <None Include="res\Shaders\NormMap.shader" />
     <None Include="res\Shaders\ParaMap.shader" />
+    <None Include="res\Shaders\Bloom.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">
@@ -1320,6 +1324,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\testParallaxMap.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testBloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

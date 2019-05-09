@@ -13,6 +13,7 @@
 	#include "testShadows.h"
 	#include "testNormalMap.h"
 	#include "testParallaxMap.h"
+	#include "testBloom.h"
 
 #endif
 
