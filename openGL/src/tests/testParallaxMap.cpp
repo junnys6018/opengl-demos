@@ -19,6 +19,7 @@ TestParaMap::TestParaMap(Camera& cam, GLFWwindow* win)
 		1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
+
 		1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f
@@ -75,7 +76,7 @@ void TestParaMap::OnUpdate()
 	s_ParaMap->Use();
 	quadVA->Bind();
 	// Brick Wall
-	t_Wood_DiffMap->Bind(0);
+	t_Brick_DiffMap->Bind(0);
 	t_Brick_NormMap->Bind(1);
 	t_Brick_DispMap->Bind(2);
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
@@ -84,7 +85,7 @@ void TestParaMap::OnUpdate()
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	s_ParaMap->setMat4("model", model);
-	t_Brick_DiffMap->Bind(0);
+	t_Wood_DiffMap->Bind(0);
 	t_Wood_NormMap->Bind(1);
 	t_Wood_DispMap->Bind(2);
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));

@@ -4,9 +4,26 @@
 #include <chrono>
 
 #define ENABLE_TIMING
+// Enums
 Draw_Flags operator|(Draw_Flags lhs, Draw_Flags rhs)
 {
 	return (Draw_Flags)((int)lhs | (int)rhs);
+}
+Object_Init_Flags operator|(Object_Init_Flags lhs, Object_Init_Flags rhs)
+{
+	return (Object_Init_Flags)((int)lhs | (int)rhs);
+}
+Texture_Init_Flags cast(Object_Init_Flags flags)
+{
+	Texture_Init_Flags result = TEXTURE_INIT_FLAGS_NONE;
+	if (flags & OBJECT_INIT_FLAGS_GAMMA_CORRECT)
+		result = result | TEXTURE_INIT_FLAGS_GAMMA_CORRECT;
+	if (flags & OBJECT_INIT_FLAGS_NOFLIP)
+		result = result | TEXTURE_INIT_FLAGS_NOFLIP;
+	if (flags & OBJECT_INIT_FLAGS_GEN_MIPMAP)
+		result = result | TEXTURE_INIT_FLAGS_GEN_MIPMAP;
+
+	return result;
 }
 
 Object::Object(const std::string& filepath, Object_Init_Flags flags)
@@ -20,7 +37,7 @@ Object::Object(const std::string& filepath, Object_Init_Flags flags)
 	const std::vector<std::string> mtlPaths = parse_obj(filepath, vBuf, iBuf);
 
 	for (auto mtlPath : mtlPaths)
-		parse_mtl(mtlPath);
+		parse_mtl(mtlPath, flags);
 
 	// Link mat_ptrs to materials
 	for (auto& matptr : mat_ptrs)
@@ -178,7 +195,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 	return mtlPaths;
 }
 
-void Object::parse_mtl(const std::string filepath)
+void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 // TODO: parse shading parameters in mtl file (Ka, Kd, Ks, Ns, Ni, d, Tf, illum)
 {
 	std::ifstream mtlFile(filepath);
@@ -233,7 +250,7 @@ void Object::parse_mtl(const std::string filepath)
 			char name[512];
 			token += 7;
 			sscanf_s(token, "%s", name, 512);
-			(materials.end() - 1)->genTexture(rootDir + std::string(name));
+			(materials.end() - 1)->genTexture(rootDir + std::string(name), GL_REPEAT, cast(flags));
 			continue;
 		}
 

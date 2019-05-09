@@ -18,9 +18,13 @@
 #define IS_SPACE(x) (((x) == ' ') || ((x) == '\t'))
 enum Object_Init_Flags
 {
-	OBJECT_INIT_FLAGS_NONE = 0,
-	OBJECT_INIT_FLAGS_GEN_TANGENT = 1
+	OBJECT_INIT_FLAGS_NONE =				0,
+	OBJECT_INIT_FLAGS_GEN_TANGENT =			1 << 0,
+	OBJECT_INIT_FLAGS_GAMMA_CORRECT =		1 << 1,
+	OBJECT_INIT_FLAGS_NOFLIP =				1 << 2,
+	OBJECT_INIT_FLAGS_GEN_MIPMAP =			1 << 3,
 };
+Object_Init_Flags operator|(Object_Init_Flags lhs, Object_Init_Flags rhs);
 enum Draw_Flags
 {
 	DRAW_FLAGS_NONE = 0,
@@ -48,9 +52,9 @@ struct Material
 	{
 
 	}
-	void genTexture(std::string texPath)
+	void genTexture(std::string texPath, GLenum wrap, Texture_Init_Flags flags)
 	{
-		m_texture = std::make_unique<Texture>(texPath);
+		m_texture = std::make_unique<Texture>(texPath, wrap, flags);
 		hasTexture = true;
 	}
 	void genNormMap(std::string texPath)
@@ -86,7 +90,7 @@ private:
 	std::vector<Material> materials;
 
 	const std::vector<std::string> parse_obj(const std::string filepath, std::vector<Vertex>& vBuf, std::vector<unsigned int>& iBuf);
-	void parse_mtl(const std::string filepath);
+	void parse_mtl(const std::string filepath, Object_Init_Flags flags);
 	void genTangents(const std::vector<Vertex>& vBuf,const std::vector<unsigned int>& iBuf);
 	std::string calc_root_dir(std::string filepath);
 };

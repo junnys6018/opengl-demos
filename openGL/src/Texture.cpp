@@ -3,6 +3,11 @@
 
 // Forward declaration
 std::string rel_to_abs_filepath(const std::string& relative);
+
+Texture_Init_Flags operator|(Texture_Init_Flags lhs, Texture_Init_Flags rhs)
+{
+	return (Texture_Init_Flags)((int)lhs | (int)rhs);
+}
 // Texture wrapper class
 Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags)
 {
@@ -15,7 +20,7 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 	// set the ID wrapping/filtering options (on the currently bound ID object)
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap));
-	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, (flags & TEXTURE_INIT_FLAGS_GEN_MIPMAP ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR)));
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load and generate the ID
 	int width, height, nrChannels;
@@ -41,7 +46,8 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 			internal_fmt = fmt;
 		}
 		GLCall(glTexImage2D(GL_TEXTURE_2D, 0, internal_fmt, width, height, 0, fmt, GL_UNSIGNED_BYTE, data));
-		GLCall(glGenerateMipmap(GL_TEXTURE_2D));
+		if (flags & TEXTURE_INIT_FLAGS_GEN_MIPMAP)
+			GLCall(glGenerateMipmap(GL_TEXTURE_2D));
 	}
 	else
 	{
