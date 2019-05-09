@@ -66,6 +66,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 	std::vector<std::string> mtlPaths;
 
 	std::string rootDir = calc_root_dir(filepath);
+	assert(rootDir != "");
 
 	std::ifstream file(filepath);
 	std::string linebuf;
@@ -355,6 +356,3 @@ void Object::Draw(const Shader& shader, Draw_Flags flags)
 			(void*)(mat_ptr.m_offset * sizeof(unsigned int))));
 	}
 }
-
-
-

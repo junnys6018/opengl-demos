@@ -12,6 +12,7 @@
 	#include "testAdvLight.h"
 	#include "testShadows.h"
 	#include "testNormalMap.h"
+	#include "testParallaxMap.h"
 
 #endif
 

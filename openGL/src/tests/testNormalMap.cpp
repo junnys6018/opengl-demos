@@ -23,9 +23,10 @@ TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
 		1.0f, 0.0f, 0.0f, 1.0f,
 		1.0f, 0.0f, 0.0f, 1.0f
 	};
-	quadVB = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices) + sizeof(tangents));
+	quadVB = std::make_unique<VertexBuffer>(sizeof(quadVertices) + sizeof(tangents));
 	quadVA = std::unique_ptr<VertexArray>(new VertexArray(*quadVB, GL_FLOAT, { 3,3,2 }));
 	quadVA->Bind();
+	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(quadVertices), quadVertices));
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, sizeof(quadVertices), sizeof(tangents), tangents));
 	GLCall(glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(sizeof(quadVertices))));
 	GLCall(glEnableVertexAttribArray(3));
@@ -58,7 +59,8 @@ TestNormMap::~TestNormMap()
 
 void TestNormMap::OnUpdate()
 {
-	m_camera.move(m_window);
+	if (m_camera.move(m_window))
+		s_NormMap->setVec3("camPos", m_camera.getCameraPos());
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	glm::mat4 model = glm::mat4(1.0f);
@@ -73,7 +75,6 @@ void TestNormMap::OnUpdate()
 	s_NormMap->setMat4("view", view);
 	s_NormMap->setMat4("proj", proj);
 	// Wall
-	s_NormMap->setVec3("camPos", m_camera.getCameraPos());
 	quadVA->Bind();
 	t_DiffMap->Bind(0);
 	t_NormMap->Bind(1);

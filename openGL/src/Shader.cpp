@@ -99,7 +99,7 @@ unsigned Shader::CompileShader(std::string source, GLenum type)
 			GLCall(glGetShaderInfoLog(shader, length, nullptr, message));
 			std::cout << "FAILED TO COMPLIE " << (type == GL_VERTEX_SHADER ? "VERTEX " : 
 				(type == GL_FRAGMENT_SHADER ? "FRAGMENT" : "GEOMETRY"))
-				<< "SHADER!\n" << message << '\n';
+				<< " SHADER!\n" << message << '\n';
 			delete[] message;
 		}
 		failedToLoad = true;

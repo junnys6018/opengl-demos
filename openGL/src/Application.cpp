@@ -60,6 +60,8 @@ int main(int argc, char* argv[])
 	test_mgr.registerTest("advLight"    , [&]()->Test* {return new TestAdvLight(camera, window); }              );
 	test_mgr.registerTest("Shadows"     , [&]()->Test* {return new TestShadows(camera, window); }               );
 	test_mgr.registerTest("NormMap"     , [&]()->Test* {return new TestNormMap(camera, window); }               );
+	test_mgr.registerTest("ParaMap"     , [&]()->Test* {return new TestParaMap(camera, window); }               );
+
 	// command line arg for default test
 	if (argc == 2)
 	{
