@@ -21,20 +21,18 @@ extern uint16_t instances;
 #include "callback.h"
 int main(int argc, char* argv[])
 {
-	GLFWwindow* window;
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		return -1;
-
-	window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
 		return -1;
 	}
-
 	glfwMakeContextCurrent(window);
+
 	if (glewInit() != GLEW_OK)
 		std::cout << "GLEW init error\n";
 

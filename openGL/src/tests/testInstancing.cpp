@@ -113,7 +113,7 @@ TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
 	GLCall(glVertexAttribDivisor(5, 1));
 	GLCall(glVertexAttribDivisor(6, 1));
 	
-	m_camera.setSpeed(0.5f);
+	m_camera.setSpeed(35);
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
@@ -121,7 +121,7 @@ TestInstancing::~TestInstancing()
 {
 	GLCall(glDeleteBuffers(1, &offsetVBO));
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-	m_camera.setSpeed(0.08f);
+	m_camera.setSpeed(5.0f);
 	m_camera.resetPos();
 }
 
@@ -142,7 +142,7 @@ void TestInstancing::OnUpdate()
 
 		glm::mat4 proj = glm::mat4(1.0f);
 		int width, height;
-		glfwGetWindowSize(m_window, &width, &height);
+		glfwGetFramebufferSize(m_window, &width, &height);
 		if (width != 0 && height != 0)
 			proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(width) / height, 0.4f, 400.0f);
 

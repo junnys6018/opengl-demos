@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), m_isWireFrame(false), m_camSpeed(1.0f), flags(0), oldFlags(0), m_convOffset(10.0f)
+	:m_camera(cam), m_window(win), m_isWireFrame(false), m_camSpeed(5.0f), flags(0), oldFlags(0), m_convOffset(10.0f)
 {
 	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 	oNidoqueen = std::make_unique<Object>("res/Objects/Pokemon/Nidoqueen/XY_Nidoqueen.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
@@ -42,7 +42,7 @@ TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
 	QuadVB = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices));
 	QuadVA = std::unique_ptr<VertexArray>(new VertexArray(*QuadVB, GL_FLOAT, { 2,2 }));
 
-	glfwGetWindowSize(m_window, &sWidth, &sHeight);
+	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	GenFrameBuffer(sWidth, sHeight);
 }
 
@@ -124,8 +124,8 @@ void TestFrameBuf::OnUpdate()
 void TestFrameBuf::OnImGuiRender()
 {
 	ImGui::Checkbox("Wireframe Mode", &m_isWireFrame);
-	if (ImGui::SliderFloat("Cam Speed", &m_camSpeed, 0.0f, 3.0f))
-		m_camera.setSpeed(m_camSpeed / 10.0f);
+	if (ImGui::SliderFloat("Cam Speed", &m_camSpeed, 1.0f, 10.0f))
+		m_camera.setSpeed(m_camSpeed);
 	if (ImGui::SliderFloat("kernel offset", &m_convOffset, 1, 50, "%.0f"))
 	{
 		m_FramebufShader->setFloat("offset", m_convOffset / 3000.0f);
@@ -138,8 +138,8 @@ void TestFrameBuf::OnImGuiRender()
 	ImGui::SameLine();
 	if (ImGui::Button("Reset Speed"))
 	{
-		m_camSpeed = 1.0f;
-		m_camera.setSpeed(m_camSpeed / 10.0f);
+		m_camSpeed = 5.0f;
+		m_camera.setSpeed(m_camSpeed);
 	}
 	if (ImGui::CollapsingHeader("Post-processing effects"))
 	{

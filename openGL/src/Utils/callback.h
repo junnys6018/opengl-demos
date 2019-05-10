@@ -16,6 +16,22 @@ void mouse_pos_callback(GLFWwindow* window, double xpos, double ypos)
 }
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+	if (key == GLFW_KEY_F && action == GLFW_RELEASE)
+	{
+		GLFWmonitor* monitor = glfwGetWindowMonitor(window);
+		if (monitor)
+		{
+			glfwSetWindowMonitor(window, NULL, 50, 50, 1080, 720, GLFW_DONT_CARE);
+			glfwSwapInterval(1); // enable vsync
+		}
+		else
+		{
+			GLFWmonitor* primary = glfwGetPrimaryMonitor();
+			const GLFWvidmode* mode = glfwGetVideoMode(primary);
+			glfwSetWindowMonitor(window, primary, 0, 0, mode->width, mode->height, mode->refreshRate);
+			glfwSwapInterval(1); // enable vsync
+		}
+	}
 	if (test_mgr.m_currentTest)
 		test_mgr.m_currentTest->key_callback(key, action);
 	camera.key_callback(window, key, action);

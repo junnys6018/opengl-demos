@@ -4,7 +4,7 @@
 TestAdvGLSL::TestAdvGLSL(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_time(0.0f), m_isWireFrame(false), m_hasNormals(false)
 {
-	glfwGetWindowSize(m_window, &sWidth, &sHeight);
+	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
 	s_glPointSize = std::make_unique<Shader>("res/Shaders/glPointSize.shader");
 	s_glFragCoord = std::make_unique<Shader>("res/Shaders/glFragCoord.shader");

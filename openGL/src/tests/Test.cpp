@@ -93,7 +93,6 @@ void TestManager::OnImGuiRender()
 			if (ImGui::Button("Enter"))
 			{
 				ImGui::EndPopup();
-				std::cout << "Pressed enter\n";
 				for (auto e : m_tests)
 				{
 					if (e.first == "Instancing")

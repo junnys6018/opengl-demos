@@ -1,6 +1,6 @@
 #include "testBloom.h"
 #include "debug.h"
-#define BLUR_SCALE 4
+#define BLUR_SCALE 10
 TestBloom::TestBloom(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
 {
@@ -39,14 +39,14 @@ TestBloom::TestBloom(Camera& cam, GLFWwindow* win)
 	u_Lights->setData(2, (void*)glm::value_ptr(glm::vec3(2.5f, 2.0f, -0.35f))  , VEC3);
 	u_Lights->setData(3, (void*)glm::value_ptr(glm::vec3(11.2f, 2.5f, 4.0f)) , VEC3);
 
-	u_Lights->setData(4, (void*)glm::value_ptr(glm::vec3(10.0f, 10.0f, 10.0f)), VEC3);
+	u_Lights->setData(4, (void*)glm::value_ptr(glm::vec3(15.0f, 10.0f, 0.0f)), VEC3);
 	u_Lights->setData(5, (void*)glm::value_ptr(glm::vec3(10.0f, 0.0f, 10.0f)), VEC3);
 	u_Lights->setData(6, (void*)glm::value_ptr(glm::vec3(0.0f, 10.0f, 10.0f)), VEC3);
 	u_Lights->setData(7, (void*)glm::value_ptr(glm::vec3(0.0f, 5.0f, 0.0f)), VEC3);
 
 	u_Lights->Bind(1);
 
-	glfwGetWindowSize(m_window, &sWidth, &sHeight);
+	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	framebuffer_size_callback(sWidth, sHeight);
 
 	GLCall(glEnable(GL_DEPTH_TEST));

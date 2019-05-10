@@ -4,9 +4,11 @@
 
 Camera::Camera()
 	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_FOV(45.0f)
-	, m_sensitivity(0.1f), m_speed(0.08f), m_firstMouse(true), m_InUse(false)
+	, m_sensitivity(0.1f), m_speed(5.0f), m_firstMouse(true), m_InUse(false)
 {
 	resetPos();
+	prevtime = glfwGetTime();
+	currtime = glfwGetTime();
 }
 glm::vec3 Camera::getCameraPos() const
 {
@@ -89,25 +91,27 @@ void Camera::key_callback(GLFWwindow *window, int key, int action)
 // returns whether camera moved
 bool Camera::move(GLFWwindow* window)
 {
+	currtime = glfwGetTime();
+	float delta = currtime - prevtime;
+	prevtime = currtime;
 	bool activated = false;
 	if (m_InUse)
 	{
 		if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS && (activated = true))
-			m_cameraPos += m_speed * m_cameraForward;
+			m_cameraPos += delta * m_speed * m_cameraForward;
 		if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS && (activated = true))
-			m_cameraPos -= m_speed * m_cameraForward;
+			m_cameraPos -= delta * m_speed * m_cameraForward;
 		if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS && (activated = true))
-			m_cameraPos -= m_speed * m_cameraRight;
+			m_cameraPos -= delta * m_speed * m_cameraRight;
 		if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS && (activated = true))
-			m_cameraPos += m_speed * m_cameraRight;
+			m_cameraPos += delta * m_speed * m_cameraRight;
 		if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS && (activated = true))
-			m_cameraPos -= m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
+			m_cameraPos -= delta * m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
 		if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && (activated = true))
-			m_cameraPos += m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
+			m_cameraPos += delta * m_speed * glm::vec3(0.0f, 1.0f, 0.0f);
 		return activated;
 	}
 	else
 		return false;
-
 }
 

@@ -5,7 +5,7 @@ TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderDepthMap(false), m_lightAngle(45.0f)
 {
 	// Object Loading
-	glfwGetWindowSize(m_window, &sWidth, &sHeight);
+	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
 	float planeVertices[] = {
 		// positions            // normals         // texcoords

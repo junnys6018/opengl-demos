@@ -32,9 +32,9 @@ private:
 	float m_yaw, m_pitch;
 	float m_lastX, m_lastY;
 	float m_sensitivity, m_speed;
-	// m_hascursor is false when GLFW_CURSOR_DISABLED is true
+	
 	bool m_firstMouse, m_InUse;
-
+	float prevtime, currtime;
 	glm::vec3 m_cameraPos;
 	glm::vec3 m_cameraDir;
 	glm::vec3 m_cameraRight;

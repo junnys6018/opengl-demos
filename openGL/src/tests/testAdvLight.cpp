@@ -43,7 +43,7 @@ TestAdvLight::TestAdvLight(Camera& cam, GLFWwindow* win)
 	// Uniform buffer
 	u_matrix = std::unique_ptr<UniformBuffer>(new UniformBuffer({ MAT4,MAT4 }));
 	u_matrix->Bind(0);
-	glfwGetWindowSize(m_window, &sWidth, &sHeight);
+	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	framebuffer_size_callback(sWidth, sHeight);
 
 	GLCall(glEnable(GL_DEPTH_TEST));

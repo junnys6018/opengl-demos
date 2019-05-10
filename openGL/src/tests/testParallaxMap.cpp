@@ -66,7 +66,7 @@ void TestParaMap::OnUpdate()
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
-	glfwGetWindowSize(m_window, &width, &height);
+	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
 		proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(width) / height, 0.1f, 100.0f);
 	s_ParaMap->setMat4("model", model);
