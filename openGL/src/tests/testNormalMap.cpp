@@ -36,7 +36,7 @@ TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
 	t_DiffMap = std::make_unique<Texture>("res/Textures/brickwall.jpg");
 	t_NormMap = std::make_unique<Texture>("res/Textures/brickwall_normal.jpg");
 
-	o_NanoSuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded", OBJECT_INIT_FLAGS_GEN_TANGENT);
+	o_NanoSuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded", OBJECT_INIT_FLAGS_GEN_TANGENT | OBJECT_INIT_FLAGS_GEN_NORMAL | OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	s_NormMap = std::make_unique<Shader>("res/Shaders/NormMap.shader");
 

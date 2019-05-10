@@ -15,8 +15,8 @@ TestAdvGLSL::TestAdvGLSL(Camera& cam, GLFWwindow* win)
 	s_Nanosuit = std::make_unique<Shader>("res/Shaders/Nidoqueen.shader");
 
 	o_Cube = std::make_unique<Object>("res/Objects/cube.obj");
-	o_Blastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj");
-	o_Nanosuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded");
+	o_Blastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	o_Nanosuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	m_front = std::make_unique<Texture>("res/Textures/container.jpg");
 	m_back = std::make_unique<Texture>("res/Textures/concrete.jpg");

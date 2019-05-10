@@ -23,7 +23,7 @@ TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
 	m_floorVA = std::unique_ptr<VertexArray>(new VertexArray(*m_floorVB, GL_FLOAT, { 3,3,2 }));
 	t_floor = std::make_unique<Texture>("res/Textures/wood.png");
 
-	o_sphere = std::make_unique<Object>("res/Objects/planet/planet.obj.expanded");
+	o_sphere = std::make_unique<Object>("res/Objects/planet/planet.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	float cubeVertices[] = {
 		// positions          // normals           // texture coords
@@ -112,6 +112,8 @@ TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0));
 	GLCall(glDrawBuffer(GL_NONE));
 	GLCall(glReadBuffer(GL_NONE));
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete!" << std::endl;
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	// uniform buffer
 	u_matrix = std::unique_ptr<UniformBuffer>(new UniformBuffer({ MAT4 }));

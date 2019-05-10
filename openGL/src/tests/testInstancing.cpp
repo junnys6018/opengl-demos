@@ -54,8 +54,8 @@ TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
 	m_skyBox = std::make_unique<CubeMap>(faces);
 	// planet setup
 
-	o_Planet = std::make_unique<Object>("res/Objects/planet/planet.obj.expanded");
-	o_Rock = std::make_unique<Object>("res/Objects/planet/rock.obj.expanded", OBJECT_INIT_FLAGS_GEN_MIPMAP);
+	o_Planet = std::make_unique<Object>("res/Objects/planet/planet.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	o_Rock = std::make_unique<Object>("res/Objects/planet/rock.obj.expanded", OBJECT_INIT_FLAGS_GEN_MIPMAP | OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	s_rock = std::make_unique<Shader>("res/Shaders/Rocks.shader");
 	s_planet = std::make_unique<Shader>("res/Shaders/Planet.shader");

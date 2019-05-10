@@ -245,7 +245,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 			continue;
 		}
 		
-		if (strncmp(token, "map_Kd", 6) == 0 && IS_SPACE(token[6]))
+		if (strncmp(token, "map_Kd", 6) == 0 && IS_SPACE(token[6]) && (flags & OBJECT_INIT_FLAGS_GEN_TEXTURE))
 		{
 			char name[512];
 			token += 7;
@@ -254,12 +254,21 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 			continue;
 		}
 
-		if (strncmp(token, "map_Bump", 8) == 0 && IS_SPACE(token[8]))
+		if (strncmp(token, "map_Bump", 8) == 0 && IS_SPACE(token[8]) && (flags & OBJECT_INIT_FLAGS_GEN_NORMAL))
 		{
 			char name[512];
 			token += 9;
 			sscanf_s(token, "%s", name, 512);
 			(materials.end() - 1)->genNormMap(rootDir + std::string(name));
+			continue;
+		}
+
+		if (strncmp(token, "map_Ks", 6) == 0 && IS_SPACE(token[6]) && (flags & OBJECT_INIT_FLAGS_GEN_SPECULAR))
+		{
+			char name[512];
+			token += 7;
+			sscanf_s(token, "%s", name, 512);
+			(materials.end() - 1)->genSpecMap(rootDir + std::string(name));
 			continue;
 		}
 	}
@@ -367,6 +376,11 @@ void Object::Draw(const Shader& shader, Draw_Flags flags)
 			{
 				mat_ptr.m_material->m_NormMap->Bind(1);
 				shader.setInt("NormMap", 1);
+			}
+			if (mat_ptr.m_material->hasSpecMap && (flags & DRAW_FLAGS_SPECULAR))
+			{
+				mat_ptr.m_material->m_SpecMap->Bind(2);
+				shader.setInt("SpecMap", 2);
 			}
 		}
 		GLCall(glDrawElements(GL_TRIANGLES, mat_ptr.m_count, GL_UNSIGNED_INT,

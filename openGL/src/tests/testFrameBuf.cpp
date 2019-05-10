@@ -4,10 +4,10 @@
 TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_isWireFrame(false), m_camSpeed(1.0f), flags(0), oldFlags(0), m_convOffset(10.0f)
 {
-	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj");
-	oNidoqueen = std::make_unique<Object>("res/Objects/Pokemon/Nidoqueen/XY_Nidoqueen.obj.expanded");
-	oPikachu = std::make_unique<Object>("res/Objects/Pokemon/Pikachu/Pikachu.obj");
-	oPiplup = std::make_unique<Object>("res/Objects/Pokemon/Piplup/Piplup.obj");
+	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	oNidoqueen = std::make_unique<Object>("res/Objects/Pokemon/Nidoqueen/XY_Nidoqueen.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	oPikachu = std::make_unique<Object>("res/Objects/Pokemon/Pikachu/Pikachu.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	oPiplup = std::make_unique<Object>("res/Objects/Pokemon/Piplup/Piplup.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	m_shader = std::make_unique<Shader>("res/Shaders/Blastoise.shader");
 	m_floorShader = std::make_unique<Shader>("res/Shaders/Cube.shader");
@@ -200,8 +200,10 @@ bool TestFrameBuf::GenFrameBuffer(int width, int height)
 
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, width, height));
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO));
-	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	//GLCall(glBindRenderbuffer(GL_RENDERBUFFER, 0));
+	//GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+		std::cout << "Framebuffer not complete! " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 
 	return glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
 }

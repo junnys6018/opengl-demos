@@ -29,7 +29,7 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 	{
 		GLenum internal_fmt, fmt;
 		if (nrChannels == 1)
-			fmt = GL_R;
+			fmt = GL_RED;
 		else if (nrChannels == 3)
 			fmt = GL_RGB;
 		else if (nrChannels == 4)

@@ -510,7 +510,10 @@
     <None Include="res\Shaders\Shadows\DepthMap.shader" />
     <None Include="res\Shaders\NormMap.shader" />
     <None Include="res\Shaders\ParaMap.shader" />
-    <None Include="res\Shaders\Bloom.shader" />
+    <None Include="res\Shaders\Bloom\lamp3.shader" />
+    <None Include="res\Shaders\Bloom\Bloom.shader" />
+    <None Include="res\Shaders\Bloom\Final.shader" />
+    <None Include="res\Shaders\Bloom\Blur.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Shader.h">

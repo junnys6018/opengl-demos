@@ -23,6 +23,10 @@ enum Object_Init_Flags
 	OBJECT_INIT_FLAGS_GAMMA_CORRECT =		1 << 1,
 	OBJECT_INIT_FLAGS_NOFLIP =				1 << 2,
 	OBJECT_INIT_FLAGS_GEN_MIPMAP =			1 << 3,
+
+	OBJECT_INIT_FLAGS_GEN_TEXTURE =         1 << 4,
+	OBJECT_INIT_FLAGS_GEN_NORMAL =          1 << 5,
+	OBJECT_INIT_FLAGS_GEN_SPECULAR =        1 << 6,
 };
 Object_Init_Flags operator|(Object_Init_Flags lhs, Object_Init_Flags rhs);
 enum Draw_Flags
@@ -44,11 +48,12 @@ struct Vertex
 struct Material
 {
 	std::string m_mtlName;
-	bool hasTexture, hasNormMap;
+	bool hasTexture, hasNormMap, hasSpecMap;
 	std::unique_ptr<Texture> m_texture;
 	std::unique_ptr<Texture> m_NormMap;
+	std::unique_ptr<Texture> m_SpecMap;
 	Material(std::string mtlName)
-		:m_mtlName(mtlName), hasTexture(false), hasNormMap(false)
+		:m_mtlName(mtlName), hasTexture(false), hasNormMap(false), hasSpecMap(false)
 	{
 
 	}
@@ -61,6 +66,11 @@ struct Material
 	{
 		m_NormMap = std::make_unique<Texture>(texPath);
 		hasNormMap = true;
+	}
+	void genSpecMap(std::string texPath)
+	{
+		m_SpecMap = std::make_unique<Texture>(texPath);
+		hasSpecMap = true;
 	}
 };
 struct Material_ptr // assigns a block of indicies to a material

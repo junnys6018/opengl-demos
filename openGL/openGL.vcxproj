@@ -126,7 +126,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -149,7 +149,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <Optimization>MaxSpeed</Optimization>
+      <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -196,7 +196,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\BlinnPhong.shader" />
-    <None Include="res\Shaders\Bloom.shader" />
+    <None Include="res\Shaders\Bloom\Bloom.shader" />
+    <None Include="res\Shaders\Bloom\Blur.shader" />
+    <None Include="res\Shaders\Bloom\Final.shader" />
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\glFragCoord.shader" />
     <None Include="res\Shaders\glFrontFacing.shader" />
@@ -209,6 +211,7 @@
     <None Include="res\Shaders\glPointSize.shader" />
     <None Include="res\Shaders\lamp.shader" />
     <None Include="res\Shaders\lamp2.shader" />
+    <None Include="res\Shaders\Bloom\lamp3.shader" />
     <None Include="res\Shaders\lighting.shader" />
     <None Include="res\Shaders\Nidoqueen.shader" />
     <None Include="res\Shaders\NormMap.shader" />

@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
 	double previousTime = glfwGetTime();
 	unsigned int frameCount = 0;
 	unsigned int fps = 0;
-
+	bool showPos = false;
 	/* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
@@ -121,6 +121,16 @@ int main(int argc, char* argv[])
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
 		
 		ImGui::Text("%.3f ms/frame (%i FPS)", 1000.0f / fps, fps);
+		if (ImGui::BeginPopupContextWindow("item context menu"))
+		{
+			ImGui::Checkbox("Show Pos", &showPos);
+			ImGui::End();
+		}
+		if (showPos)
+		{
+			glm::vec3 pos = camera.getCameraPos();
+			ImGui::Text("x: %.3f y: %.3f z: %.3f", pos.x, pos.y, pos.z);
+		}
 		
 		ImGui::End();
 

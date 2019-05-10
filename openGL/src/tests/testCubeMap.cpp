@@ -4,7 +4,7 @@
 TestCubeMap::TestCubeMap(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win)
 {
-	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj");
+	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	std::vector<std::string> faces = {
 		"res/Textures/CubeMaps/clearSky/right.jpg",
