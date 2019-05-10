@@ -120,7 +120,12 @@ void TestBloom::OnImGuiRender()
 	ImGui::Checkbox("WireFrame", &m_isWireFrame);
 	if (ImGui::SliderFloat("Exposure", &exposure, 0.01f, 1.0f, "%.3f"))
 		s_Final->setFloat("exposure", exposure);
-
+	if (ImGui::Button("Reset Exposure"))
+	{
+		exposure = 0.1f;
+		s_Final->setFloat("exposure", exposure);
+	}
+	ImGui::Separator();
 	ImGui::RadioButton("Normal", &renderMode, 0);
 	ImGui::RadioButton("Bloom Filter", &renderMode, 1);
 	ImGui::RadioButton("Bloom", &renderMode, 2);

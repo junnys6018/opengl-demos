@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -154,7 +154,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -171,10 +171,10 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
-    <ClCompile Include="src\Camera.cpp" />
-    <ClCompile Include="src\IndexBuffer.cpp" />
-    <ClCompile Include="src\Object.cpp" />
-    <ClCompile Include="src\Shader.cpp" />
+    <ClCompile Include="src\Utils\Camera.cpp" />
+    <ClCompile Include="src\Utils\IndexBuffer.cpp" />
+    <ClCompile Include="src\Utils\Object.cpp" />
+    <ClCompile Include="src\Utils\Shader.cpp" />
     <ClCompile Include="src\tests\Test.cpp" />
     <ClCompile Include="src\tests\testAdvGLSL.cpp" />
     <ClCompile Include="src\tests\testAdvLight.cpp" />
@@ -188,11 +188,11 @@
     <ClCompile Include="src\tests\testPlanets.cpp" />
     <ClCompile Include="src\tests\testShadows.cpp" />
     <ClCompile Include="src\tests\testTriangle.cpp" />
-    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="src\Utils\Texture.cpp" />
     <ClCompile Include="src\Utils\CubeMap.cpp" />
     <ClCompile Include="src\Utils\UniformBuffer.cpp" />
-    <ClCompile Include="src\VertexArray.cpp" />
-    <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\Utils\VertexArray.cpp" />
+    <ClCompile Include="src\Utils\VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\BlinnPhong.shader" />
@@ -361,12 +361,12 @@
     <None Include="Vendor\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\callback.h" />
-    <ClInclude Include="src\Camera.h" />
-    <ClInclude Include="src\Object.h" />
-    <ClInclude Include="src\debug.h" />
-    <ClInclude Include="src\IndexBuffer.h" />
-    <ClInclude Include="src\Shader.h" />
+    <ClInclude Include="src\Utils\callback.h" />
+    <ClInclude Include="src\Utils\Camera.h" />
+    <ClInclude Include="src\Utils\Object.h" />
+    <ClInclude Include="src\Utils\debug.h" />
+    <ClInclude Include="src\Utils\IndexBuffer.h" />
+    <ClInclude Include="src\Utils\Shader.h" />
     <ClInclude Include="src\tests\test.h" />
     <ClInclude Include="src\tests\testAdvGLSL.h" />
     <ClInclude Include="src\tests\testAdvLight.h" />
@@ -382,11 +382,11 @@
     <ClInclude Include="src\tests\testShadows.h" />
     <ClInclude Include="src\tests\testTriangle.h" />
     <ClInclude Include="src\tests\__Test__.h" />
-    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="src\Utils\Texture.h" />
     <ClInclude Include="src\Utils\CubeMap.h" />
     <ClInclude Include="src\Utils\UniformBuffer.h" />
-    <ClInclude Include="src\VertexArray.h" />
-    <ClInclude Include="src\VertexBuffer.h" />
+    <ClInclude Include="src\Utils\VertexArray.h" />
+    <ClInclude Include="src\Utils\VertexBuffer.h" />
     <ClInclude Include="Vendor\GLFW\glfw3.h" />
     <ClInclude Include="Vendor\GLFW\glfw3native.h" />
     <ClInclude Include="Vendor\glm\common.hpp" />
