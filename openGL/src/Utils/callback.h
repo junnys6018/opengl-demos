@@ -32,7 +32,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			glfwSwapInterval(1); // enable vsync
 		}
 	}
-	if (test_mgr.m_currentTest)
+	else if (test_mgr.m_currentTest)
 		test_mgr.m_currentTest->key_callback(key, action);
 	camera.key_callback(window, key, action);
 }
