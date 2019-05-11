@@ -17,7 +17,6 @@ Camera camera;
 TestManager test_mgr;
 extern uint16_t instances;
 
-// callback functions defined here
 #include "callback.h"
 int main(int argc, char* argv[])
 {

@@ -9,6 +9,7 @@
 
 #include <memory>
 #include "glm/gtc/type_ptr.hpp"
+#include "stb_image_write.h"
 
 class TestBloom : public Test
 {

@@ -73,6 +73,9 @@ void TestBloom::OnUpdate()
 	model = glm::scale(model, glm::vec3(0.01f));
 	s_Bloom->setMat4("model", model);
 	u_Matrices->setData(0, (void*)glm::value_ptr(m_camera.getViewMatrix()), MAT4);
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	u_Matrices->setData(1, glm::value_ptr(proj), MAT4);
+
 	o_Sponza->Draw(*s_Bloom);
 
 	// Lamps
@@ -134,6 +137,17 @@ void TestBloom::OnImGuiRender()
 		old_renderMode = renderMode;
 		s_Final->setInt("renderMode", renderMode);
 	}
+	if (ImGui::Button("ScreenShot"))
+	{
+		void* data = new char[sWidth * sHeight * 4];
+		GLCall(glReadPixels(0, 0, sWidth, sHeight, GL_RGB, GL_UNSIGNED_BYTE, data));
+		stbi_flip_vertically_on_write(1);
+		if (stbi_write_png("screenshot.png", sWidth, sHeight, 3, data, sWidth * 3))
+			std::cout << "Took Screenshot\n";
+		else
+			std::cout << "Failed to take screenshot\n";
+		delete[] data;
+	}
 }
 
 void TestBloom::framebuffer_size_callback(int width, int height)
@@ -142,9 +156,6 @@ void TestBloom::framebuffer_size_callback(int width, int height)
 	{
 		sWidth = width;
 		sHeight = height;
-		glm::mat4 proj = glm::mat4(1.0f);
-		proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
-		u_Matrices->setData(1, glm::value_ptr(proj), MAT4);
 
 		genFrameBuffers();
 	}

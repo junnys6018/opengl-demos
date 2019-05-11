@@ -139,9 +139,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="src\stb_image.h" />
+    <ClInclude Include="src\stb_image_write.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\stb_image.cpp" />
+    <ClCompile Include="src\stb_image_write.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
