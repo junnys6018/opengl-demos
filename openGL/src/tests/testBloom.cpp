@@ -152,6 +152,7 @@ void TestBloom::framebuffer_size_callback(int width, int height)
 
 void TestBloom::genFrameBuffers()
 {
+	// Delete old buffers
 	GLCall(glDeleteFramebuffers(1, &hdrFBO));
 	GLCall(glDeleteRenderbuffers(1, &depthRBO));
 	GLCall(glDeleteTextures(2, colorBuffers));
