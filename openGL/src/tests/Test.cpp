@@ -10,7 +10,7 @@
 extern uint16_t instances = 10000;
 
 TestManager::TestManager()
-	:m_currentTest(nullptr), show_demo_window(false)
+	:m_currentTest(nullptr), show_demo_window(false), show_pos(false), show_overlay(true)
 {
 
 }
@@ -45,7 +45,7 @@ void TestManager::registerTest(std::string name, std::function<Test*()> fp)
 	m_tests.push_back(std::make_pair(name, fp));
 }
 
-void TestManager::OnImGuiRender()
+void TestManager::OnImGuiRender(unsigned int fps, float posX, float posY, float posZ)
 {
 	if (show_demo_window)
 		ImGui::ShowDemoWindow(&show_demo_window);
@@ -65,6 +65,10 @@ void TestManager::OnImGuiRender()
 	{
 		const int maxButtonCol = 8;
 		ImGui::Checkbox("Demo Window", &show_demo_window);
+		ImGui::SameLine();
+		ImGui::Checkbox("Overlay", &show_overlay);
+		ImGui::Separator();
+		ImGui::Text("Tests:");
 		for (int i = 0; i < maxButtonCol; ++i)
 		{
 			unsigned int index = i;
@@ -104,5 +108,28 @@ void TestManager::OnImGuiRender()
 		}
 	}
 	ImGui::End();
+
+	// FPS counter
+	if (show_overlay)
+	{
+		ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f), ImGuiCond_Always);
+		ImGui::SetNextWindowBgAlpha(0.3f); // Transparent background
+		ImGui::Begin("Example: Simple overlay", NULL, ImGuiWindowFlags_NoMove |
+			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
+			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
+
+		ImGui::Text("%.3f ms/frame (%i FPS)", 1000.0f / fps, fps);
+		if (ImGui::BeginPopupContextWindow("item context menu"))
+		{
+			ImGui::Checkbox("Show Pos", &show_pos);
+			ImGui::Checkbox("Overlay", &show_overlay);
+			ImGui::End();
+		}
+		if (show_pos)
+		{
+			ImGui::Text("x: %.3f y: %.3f z: %.3f", posX, posY, posZ);
+		}
+		ImGui::End();
+	}
 }
 
