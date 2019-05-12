@@ -146,6 +146,8 @@ TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
 TestShadows::~TestShadows()
 {
 	GLCall(glDisable(GL_CULL_FACE));
+	GLCall(glDeleteFramebuffers(1, &depthMapFBO));
+	GLCall(glDeleteTextures(1, &depthMap));
 }
 
 void TestShadows::OnUpdate()

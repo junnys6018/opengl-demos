@@ -14,6 +14,7 @@
 	#include "testNormalMap.h"
 	#include "testParallaxMap.h"
 	#include "testBloom.h"
+	#include "testDeferred.h"
 
 #endif
 

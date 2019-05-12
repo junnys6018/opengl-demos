@@ -87,6 +87,9 @@
     <ClCompile Include="src\Utils\VertexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\testDeferred.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -514,6 +517,8 @@
     <None Include="res\Shaders\Bloom\Bloom.shader" />
     <None Include="res\Shaders\Bloom\Final.shader" />
     <None Include="res\Shaders\Bloom\Blur.shader" />
+    <None Include="res\shaders\DeferredShading\GeometryPass.shader" />
+    <None Include="res\shaders\DeferredShading\LightPass.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
@@ -1330,6 +1335,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\callback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testDeferred.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

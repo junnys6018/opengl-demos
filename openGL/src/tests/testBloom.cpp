@@ -57,6 +57,13 @@ TestBloom::~TestBloom()
 {
 	GLCall(glDisable(GL_CULL_FACE));
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+
+	// Delete old buffers
+	GLCall(glDeleteFramebuffers(1, &hdrFBO));
+	GLCall(glDeleteRenderbuffers(1, &depthRBO));
+	GLCall(glDeleteTextures(2, colorBuffers));
+	GLCall(glDeleteFramebuffers(2, pingpongFBO));
+	GLCall(glDeleteTextures(2, pingpongBuffer));
 }
 
 void TestBloom::OnUpdate()

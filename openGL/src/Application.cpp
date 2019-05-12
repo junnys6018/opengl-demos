@@ -59,6 +59,7 @@ int main(int argc, char* argv[])
 	test_mgr.registerTest("NormMap"     , [&]()->Test* {return new TestNormMap(camera, window); }               );
 	test_mgr.registerTest("ParaMap"     , [&]()->Test* {return new TestParaMap(camera, window); }               );
 	test_mgr.registerTest("Bloom"       , [&]()->Test* {return new TestBloom(camera, window); }                 );
+	test_mgr.registerTest("Deferred"    , [&]()->Test* {return new TestDeferred(camera, window); }              );
 
 	// command line arg for default test
 	if (argc == 2)

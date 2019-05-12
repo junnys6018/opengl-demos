@@ -173,6 +173,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
+    <ClCompile Include="src\tests\testDeferred.cpp" />
     <ClCompile Include="src\Utils\Camera.cpp" />
     <ClCompile Include="src\Utils\IndexBuffer.cpp" />
     <ClCompile Include="src\Utils\Object.cpp" />
@@ -201,6 +202,8 @@
     <None Include="res\Shaders\Bloom\Bloom.shader" />
     <None Include="res\Shaders\Bloom\Blur.shader" />
     <None Include="res\Shaders\Bloom\Final.shader" />
+    <None Include="res\shaders\DeferredShading\GeometryPass.shader" />
+    <None Include="res\shaders\DeferredShading\LightPass.shader" />
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\glFragCoord.shader" />
     <None Include="res\Shaders\glFrontFacing.shader" />
@@ -363,6 +366,7 @@
     <None Include="Vendor\glm\gtx\wrap.inl" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\tests\testDeferred.h" />
     <ClInclude Include="src\Utils\callback.h" />
     <ClInclude Include="src\Utils\Camera.h" />
     <ClInclude Include="src\Utils\Object.h" />
