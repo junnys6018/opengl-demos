@@ -37,12 +37,12 @@ TestBloom::TestBloom(Camera& cam, GLFWwindow* win)
 	u_Lights->setData(0, (void*)glm::value_ptr(glm::vec3(-10.0f, 2.5f, -0.35f)), VEC3);
 	u_Lights->setData(1, (void*)glm::value_ptr(glm::vec3(9.0f, 2.5f, -0.35f))  , VEC3);
 	u_Lights->setData(2, (void*)glm::value_ptr(glm::vec3(2.5f, 2.0f, -0.35f))  , VEC3);
-	u_Lights->setData(3, (void*)glm::value_ptr(glm::vec3(11.2f, 2.5f, 4.0f)) , VEC3);
+	u_Lights->setData(3, (void*)glm::value_ptr(glm::vec3(11.2f, 2.5f, 4.0f))   , VEC3);
 
 	u_Lights->setData(4, (void*)glm::value_ptr(glm::vec3(15.0f, 10.0f, 0.0f)), VEC3);
 	u_Lights->setData(5, (void*)glm::value_ptr(glm::vec3(10.0f, 0.0f, 10.0f)), VEC3);
 	u_Lights->setData(6, (void*)glm::value_ptr(glm::vec3(0.0f, 10.0f, 10.0f)), VEC3);
-	u_Lights->setData(7, (void*)glm::value_ptr(glm::vec3(0.0f, 5.0f, 0.0f)), VEC3);
+	u_Lights->setData(7, (void*)glm::value_ptr(glm::vec3(0.0f, 5.0f, 0.0f))  , VEC3);
 
 	u_Lights->Bind(1);
 

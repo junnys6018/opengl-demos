@@ -6,7 +6,7 @@
 #include <sstream>
 
 #include "imgui.h"
-
+#include <iostream> // remove after temp
 class Test
 {
 public:
@@ -28,7 +28,7 @@ public:
 	void parseInput(std::string);
 	void registerTest(std::string, std::function<Test*()>);
 
-	void OnImGuiRender(unsigned int fps, const Camera& cam);
+	void OnImGuiRender(unsigned int fps, float posX, float posY, float posZ, bool camInUse);
 
 	Test* m_currentTest;
 private:

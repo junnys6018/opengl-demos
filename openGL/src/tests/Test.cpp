@@ -1,7 +1,11 @@
 #include "test.h"
-#include "testInstancing.h"
-#include "Camera.h"
 #include <iostream>
+
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
+#include "testInstancing.h"
 
 extern uint16_t instances = 10000;
 
@@ -41,9 +45,9 @@ void TestManager::registerTest(std::string name, std::function<Test*()> fp)
 	m_tests.push_back(std::make_pair(name, fp));
 }
 
-void TestManager::OnImGuiRender(unsigned int fps, const Camera& cam)
+void TestManager::OnImGuiRender(unsigned int fps, float posX, float posY, float posZ, bool camInUse)
 {
-	if (!cam.InUse())
+	if (!camInUse)
 	{
 		if (show_demo_window)
 			ImGui::ShowDemoWindow(&show_demo_window);
@@ -107,7 +111,6 @@ void TestManager::OnImGuiRender(unsigned int fps, const Camera& cam)
 		}
 		ImGui::End();
 	}
-
 	// FPS counter
 	if (show_overlay)
 	{
@@ -126,7 +129,7 @@ void TestManager::OnImGuiRender(unsigned int fps, const Camera& cam)
 		}
 		if (show_pos)
 		{
-			ImGui::Text("x: %.3f y: %.3f z: %.3f", cam.getCameraPos().x, cam.getCameraPos().y, cam.getCameraPos().z);
+			ImGui::Text("x: %.3f y: %.3f z: %.3f", posX, posY, posZ);
 		}
 		ImGui::End();
 	}
