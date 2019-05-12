@@ -28,7 +28,7 @@ public:
 	void parseInput(std::string);
 	void registerTest(std::string, std::function<Test*()>);
 
-	void OnImGuiRender(unsigned int fps, float posX, float posY, float posZ);
+	void OnImGuiRender(unsigned int fps, float posX, float posY, float posZ, bool camInUse);
 
 	Test* m_currentTest;
 private:

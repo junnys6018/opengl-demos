@@ -45,70 +45,72 @@ void TestManager::registerTest(std::string name, std::function<Test*()> fp)
 	m_tests.push_back(std::make_pair(name, fp));
 }
 
-void TestManager::OnImGuiRender(unsigned int fps, float posX, float posY, float posZ)
+void TestManager::OnImGuiRender(unsigned int fps, float posX, float posY, float posZ, bool camInUse)
 {
-	if (show_demo_window)
-		ImGui::ShowDemoWindow(&show_demo_window);
+	if (!camInUse)
+	{
+		if (show_demo_window)
+			ImGui::ShowDemoWindow(&show_demo_window);
 
-	ImGui::Begin("Test Menu");
-	if (m_currentTest)
-	{
-		if (ImGui::Button("<-"))
+		ImGui::Begin("Test Menu");
+		if (m_currentTest)
 		{
-			delete m_currentTest;
-			m_currentTest = nullptr;
-		}
-		else
-			m_currentTest->OnImGuiRender();
-	}
-	else
-	{
-		const int maxButtonCol = 8;
-		ImGui::Checkbox("Demo Window", &show_demo_window);
-		ImGui::SameLine();
-		ImGui::Checkbox("Overlay", &show_overlay);
-		ImGui::Separator();
-		ImGui::Text("Tests:");
-		for (int i = 0; i < maxButtonCol; ++i)
-		{
-			unsigned int index = i;
-			while (true)
+			if (ImGui::Button("<-"))
 			{
-				// hack for testInstancing TODO: refactor test_mgr
-				if (ImGui::Button(m_tests[index].first.c_str(), ImVec2(120.0f, 25.0f)))
-				{
-					if (m_tests[index].first != "Instancing")
-						m_currentTest = m_tests[index].second();
-					else
-						ImGui::OpenPopup("config");
-				}
-				index += maxButtonCol;
-				if (index < m_tests.size())
-					ImGui::SameLine(0.0f, 20.0f);
-				else break;
-			}
-		}
-		if (ImGui::BeginPopup("config"))
-		{
-			ImGui::Text("#instances:");
-			ImGui::PushItemWidth(-1);
-			ImGui::InputScalar("##Value", ImGuiDataType_U16, &instances);
-			ImGui::PopItemWidth();
-			if (ImGui::Button("Enter"))
-			{
-				ImGui::EndPopup();
-				for (auto e : m_tests)
-				{
-					if (e.first == "Instancing")
-						m_currentTest = e.second();
-				}
+				delete m_currentTest;
+				m_currentTest = nullptr;
 			}
 			else
-				ImGui::EndPopup();
+				m_currentTest->OnImGuiRender();
 		}
+		else
+		{
+			const int maxButtonCol = 8;
+			ImGui::Checkbox("Demo Window", &show_demo_window);
+			ImGui::SameLine();
+			ImGui::Checkbox("Overlay", &show_overlay);
+			ImGui::Separator();
+			ImGui::Text("Tests:");
+			for (int i = 0; i < maxButtonCol; ++i)
+			{
+				unsigned int index = i;
+				while (true)
+				{
+					// hack for testInstancing TODO: refactor test_mgr
+					if (ImGui::Button(m_tests[index].first.c_str(), ImVec2(120.0f, 25.0f)))
+					{
+						if (m_tests[index].first != "Instancing")
+							m_currentTest = m_tests[index].second();
+						else
+							ImGui::OpenPopup("config");
+					}
+					index += maxButtonCol;
+					if (index < m_tests.size())
+						ImGui::SameLine(0.0f, 20.0f);
+					else break;
+				}
+			}
+			if (ImGui::BeginPopup("config"))
+			{
+				ImGui::Text("#instances:");
+				ImGui::PushItemWidth(-1);
+				ImGui::InputScalar("##Value", ImGuiDataType_U16, &instances);
+				ImGui::PopItemWidth();
+				if (ImGui::Button("Enter"))
+				{
+					ImGui::EndPopup();
+					for (auto e : m_tests)
+					{
+						if (e.first == "Instancing")
+							m_currentTest = e.second();
+					}
+				}
+				else
+					ImGui::EndPopup();
+			}
+		}
+		ImGui::End();
 	}
-	ImGui::End();
-
 	// FPS counter
 	if (show_overlay)
 	{

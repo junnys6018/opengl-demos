@@ -107,8 +107,7 @@ int main(int argc, char* argv[])
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		if (!camera.InUse())
-			test_mgr.OnImGuiRender(fps, camera.getCameraPos().x, camera.getCameraPos().y, camera.getCameraPos().z);
+		test_mgr.OnImGuiRender(fps, camera.getCameraPos().x, camera.getCameraPos().y, camera.getCameraPos().z, camera.InUse());
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
