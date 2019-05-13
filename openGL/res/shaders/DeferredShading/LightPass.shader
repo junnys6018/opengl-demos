@@ -22,6 +22,7 @@ uniform sampler2D gAlbedoSpec;
 uniform int renderMode;
 uniform int NUM_LIGHTS;
 uniform vec3 camPos;
+uniform float exposure;
 
 struct PointLight
 {
@@ -45,31 +46,31 @@ void main()
 		vec3 fragPos = texture(gPosition, f_texCoord).rgb;
 		vec3 normal = texture(gNormal, f_texCoord).rgb;
 		vec3 albedo = texture(gAlbedoSpec, f_texCoord).rgb;
-		float specPow = texture(gAlbedoSpec, f_texCoord).a;
+		float specFactor = texture(gAlbedoSpec, f_texCoord).a;
 
 		vec3 lightColor = albedo * 0.1;
+		vec3 viewDir = normalize(camPos - fragPos);
 		for (int i = 0; i < NUM_LIGHTS; i++)
 		{
 			PointLight p = pointLights[i];
 
-			// Diffuse;
-			vec3 lightDir = normalize(fragPos - p.position);
-			float diff = max(dot(-lightDir, normal), 0.0);
-			// Specular
-			vec3 reflectDir = reflect(lightDir, normal);
-			vec3 viewDir = normalize(camPos - fragPos);
-			vec3 halfDir = normalize(-lightDir + viewDir);
-			float spec = pow(max(dot(halfDir, normal), 0.0), specPow);
 			// Attenuation
 			float distance = length(p.position - fragPos);
 			if (distance > p.radius)
 				continue;
 			float attenuation = 1.0 - distance / p.radius;
+			// Diffuse;
+			vec3 lightDir = normalize(fragPos - p.position);
+			float diff = max(dot(-lightDir, normal), 0.0);
+			// Specular
+			vec3 reflectDir = reflect(lightDir, normal);
+			vec3 halfDir = normalize(-lightDir + viewDir);
+			float spec = pow(max(dot(halfDir, normal), 0.0), 24);
 
 			// combine results
-			lightColor += attenuation * p.intensity * p.color * (diff + spec) * albedo;
+			lightColor += attenuation * p.intensity * p.color * (diff + specFactor * spec) * albedo;
 		}
-		lightColor = vec3(1.0) - exp(-lightColor * 0.5);
+		lightColor = vec3(1.0) - exp(-lightColor * exposure);
 		color = vec4(lightColor, 1.0);
 	}
 	else if (renderMode == 1)

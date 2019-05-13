@@ -203,6 +203,7 @@
     <None Include="res\Shaders\Bloom\Blur.shader" />
     <None Include="res\Shaders\Bloom\Final.shader" />
     <None Include="res\shaders\DeferredShading\GeometryPass.shader" />
+    <None Include="res\shaders\DeferredShading\Lamp4.shader" />
     <None Include="res\shaders\DeferredShading\LightPass.shader" />
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\glFragCoord.shader" />

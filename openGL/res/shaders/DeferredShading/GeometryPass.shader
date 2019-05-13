@@ -1,13 +1,16 @@
 #shader Vertex
-#version 330 core
+#version 420 core
 
 layout(location = 0) in vec3 v_position;
 layout(location = 1) in vec3 v_normal;
 layout(location = 2) in vec2 v_texCoord;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 proj;
+layout(std140, binding = 1) uniform Matrix
+{
+	mat4 view;
+	mat4 proj;
+};
 
 out vec3 f_fragPos;
 out vec2 f_texCoord;
@@ -26,7 +29,7 @@ void main()
 }
 
 #shader Fragment
-#version 330 core
+#version 420 core
 
 layout(location = 0) out vec3 gPosition;
 layout(location = 1) out vec3 gNormal;

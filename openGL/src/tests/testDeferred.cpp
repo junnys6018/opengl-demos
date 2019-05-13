@@ -16,7 +16,7 @@ struct PointLight
 		:position(pos), color(col), intensity(intensity), radius(rad)	{}
 };
 TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), NUM_LIGHTS(128)
+	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), NUM_LIGHTS(64), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -27,9 +27,11 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	s_LightPass->setInt("gNormal", 1);
 	s_LightPass->setInt("gAlbedoSpec", 2);
 	s_LightPass->setInt("NUM_LIGHTS", NUM_LIGHTS);
+	s_LightPass->setFloat("exposure", exposure);
+	s_Lamp = std::make_unique<Shader>("res/shaders/DeferredShading/Lamp4.shader");
 
 	o_Sponza = std::make_unique<Object>("res/Objects/sponza/sponza.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE | OBJECT_INIT_FLAGS_GEN_SPECULAR);
-
+	o_Cube = std::make_unique<Object>("res/Objects/cube.obj");
 	// Screen quad VAO
 	float quadVertices[] = {
 		// positions   // texCoords
@@ -44,27 +46,13 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	QuadVB = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices));
 	QuadVA = std::unique_ptr<VertexArray>(new VertexArray(*QuadVB, GL_FLOAT, { 2,2 }));
 
-	GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
-	GLCall(glEnable(GL_DEPTH_TEST));
-	// Generate Lights in a cylinder of radius and height about (0,0,0)
+	u_Matrix = std::unique_ptr<UniformBuffer>(new UniformBuffer({ MAT4,MAT4 }));
+	u_Matrix->Bind(1);
+	// Generate Lights
 	std::vector<PointLight> vecLight;
 	vecLight.reserve(NUM_LIGHTS);
-	const float RADIUS = 12.0f, HEIGHT = 12.0f; 
-	srand((unsigned int)glfwGetTime());
-	for (int i = 0; i < NUM_LIGHTS; i++)
-	{
-		float angle = rand() % 360;
-		float height = (float)rand() / RAND_MAX * HEIGHT;
-		float radius = (float)rand() / RAND_MAX * RADIUS;
-		glm::vec4 position = glm::vec4(radius * sinf(glm::radians(angle)), height, radius * cosf(glm::radians(angle)), 1.0f);
-		printf("x: %.3f y: %.3f z: %.3f \n", position.x, position.y, position.z);
-		glm::vec4 color = glm::vec4(rand() % 255 / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f);
-		float maxColor = std::max(color.r, std::max(color.g, color.b));
-		color /= maxColor; // Normalize color s.t. max component = 1
-		float intensity = (float)rand() / RAND_MAX * 4 + 1; // intensity ranges from 1 - 5
-		float Lightradius = (-LINEAR + sqrtf(LINEAR * LINEAR - 4.0f * QUADRATIC * (CONSTANT - intensity * 256))) / (2 * QUADRATIC);
-		vecLight.emplace_back(position, color, intensity, Lightradius);
-	}
+	genLightsInCylinder(vecLight, 12, 12);
+	//genLightsInRect(vecLight, glm::vec3(3, 6, 3), glm::vec3(0, 3, 0));
 	GLCall(glGenBuffers(1, &lightsSSBO));
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightsSSBO));
 	// sizeof(PointLight) = 48 by std140 rules
@@ -75,6 +63,38 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	}
 	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightsSSBO));
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
+	// Generate model matrices for lights
+	std::vector<glm::mat4> modelMatrices;
+	modelMatrices.reserve(NUM_LIGHTS);
+	for (int i = 0; i < vecLight.size(); i++)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, glm::vec3(vecLight[i].position));
+		model = glm::scale(model, glm::vec3(0.1f));
+		modelMatrices.push_back(model);
+	}
+	o_Cube->vertexArray->Bind();
+	GLCall(glGenBuffers(1, &modelVBO));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, modelVBO));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, NUM_LIGHTS * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW));
+
+	GLCall(glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)0));
+	GLCall(glEnableVertexAttribArray(3));
+	GLCall(glVertexAttribPointer(4, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(sizeof(glm::vec4))));
+	GLCall(glEnableVertexAttribArray(4));
+	GLCall(glVertexAttribPointer(5, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(2 * sizeof(glm::vec4))));
+	GLCall(glEnableVertexAttribArray(5));
+	GLCall(glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)(3 * sizeof(glm::vec4))));
+	GLCall(glEnableVertexAttribArray(6));
+
+	GLCall(glVertexAttribDivisor(3, 1));
+	GLCall(glVertexAttribDivisor(4, 1));
+	GLCall(glVertexAttribDivisor(5, 1));
+	GLCall(glVertexAttribDivisor(6, 1));
+	o_Cube->vertexArray->unBind();
+	GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
+	GLCall(glEnable(GL_DEPTH_TEST));
+	GLCall(glEnable(GL_CULL_FACE));
 }
 
 TestDeferred::~TestDeferred()
@@ -84,11 +104,14 @@ TestDeferred::~TestDeferred()
 	GLCall(glDeleteTextures(1, &gNormal));
 	GLCall(glDeleteTextures(1, &gColorSpec));
 	GLCall(glDeleteRenderbuffers(1, &rboDepth));
+
+	GLCall(glDisable(GL_CULL_FACE));
 }
 
 void TestDeferred::OnUpdate()
 {
-	m_camera.move(m_window);
+	if (m_camera.move(m_window))
+		s_LightPass->setVec3("camPos", m_camera.getCameraPos());
 	// Geometry Pass
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -99,8 +122,8 @@ void TestDeferred::OnUpdate()
 	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 
 	s_GeometryPass->setMat4("model", model);
-	s_GeometryPass->setMat4("view", view);
-	s_GeometryPass->setMat4("proj", proj);
+	u_Matrix->setData(0, glm::value_ptr(view), MAT4);
+	u_Matrix->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_GeometryPass, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_SPECULAR);
 
@@ -117,24 +140,47 @@ void TestDeferred::OnUpdate()
 
 	QuadVA->Bind();
 	s_LightPass->Use();
-	s_LightPass->setVec3("camPos", m_camera.getCameraPos());
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+	// Draw Lamps (Done in forward rendering)
+	if (renderLights)
+	{
+		o_Cube->vertexArray->Bind();
+		s_Lamp->Use();
+		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer));
+		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0)); // write to default framebuffer
+		GLCall(glBlitFramebuffer(0, 0, sWidth, sHeight, 0, 0, sWidth, sHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST));
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, o_Cube->indexBuffer->getCount(), GL_UNSIGNED_INT, 0, NUM_LIGHTS));
+	}
 
 }
 
 void TestDeferred::OnImGuiRender()
 {
-	ImGui::RadioButton("Show Lighting", &renderMode, 0);
-	ImGui::RadioButton("Show Position", &renderMode, 1);
-	ImGui::RadioButton("Show Normal", &renderMode, 2);
-	ImGui::RadioButton("Show Albedo", &renderMode, 3);
-	ImGui::RadioButton("Show Specular", &renderMode, 4);
-
+	ImGui::Text("Number of Point Lights: %i", NUM_LIGHTS);
+	ImGui::Separator();
+	ImGui::RadioButton("Show Lighting Only", &renderMode, 0);
+	ImGui::RadioButton("Show Position Only", &renderMode, 1);
+	ImGui::RadioButton("Show Normal Only", &renderMode, 2);
+	ImGui::RadioButton("Show Albedo Only", &renderMode, 3);
+	ImGui::RadioButton("Show Specular Only", &renderMode, 4);
+	ImGui::Separator();
 	if (renderMode != old_renderMode)
 	{
 		old_renderMode = renderMode;
 		s_LightPass->setInt("renderMode", renderMode);
 	}
+
+	if (ImGui::SliderFloat("Exposure", &exposure, 0.1, 5, "%.2f"))
+		s_LightPass->setFloat("exposure", exposure);
+	if (ImGui::Button("Reset Exposure"))
+	{
+		exposure = 0.5f;
+		s_LightPass->setFloat("exposure", exposure);
+	}
+	ImGui::Separator();
+	ImGui::Checkbox("Render Lamps", &renderLights);
+
 }
 
 void TestDeferred::framebuffer_size_callback(int width, int height)
@@ -195,4 +241,44 @@ void TestDeferred::genFrameBuffers()
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete! " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+}
+
+void TestDeferred::genLightsInCylinder(std::vector<PointLight>& vecLight, float RADIUS, float HEIGHT)
+{
+	srand((unsigned int)glfwGetTime());
+	for (int i = 0; i < NUM_LIGHTS; i++)
+	{
+		float angle = rand() % 360;
+		float height = (float)rand() / RAND_MAX * HEIGHT;
+		float radius = (float)rand() / RAND_MAX * RADIUS;
+		glm::vec4 position = glm::vec4(radius * sinf(glm::radians(angle)), height, radius * cosf(glm::radians(angle)), 1.0f);
+		//	printf("x: %.3f y: %.3f z: %.3f \n", position.x, position.y, position.z);
+		genLightAttibute(vecLight, position);
+	}
+}
+
+void TestDeferred::genLightsInRect(std::vector<PointLight>& vecLight, glm::vec3 dimensions, glm::vec3 center)
+{
+	srand((unsigned int)glfwGetTime());
+	for (int i = 0; i < NUM_LIGHTS; i++)
+	{
+		glm::vec3 min = center - 0.5f * dimensions;
+		glm::vec3 max = center + 0.5f * dimensions;
+		// Generate random numbers with uniform distribution in [ min,max ]
+		float x = min.x + (float)rand() / RAND_MAX * (max.x - min.x);
+		float y = min.y + (float)rand() / RAND_MAX * (max.y - min.y);
+		float z = min.z + (float)rand() / RAND_MAX * (max.z - min.z);
+		glm::vec4 position = glm::vec4(x, y, z, 1.0f);
+		genLightAttibute(vecLight, position);
+	}
+}
+
+void genLightAttibute(std::vector<PointLight>& vecLight, glm::vec4 position)
+{
+	glm::vec4 color = glm::vec4(rand() % 255 / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f);
+	float maxColor = std::max(color.r, std::max(color.g, color.b));
+	color /= maxColor; // Normalize color s.t. max component = 1
+	float intensity = (float)rand() / RAND_MAX * 4 + 1; // intensity ranges from 1 - 5
+	float Lightradius = (-LINEAR + sqrtf(LINEAR * LINEAR - 4.0f * QUADRATIC * (CONSTANT - intensity * 256))) / (2 * QUADRATIC);
+	vecLight.emplace_back(position, color, intensity, Lightradius);
 }
