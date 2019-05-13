@@ -70,6 +70,7 @@ TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
 	modelMatrices.reserve(m_amount);
 	float radius = 80.0f;
 	offset = 10.0f;
+	srand((unsigned int)glfwGetTime());
 	for (unsigned int i = 0; i < m_amount; i++)
 	{
 		glm::mat4 model = glm::mat4(1.0f);

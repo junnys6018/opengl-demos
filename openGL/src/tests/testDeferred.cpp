@@ -1,8 +1,22 @@
 #include "testDeferred.h"
 #include "debug.h"
 
+#define CONSTANT 1.0f
+#define LINEAR 0.14f
+#define QUADRATIC 0.07f
+
+struct PointLight
+{
+	glm::vec4 position;
+	glm::vec4 color;
+	float intensity;
+	float radius;
+
+	PointLight(glm::vec4 pos, glm::vec4 col, float intensity, float rad)
+		:position(pos), color(col), intensity(intensity), radius(rad)	{}
+};
 TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0)
+	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), NUM_LIGHTS(128)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -12,7 +26,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	s_LightPass->setInt("gPosition", 0);
 	s_LightPass->setInt("gNormal", 1);
 	s_LightPass->setInt("gAlbedoSpec", 2);
-
+	s_LightPass->setInt("NUM_LIGHTS", NUM_LIGHTS);
 
 	o_Sponza = std::make_unique<Object>("res/Objects/sponza/sponza.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE | OBJECT_INIT_FLAGS_GEN_SPECULAR);
 
@@ -32,6 +46,35 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 
 	GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
 	GLCall(glEnable(GL_DEPTH_TEST));
+	// Generate Lights in a cylinder of radius and height about (0,0,0)
+	std::vector<PointLight> vecLight;
+	vecLight.reserve(NUM_LIGHTS);
+	const float RADIUS = 12.0f, HEIGHT = 12.0f; 
+	srand((unsigned int)glfwGetTime());
+	for (int i = 0; i < NUM_LIGHTS; i++)
+	{
+		float angle = rand() % 360;
+		float height = (float)rand() / RAND_MAX * HEIGHT;
+		float radius = (float)rand() / RAND_MAX * RADIUS;
+		glm::vec4 position = glm::vec4(radius * sinf(glm::radians(angle)), height, radius * cosf(glm::radians(angle)), 1.0f);
+		printf("x: %.3f y: %.3f z: %.3f \n", position.x, position.y, position.z);
+		glm::vec4 color = glm::vec4(rand() % 255 / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f);
+		float maxColor = std::max(color.r, std::max(color.g, color.b));
+		color /= maxColor; // Normalize color s.t. max component = 1
+		float intensity = (float)rand() / RAND_MAX * 4 + 1; // intensity ranges from 1 - 5
+		float Lightradius = (-LINEAR + sqrtf(LINEAR * LINEAR - 4.0f * QUADRATIC * (CONSTANT - intensity * 256))) / (2 * QUADRATIC);
+		vecLight.emplace_back(position, color, intensity, Lightradius);
+	}
+	GLCall(glGenBuffers(1, &lightsSSBO));
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightsSSBO));
+	// sizeof(PointLight) = 48 by std140 rules
+	GLCall(glBufferData(GL_SHADER_STORAGE_BUFFER, vecLight.size() * 48, nullptr, GL_STATIC_DRAW));
+	for (int i = 0; i < vecLight.size(); i++)
+	{
+		GLCall(glBufferSubData(GL_SHADER_STORAGE_BUFFER, 48 * i, 40, &vecLight[i]));
+	}
+	GLCall(glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, lightsSSBO));
+	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
 }
 
 TestDeferred::~TestDeferred()
@@ -74,6 +117,7 @@ void TestDeferred::OnUpdate()
 
 	QuadVA->Bind();
 	s_LightPass->Use();
+	s_LightPass->setVec3("camPos", m_camera.getCameraPos());
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 
 }

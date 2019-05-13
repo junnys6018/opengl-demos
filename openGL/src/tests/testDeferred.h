@@ -8,6 +8,8 @@
 //#include "Utils/UniformBuffer.h"
 
 #include <memory>
+#include <stdlib.h> // srand() and rand()
+#include <algorithm> // std::max()
 //#include "glm/gtc/type_ptr.hpp"
 
 class TestDeferred : public Test
@@ -33,6 +35,8 @@ private:
 	unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
 	int sWidth, sHeight;
 	int renderMode, old_renderMode;
+	unsigned int lightsSSBO;
+	const unsigned int NUM_LIGHTS;
 
 	void genFrameBuffers();
 };
