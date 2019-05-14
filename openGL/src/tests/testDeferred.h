@@ -32,6 +32,8 @@ private:
 	std::unique_ptr<Shader> s_GeometryPass;
 	std::unique_ptr<Shader> s_LightPass;
 	std::unique_ptr<Shader> s_Lamp;
+	std::unique_ptr<Shader> s_FustrumCull;
+	std::unique_ptr<Shader> s_FinalPass;
 
 	std::unique_ptr<Object> o_Sponza;
 	std::unique_ptr<Object> o_Cube;
@@ -43,10 +45,12 @@ private:
 	unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
 	unsigned int lightsSSBO;
 	unsigned int modelVBO;
+	unsigned int tex_output;
 
 	int sWidth, sHeight;
 	int renderMode, old_renderMode;
 	bool renderLights;
+	bool useTileBased, visualiseLights; // visualiseLights that intersect fustrum
 	const unsigned int NUM_LIGHTS;
 	float exposure;
 

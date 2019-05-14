@@ -3,13 +3,17 @@
 
 
 Shader::Shader(const std::string& shaderpath)
-	:failedToLoad(false)
+	:failedToLoad(false), isComputeShader(false)
 {
 	// PARSE SHADER
 	std::string Shaders[3];
 	enum class Mode
 	{
-		VOID = -1, VERTEX_SHADER = 0, FRAGMENT_SHADER = 1, GEOMETRY_SHADER = 2
+		VOID = -1,
+		VERTEX_SHADER = 0,
+		COMPUTE_SHADER = 0,
+		FRAGMENT_SHADER = 1,
+		GEOMETRY_SHADER = 2
 	};
 	// Seperates .shader file into 2 strings, one holding the vertex shader, the other holding the fragment shader, the last holding geom shader
 	Mode mode = Mode::VOID;
@@ -23,55 +27,62 @@ Shader::Shader(const std::string& shaderpath)
 			mode = Mode::FRAGMENT_SHADER;
 		else if (line == "#shader Geometry")
 			mode = Mode::GEOMETRY_SHADER;
+		else if (line == "#shader Compute")
+		{
+			isComputeShader = true;
+			mode = Mode::COMPUTE_SHADER;
+		}
 		else if (mode != Mode::VOID)
 			Shaders[(int)mode] += line + '\n';
 	}
 	// complies shader and returns ID to shader object.
-	unsigned int VertexShader = CompileShader(Shaders[0], GL_VERTEX_SHADER);
-	unsigned int FragmentShader = CompileShader(Shaders[1], GL_FRAGMENT_SHADER);
-	unsigned int GeometryShader = 0;
-	if (Shaders[2] != "")
-		GeometryShader = CompileShader(Shaders[2], GL_GEOMETRY_SHADER);
-	// create program object
-	GLCall(ID = glCreateProgram());
-	// attach and link vertex and fragment shader
-	GLCall(glAttachShader(ID, VertexShader));
-	GLCall(glAttachShader(ID, FragmentShader));
-	if (Shaders[2] != "")
+	if (isComputeShader)
 	{
-		GLCall(glAttachShader(ID, GeometryShader));
-	}
-	GLCall(glLinkProgram(ID));
-	GLCall(glValidateProgram(ID));
-	// Error Handling for linking stage
-	int status;
-	GLCall(glGetProgramiv(ID, GL_LINK_STATUS, &status));
-	if (status == GL_FALSE)
-	{
-		std::cout << "Failed to link shaders!\n";
-		int length;
-		GLCall(glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &length));
-		if (length != 0)
+		assert(Shaders[1].size() == 0 && Shaders[2].size() == 0);
+		std::cout << shaderpath << " is a compute shader!\n";
+		unsigned int ComputeShader = CompileShader(Shaders[0], GL_COMPUTE_SHADER);
+		// create program object
+		GLCall(ID = glCreateProgram());
+		// attach and link compute shader
+		GLCall(glAttachShader(ID, ComputeShader));
+		GLCall(glLinkProgram(ID));
+		if (validateShader())
 		{
-			char *message = new char[length];
-			GLCall(glGetProgramInfoLog(ID, length, nullptr, message));
-			std::cout << message << std::endl;
-			delete[] message;
+			// Compilation Successful, delete intermediates
+			GLCall(glDeleteShader(ComputeShader));
+			GLCall(glUseProgram(ID));
 		}
-		GLCall(glDeleteProgram(ID));
-		failedToLoad = true;
 	}
 	else
 	{
-		// Deletes intermediates
-		GLCall(glDeleteShader(VertexShader));
-		GLCall(glDeleteShader(FragmentShader));
+		unsigned int VertexShader = CompileShader(Shaders[0], GL_VERTEX_SHADER);
+		unsigned int FragmentShader = CompileShader(Shaders[1], GL_FRAGMENT_SHADER);
+		unsigned int GeometryShader = 0;
+		if (Shaders[2] != "")
+			GeometryShader = CompileShader(Shaders[2], GL_GEOMETRY_SHADER);
+		// create program object
+		GLCall(ID = glCreateProgram());
+		// attach and link vertex and fragment shader
+		GLCall(glAttachShader(ID, VertexShader));
+		GLCall(glAttachShader(ID, FragmentShader));
 		if (Shaders[2] != "")
 		{
-			GLCall(glDeleteShader(GeometryShader));
+			GLCall(glAttachShader(ID, GeometryShader));
 		}
-		GLCall(glUseProgram(ID));
+		GLCall(glLinkProgram(ID));
+		if (validateShader())
+		{
+			// Compilation Successful, delete intermediates
+			GLCall(glDeleteShader(VertexShader));
+			GLCall(glDeleteShader(FragmentShader));
+			if (Shaders[2] != "")
+			{
+				GLCall(glDeleteShader(GeometryShader));
+			}
+			GLCall(glUseProgram(ID));
+		}
 	}
+\
 }
 Shader::~Shader()
 {
@@ -97,14 +108,49 @@ unsigned Shader::CompileShader(std::string source, GLenum type)
 		{
 			char *message = new char[length];
 			GLCall(glGetShaderInfoLog(shader, length, nullptr, message));
-			std::cout << "FAILED TO COMPLIE " << (type == GL_VERTEX_SHADER ? "VERTEX " : 
-				(type == GL_FRAGMENT_SHADER ? "FRAGMENT" : "GEOMETRY"))
-				<< " SHADER!\n" << message << '\n';
+			std::string line;
+			switch (type)
+			{
+			case GL_VERTEX_SHADER:
+				line = "Vertex Shader:\n"; break;
+			case GL_FRAGMENT_SHADER:
+				line = "Fragment Shader:\n"; break;
+			case GL_GEOMETRY_SHADER:
+				line = "Geometry Shader:\n"; break;
+			case GL_COMPUTE_SHADER:
+				line = "Compute Shader:\n"; break;
+			}
+			std::cout << "Failed to compile " << line << message << std::endl;
 			delete[] message;
 		}
 		failedToLoad = true;
 	}
 	return shader;
+}
+
+bool Shader::validateShader()
+{
+	GLCall(glValidateProgram(ID));
+	// Error Handling for linking stage
+	int status;
+	GLCall(glGetProgramiv(ID, GL_LINK_STATUS, &status));
+	if (status == GL_FALSE)
+	{
+		std::cout << "Failed to link shaders!\n";
+		int length;
+		GLCall(glGetProgramiv(ID, GL_INFO_LOG_LENGTH, &length));
+		if (length != 0)
+		{
+			char* message = new char[length];
+			GLCall(glGetProgramInfoLog(ID, length, nullptr, message));
+			std::cout << message << std::endl;
+			delete[] message;
+		}
+		GLCall(glDeleteProgram(ID));
+		failedToLoad = true;
+		return false;
+	}
+	else return true;
 }
 
 void Shader::Use() const

@@ -16,7 +16,8 @@ struct PointLight
 		:position(pos), color(col), intensity(intensity), radius(rad)	{}
 };
 TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), NUM_LIGHTS(64), exposure(0.5f)
+	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), useTileBased(true), visualiseLights(false),
+	NUM_LIGHTS(128), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -29,6 +30,19 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	s_LightPass->setInt("NUM_LIGHTS", NUM_LIGHTS);
 	s_LightPass->setFloat("exposure", exposure);
 	s_Lamp = std::make_unique<Shader>("res/shaders/DeferredShading/Lamp4.shader");
+	s_FustrumCull = std::make_unique<Shader>("res/shaders/DeferredShading/cFustrumCull.shader");
+	s_FustrumCull->setInt("gPosition", 0);
+	s_FustrumCull->setInt("gNormal", 1);
+	s_FustrumCull->setInt("gAlbedoSpec", 2);
+	s_FustrumCull->setVec2("resolution", sWidth, sHeight);
+	s_FustrumCull->setInt("NUM_LIGHTS", NUM_LIGHTS);
+	s_FustrumCull->setFloat("exposure", exposure);
+	s_FinalPass = std::make_unique<Shader>("res/shaders/DeferredShading/FinalPass.shader");
+	s_FinalPass->setInt("Texture", 0);
+
+	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::scale(model, glm::vec3(0.01f));
+	s_GeometryPass->setMat4("model", model);
 
 	o_Sponza = std::make_unique<Object>("res/Objects/sponza/sponza.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE | OBJECT_INIT_FLAGS_GEN_SPECULAR);
 	o_Cube = std::make_unique<Object>("res/Objects/cube.obj");
@@ -104,6 +118,7 @@ TestDeferred::~TestDeferred()
 	GLCall(glDeleteTextures(1, &gNormal));
 	GLCall(glDeleteTextures(1, &gColorSpec));
 	GLCall(glDeleteRenderbuffers(1, &rboDepth));
+	GLCall(glDeleteTextures(1, &tex_output));
 
 	GLCall(glDisable(GL_CULL_FACE));
 }
@@ -111,39 +126,65 @@ TestDeferred::~TestDeferred()
 void TestDeferred::OnUpdate()
 {
 	if (m_camera.move(m_window))
+	{
 		s_LightPass->setVec3("camPos", m_camera.getCameraPos());
+		s_FustrumCull->setVec3("camPos", m_camera.getCameraPos());
+	}
 	// Geometry Pass
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::scale(model, glm::vec3(0.01f));
+
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 
-	s_GeometryPass->setMat4("model", model);
 	u_Matrix->setData(0, glm::value_ptr(view), MAT4);
 	u_Matrix->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_GeometryPass, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_SPECULAR);
 
 	// Lighting Pass
-	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+	if (useTileBased)
+	{
+		s_FustrumCull->Use();
 
-	GLCall(glActiveTexture(GL_TEXTURE0));
-	GLCall(glBindTexture(GL_TEXTURE_2D, gPosition));
-	GLCall(glActiveTexture(GL_TEXTURE1));
-	GLCall(glBindTexture(GL_TEXTURE_2D, gNormal));
-	GLCall(glActiveTexture(GL_TEXTURE2));
-	GLCall(glBindTexture(GL_TEXTURE_2D, gColorSpec));
+		GLCall(glActiveTexture(GL_TEXTURE0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gPosition));
+		GLCall(glActiveTexture(GL_TEXTURE1));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gNormal));
+		GLCall(glActiveTexture(GL_TEXTURE2));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gColorSpec));
+		u_Matrix->Bind(1);
+		GLCall(glDispatchCompute(sWidth / 16, sHeight / 15, 1));
 
-	QuadVA->Bind();
-	s_LightPass->Use();
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-	// Draw Lamps (Done in forward rendering)
+		GLCall(glActiveTexture(GL_TEXTURE0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, tex_output));
+		QuadVA->Bind();
+		s_FinalPass->Use();
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+	}
+	else
+	{
+		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
+
+		GLCall(glActiveTexture(GL_TEXTURE0));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gPosition));
+		GLCall(glActiveTexture(GL_TEXTURE1));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gNormal));
+		GLCall(glActiveTexture(GL_TEXTURE2));
+		GLCall(glBindTexture(GL_TEXTURE_2D, gColorSpec));
+
+		QuadVA->Bind();
+		s_LightPass->Use();
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+	}
+
 	if (renderLights)
 	{
+		// Draw Lamps (Done in forward rendering)
 		o_Cube->vertexArray->Bind();
 		s_Lamp->Use();
 		GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer));
@@ -152,12 +193,14 @@ void TestDeferred::OnUpdate()
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		GLCall(glDrawElementsInstanced(GL_TRIANGLES, o_Cube->indexBuffer->getCount(), GL_UNSIGNED_INT, 0, NUM_LIGHTS));
 	}
-
 }
 
 void TestDeferred::OnImGuiRender()
 {
 	ImGui::Text("Number of Point Lights: %i", NUM_LIGHTS);
+	ImGui::Checkbox("Use Tile Based Deferred Shading", &useTileBased);
+	if (useTileBased && ImGui::Checkbox("Visualise Lights", &visualiseLights))
+		s_FustrumCull->setBool("visualiseLights", visualiseLights);
 	ImGui::Separator();
 	ImGui::RadioButton("Show Lighting Only", &renderMode, 0);
 	ImGui::RadioButton("Show Position Only", &renderMode, 1);
@@ -169,26 +212,38 @@ void TestDeferred::OnImGuiRender()
 	{
 		old_renderMode = renderMode;
 		s_LightPass->setInt("renderMode", renderMode);
+		s_FustrumCull->setInt("renderMode", renderMode);
 	}
 
 	if (ImGui::SliderFloat("Exposure", &exposure, 0.1, 5, "%.2f"))
+	{
 		s_LightPass->setFloat("exposure", exposure);
+		s_FustrumCull->setFloat("exposure", exposure);
+	}
 	if (ImGui::Button("Reset Exposure"))
 	{
 		exposure = 0.5f;
 		s_LightPass->setFloat("exposure", exposure);
+		s_FustrumCull->setFloat("exposure", exposure);
 	}
 	ImGui::Separator();
 	ImGui::Checkbox("Render Lamps", &renderLights);
 
+	int width, height;
+	glfwGetFramebufferSize(m_window, &width, &height);
+	bool isSizeMod16 = (width % 16 == 0) && (height % 15 == 0);
+	ImGui::Text("Width: %i, Height: %i, %s", width, height, isSizeMod16 ? "true" : "false");
 }
 
 void TestDeferred::framebuffer_size_callback(int width, int height)
 {
 	if (width != 0 && height != 0)
 	{
-		sWidth = width;
-		sHeight = height;
+		// Screensize needs to be a multiple of 16 x 15
+		sWidth = width - width % 16;
+		sHeight = height - height % 15;
+		s_FustrumCull->setVec2("resolution", sWidth, sHeight);
+		glfwSetWindowSize(m_window, sWidth, sHeight);
 		genFrameBuffers();
 	}
 }
@@ -200,6 +255,7 @@ void TestDeferred::genFrameBuffers()
 	GLCall(glDeleteTextures(1, &gNormal));
 	GLCall(glDeleteTextures(1, &gColorSpec));
 	GLCall(glDeleteRenderbuffers(1, &rboDepth));
+	GLCall(glDeleteTextures(1, &tex_output));
 
 	GLCall(glGenFramebuffers(1, &gBuffer));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
@@ -232,15 +288,25 @@ void TestDeferred::genFrameBuffers()
 	GLCall(glDrawBuffers(3, attachments));
 
 	// create and attach depth buffer (renderbuffer)
-	glGenRenderbuffers(1, &rboDepth);
-	glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, sWidth, sHeight);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+	GLCall(glGenRenderbuffers(1, &rboDepth));
+	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, rboDepth));
+	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, sWidth, sHeight));
+	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth));
 
 
 	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		std::cout << "Framebuffer not complete! " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
+
+	// Texture output
+	GLCall(glGenTextures(1, &tex_output));
+	GLCall(glBindTexture(GL_TEXTURE_2D, tex_output));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, sWidth, sHeight, 0, GL_RGBA, GL_FLOAT, nullptr));
+	GLCall(glBindImageTexture(0, tex_output, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA16F));
 }
 
 void TestDeferred::genLightsInCylinder(std::vector<PointLight>& vecLight, float RADIUS, float HEIGHT)
@@ -277,7 +343,7 @@ void genLightAttibute(std::vector<PointLight>& vecLight, glm::vec4 position)
 {
 	glm::vec4 color = glm::vec4(rand() % 255 / 255.0f, rand() % 255 / 255.0f, rand() % 255 / 255.0f, 1.0f);
 	float maxColor = std::max(color.r, std::max(color.g, color.b));
-	color /= maxColor; // Normalize color s.t. max component = 1
+	color /= maxColor; // Normalize color such that max component = 1
 	float intensity = (float)rand() / RAND_MAX * 4 + 1; // intensity ranges from 1 - 5
 	float Lightradius = (-LINEAR + sqrtf(LINEAR * LINEAR - 4.0f * QUADRATIC * (CONSTANT - intensity * 256))) / (2 * QUADRATIC);
 	vecLight.emplace_back(position, color, intensity, Lightradius);

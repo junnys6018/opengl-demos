@@ -18,8 +18,9 @@ public:
 	unsigned int getID() const;
 private:
 	unsigned int ID;
-	bool failedToLoad;
+	bool failedToLoad, isComputeShader;
 	unsigned CompileShader(std::string, GLenum);
+	bool validateShader();
 public:
 	// Functions sets Uniforms in the shader code
 	void setInt(const std::string &name, const int &value) const;

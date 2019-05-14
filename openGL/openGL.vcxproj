@@ -201,7 +201,9 @@
     <None Include="res\Shaders\BlinnPhong.shader" />
     <None Include="res\Shaders\Bloom\Bloom.shader" />
     <None Include="res\Shaders\Bloom\Blur.shader" />
+    <None Include="res\shaders\DeferredShading\cFustrumCull.shader" />
     <None Include="res\Shaders\Bloom\Final.shader" />
+    <None Include="res\shaders\DeferredShading\FinalPass.shader" />
     <None Include="res\shaders\DeferredShading\GeometryPass.shader" />
     <None Include="res\shaders\DeferredShading\Lamp4.shader" />
     <None Include="res\shaders\DeferredShading\LightPass.shader" />

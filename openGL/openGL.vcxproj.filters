@@ -520,6 +520,8 @@
     <None Include="res\shaders\DeferredShading\GeometryPass.shader" />
     <None Include="res\shaders\DeferredShading\LightPass.shader" />
     <None Include="res\shaders\DeferredShading\Lamp4.shader" />
+    <None Include="res\shaders\DeferredShading\cFustrumCull.shader" />
+    <None Include="res\shaders\DeferredShading\FinalPass.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
