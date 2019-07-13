@@ -17,7 +17,7 @@ struct PointLight
 };
 TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), useTileBased(true), visualiseLights(false),
-	NUM_LIGHTS(128), exposure(0.5f)
+	NUM_LIGHTS(32), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -144,7 +144,7 @@ void TestDeferred::OnUpdate()
 	o_Sponza->Draw(*s_GeometryPass, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_SPECULAR);
 
 	// Lighting Pass
-	if (useTileBased)
+	if (useTileBased && renderMode == 0)
 	{
 		s_FustrumCull->Use();
 
@@ -212,7 +212,6 @@ void TestDeferred::OnImGuiRender()
 	{
 		old_renderMode = renderMode;
 		s_LightPass->setInt("renderMode", renderMode);
-		s_FustrumCull->setInt("renderMode", renderMode);
 	}
 
 	if (ImGui::SliderFloat("Exposure", &exposure, 0.1, 5, "%.2f"))

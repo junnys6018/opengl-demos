@@ -24,5 +24,5 @@ out vec4 color;
 
 void main()
 {
-	color = texture(Texture1, f_TexCoord);
+	color = vec4(texture(Texture1, f_TexCoord).rgb, 1.0);
 }

@@ -15,6 +15,7 @@
 	#include "testParallaxMap.h"
 	#include "testBloom.h"
 	#include "testDeferred.h"
+	#include "testSSAO.h"
 
 #endif
 

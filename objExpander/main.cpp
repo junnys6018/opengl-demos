@@ -20,7 +20,7 @@ struct vec3
 std::ostream& operator<<(std::ostream& out, const vec3& vert)
 {
 	char buffer[BUF_SIZE];
-	snprintf(buffer, BUF_SIZE, "%.4f %.4f %.4f", vert.x, vert.y, vert.z);
+	snprintf(buffer, BUF_SIZE, "%.6f %.6f %.6f", vert.x, vert.y, vert.z);
 	out << buffer;
 	return out;
 }
@@ -34,14 +34,14 @@ struct vec2
 std::ostream& operator<<(std::ostream& out, const vec2& vert)
 {
 	char buffer[BUF_SIZE];
-	snprintf(buffer, BUF_SIZE, "%.4f %.4f", vert.x, vert.y);
+	snprintf(buffer, BUF_SIZE, "%.6f %.6f", vert.x, vert.y);
 	out << buffer;
 	return out;
 }
 struct Index
 {
-	unsigned int v, vt, vn;
-	Index(unsigned int _v = 0U, unsigned int _vt = 0U, unsigned int _vn = 0U)
+	int v, vt, vn;
+	Index(int _v = 0, int _vt = 0, int _vn = 0)
 		:v(_v), vt(_vt), vn(_vn)	{}
 	friend bool operator<(const Index& left, const Index& right);
 };
@@ -160,7 +160,7 @@ bool buffer_obj(const std::string& filepath,
 			int iterations = 0;
 			while (s >> data)
 			{
-				unsigned int v, vt, vn;
+				int v, vt, vn;
 				std::sscanf(data.c_str(), "%i/%i/%i", &v, &vt, &vn);
 				iBuf.emplace_back(v - 1, vt - 1, vn - 1);
 				iterations++;
@@ -213,7 +213,11 @@ bool expand_obj(std::vector<vec3>& vPos,
 	{
 		if (map.find(index) == map.end())	// if no index exsists
 		{
-			vertexBuffer.emplace_back(vPos[index.v], vTex[index.vt], vNorm[index.vn]);
+			// convert negative indices to positive
+			unsigned int vIndex = index.v >= 0 ? index.v : vPos.size() + index.v + 1;
+			unsigned int vtIndex = index.vt >= 0 ? index.vt : vTex.size() + index.vt + 1;
+			unsigned int vnIndex = index.vn >= 0 ? index.vn : vNorm.size() + index.vn + 1;
+			vertexBuffer.emplace_back(vPos[vIndex], vTex[vtIndex], vNorm[vnIndex]);
 			indexBuffer.emplace_back(last_index + 1);
 			map.insert(std::make_pair(index, last_index));
 			++last_index;

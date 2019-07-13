@@ -5,3 +5,5 @@ openGL/imgui.ini
 bin
 bin-int
 .vs
+objExpander/*.obj
+objExpander/*.obj.expanded

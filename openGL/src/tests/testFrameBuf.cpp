@@ -49,7 +49,7 @@ TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
 TestFrameBuf::~TestFrameBuf()
 {
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-	m_camera.setSpeed(0.1f);
+	m_camera.setSpeed(5.0f);
 
 	GLCall(glDeleteFramebuffers(1, &FBO));
 	GLCall(glDeleteTextures(1, &texture));
