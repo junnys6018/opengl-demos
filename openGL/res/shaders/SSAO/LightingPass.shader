@@ -66,7 +66,7 @@ void main()
 		// Specular
 		vec3 viewDir = normalize(-fragPos);
 		vec3 halfDir = normalize(-lightDir + viewDir);
-		float spec = pow(max(dot(halfDir, normal), 0.0), 8);
+		float spec = pow(max(dot(halfDir, normal), 0.0), 8.0);
 		// Attenuation
 		float distance = length(light.Position - fragPos);
 		float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * (distance * distance));

@@ -26,6 +26,7 @@ uniform sampler2D texNoise;
 uniform vec3 samples[64];
 uniform mat4 proj;
 uniform vec2 screenSize;
+uniform float power;
 
 // tile noise texture over screen based on screen dimensions divided by noise size
 const vec2 noiseScale = vec2(screenSize.x / 4.0, screenSize.y / 4.0);
@@ -58,5 +59,6 @@ void main()
 		float rangeCheck = smoothstep(0.0, 1.0, radius / abs(fragPos.z - sampleDepth));
 		occlusion += (sampleDepth >= fsample.z + bias ? 1.0 : 0.0) * rangeCheck;
 	}
-	FragColor = 1.0 - occlusion / float(kernelSize);
+	occlusion = 1.0 - occlusion / float(kernelSize);
+	FragColor = pow(occlusion, power);
 }

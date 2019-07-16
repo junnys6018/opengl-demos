@@ -42,6 +42,7 @@ private:
 	unsigned int gBuffer, gPosition, gNormal, gColor, rboDepth, noiseTexture, ssaoFBO, ssaoColor, ssaoBlurFBO, ssaoBlurColor;
 	int renderMode, oldRenderMode;
 	glm::vec3 LightColor;
+	float power;
 };
 
 

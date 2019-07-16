@@ -4,7 +4,7 @@
 float rand_float(float a, float b);
 
 TestSSAO::TestSSAO(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(5), oldRenderMode(5), LightColor(1.0f, 1.0f, 1.0f)
+	:m_camera(cam), m_window(win), renderMode(5), oldRenderMode(5), LightColor(1.0f, 1.0f, 1.0f), power(1.0f)
 {
 	srand((unsigned int)glfwGetTime());
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
@@ -17,6 +17,7 @@ TestSSAO::TestSSAO(Camera& cam, GLFWwindow* win)
 	s_ssaoPass->setInt("gNormal", 1);
 	s_ssaoPass->setInt("texNoise", 2);
 	s_ssaoPass->setVec2("screenSize", (float)sWidth, (float)sHeight);
+	s_ssaoPass->setFloat("power", power);
 	s_BlurPass = std::make_unique<Shader>("res/shaders/SSAO/BlurPass.shader");
 	s_BlurPass->setInt("ssaoColor", 0);
 	s_LightingPass = std::make_unique<Shader>("res/shaders/SSAO/LightingPass.shader");
@@ -228,6 +229,8 @@ void TestSSAO::OnImGuiRender()
 	ImGui::Separator();
 	if (ImGui::ColorEdit3("Light Color", &LightColor[0]))
 		s_LightingPass->setVec3("light.Color", LightColor);
+	if (ImGui::SliderFloat("Occlusion pow", &power, 1.0f, 16.0f))
+		s_ssaoPass->setFloat("power", power);
 
 }
 
