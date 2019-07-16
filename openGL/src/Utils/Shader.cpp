@@ -3,7 +3,7 @@
 
 
 Shader::Shader(const std::string& shaderpath)
-	:failedToLoad(false), isComputeShader(false)
+	:failedToLoad(false), isComputeShader(false), m_shaderpath(shaderpath)
 {
 	// PARSE SHADER
 	std::string Shaders[3];
@@ -120,7 +120,7 @@ unsigned Shader::CompileShader(std::string source, GLenum type)
 			case GL_COMPUTE_SHADER:
 				line = "Compute Shader:\n"; break;
 			}
-			std::cout << "Failed to compile " << line << message << std::endl;
+			std::cout << "Failed to compile " << line << m_shaderpath << '\n' << message << std::endl;
 			delete[] message;
 		}
 		failedToLoad = true;

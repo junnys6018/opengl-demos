@@ -86,6 +86,11 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 	assert(rootDir != "");
 
 	std::ifstream file(filepath);
+	if (!file)
+	{
+		std::cout << "Failed to read " << filepath << std::endl;
+		system("pause");
+	}
 	std::string linebuf;
 
 	unsigned int vnIndex = 0;
@@ -202,7 +207,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 	if (!mtlFile)
 	{
 		std::cout << "Failed to read " << filepath << std::endl;
-		return;
+		system("pause");
 	}
 	std::string linebuf;
 	std::string rootDir = calc_root_dir(filepath);

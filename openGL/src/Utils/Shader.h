@@ -19,6 +19,7 @@ public:
 private:
 	unsigned int ID;
 	bool failedToLoad, isComputeShader;
+	std::string m_shaderpath;
 	unsigned CompileShader(std::string, GLenum);
 	bool validateShader();
 public:

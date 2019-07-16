@@ -19,6 +19,7 @@ public:
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
+	void genFrameBuffers();
 	Camera& m_camera;
 	GLFWwindow* m_window;
 
@@ -26,11 +27,21 @@ private:
 	std::unique_ptr<Object> o_Erato;
 
 	std::unique_ptr<Shader> s_GeometryPass;
-	std::unique_ptr<Shader> s_FinalPass;
+	std::unique_ptr<Shader> s_ssaoPass;
+	std::unique_ptr<Shader> s_BlurPass;
+	std::unique_ptr<Shader> s_LightingPass;
+
+	std::unique_ptr<VertexBuffer> QuadVB;
+	std::unique_ptr<VertexArray> QuadVA;
+
+	std::unique_ptr<VertexBuffer> CubeVB;
+	std::unique_ptr<VertexArray> CubeVA;
+	std::unique_ptr<Texture> CubeTexture;
 
 	int sWidth, sHeight;
-	unsigned int gBuffer, gPosition, gNormal, gColorSpec, rboDepth;
-	bool m_isWireFrame;
+	unsigned int gBuffer, gPosition, gNormal, gColor, rboDepth, noiseTexture, ssaoFBO, ssaoColor, ssaoBlurFBO, ssaoBlurColor;
+	int renderMode, oldRenderMode;
+	glm::vec3 LightColor;
 };
 
 

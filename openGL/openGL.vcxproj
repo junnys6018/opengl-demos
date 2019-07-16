@@ -235,6 +235,10 @@
     <None Include="res\Shaders\Simple.shader" />
     <None Include="res\Shaders\SingleColor.shader" />
     <None Include="res\Shaders\SkyBox.shader" />
+    <None Include="res\shaders\SSAO\BlurPass.shader" />
+    <None Include="res\shaders\SSAO\GeometryPass.shader" />
+    <None Include="res\shaders\SSAO\LightingPass.shader" />
+    <None Include="res\shaders\SSAO\OcclusionPass.shader" />
     <None Include="res\Shaders\Triangle.shader" />
     <ClCompile Include="src\tests\testCubeMap.cpp" />
     <None Include="Vendor\glm\detail\func_common.inl" />

@@ -525,6 +525,10 @@
     <None Include="res\shaders\DeferredShading\Lamp4.shader" />
     <None Include="res\shaders\DeferredShading\cFustrumCull.shader" />
     <None Include="res\shaders\DeferredShading\FinalPass.shader" />
+    <None Include="res\shaders\SSAO\GeometryPass.shader" />
+    <None Include="res\shaders\SSAO\LightingPass.shader" />
+    <None Include="res\shaders\SSAO\OcclusionPass.shader" />
+    <None Include="res\shaders\SSAO\BlurPass.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
