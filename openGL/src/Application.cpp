@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Font loading
 	ImGuiIO& io = ImGui::GetIO();
-	io.Fonts->AddFontFromFileTTF("res/Fonts/Consola.ttf", 18);
+	io.Fonts->AddFontFromFileTTF("res/Fonts/Consola.ttf", 16);
 
 	// Timing
 	double previousTime = glfwGetTime();

@@ -19,17 +19,17 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	if (key == GLFW_KEY_F && action == GLFW_RELEASE)
 	{
 		GLFWmonitor* monitor = glfwGetWindowMonitor(window);
-		if (monitor)
+		if (monitor) // if fullscreen, turn to windowed mode
 		{
 			glfwSetWindowMonitor(window, NULL, 50, 50, 1080, 720, GLFW_DONT_CARE);
-			glfwSwapInterval(1); // enable vsync
+			//glfwSwapInterval(1); // enable vsync
 		}
-		else
+		else // make it fullscreen
 		{
 			GLFWmonitor* primary = glfwGetPrimaryMonitor();
 			const GLFWvidmode* mode = glfwGetVideoMode(primary);
 			glfwSetWindowMonitor(window, primary, 0, 0, mode->width, mode->height, mode->refreshRate);
-			glfwSwapInterval(1); // enable vsync
+			//glfwSwapInterval(1); // enable vsync
 		}
 	}
 	else if (test_mgr.m_currentTest)

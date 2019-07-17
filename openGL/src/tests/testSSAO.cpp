@@ -128,7 +128,17 @@ TestSSAO::TestSSAO(Camera& cam, GLFWwindow* win)
 
 TestSSAO::~TestSSAO()
 {
-	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
+	GLCall(glDeleteFramebuffers(1, &gBuffer));
+	GLCall(glDeleteTextures(1, &gPosition));
+	GLCall(glDeleteTextures(1, &gNormal));
+	GLCall(glDeleteTextures(1, &gColor));
+	GLCall(glDeleteRenderbuffers(1, &rboDepth));
+
+	GLCall(glDeleteFramebuffers(1, &ssaoFBO));
+	GLCall(glDeleteTextures(1, &ssaoColor));
+
+	GLCall(glDeleteFramebuffers(1, &ssaoBlurFBO));
+	GLCall(glDeleteTextures(1, &ssaoBlurColor));
 }
 
 void TestSSAO::OnUpdate()
@@ -220,24 +230,22 @@ void TestSSAO::OnUpdate()
 
 void TestSSAO::OnImGuiRender()
 {
-	ImGui::RadioButton("gPosition"     , &renderMode, 0);
-	ImGui::RadioButton("gNormal"       , &renderMode, 1);
-	ImGui::RadioButton("gAlbedo"       , &renderMode, 2);
-	ImGui::RadioButton("SSAO Texture"  , &renderMode, 3);
-	ImGui::RadioButton("SSAO Blur"     , &renderMode, 4);
-	ImGui::RadioButton("SSAO Lighting" , &renderMode, 5);
-	ImGui::RadioButton("Lighting"      , &renderMode, 6);
-	// only update rendermode if it changed
-	if (renderMode != oldRenderMode)
+	if (ImGui::CollapsingHeader("Render Targets"))
 	{
-		oldRenderMode = renderMode;
-		s_LightingPass->setInt("renderMode", renderMode);
+		ImGui::RadioButton("gPosition"     , &renderMode, 0);
+		ImGui::RadioButton("gNormal"       , &renderMode, 1);
+		ImGui::RadioButton("gAlbedo"       , &renderMode, 2);
+		ImGui::RadioButton("SSAO Texture"  , &renderMode, 3);
+		ImGui::RadioButton("SSAO Blur"     , &renderMode, 4);
+		ImGui::RadioButton("SSAO Lighting" , &renderMode, 5);
+		ImGui::RadioButton("Lighting"      , &renderMode, 6);
+		// only update rendermode if it changed
+		if (renderMode != oldRenderMode)
+		{
+			oldRenderMode = renderMode;
+			s_LightingPass->setInt("renderMode", renderMode);
+		}
 	}
-	ImGui::Separator();
-	if (ImGui::ColorEdit3("Light Color", &LightColor[0]))
-		s_LightingPass->setVec3("light.Color", LightColor);
-	if (ImGui::SliderFloat("Occlusion pow", &power, 1.0f, 16.0f))
-		s_ssaoPass->setFloat("power", power);
 	if (ImGui::CollapsingHeader("Profiling"))
 	{
 		ImGui::Text("Geometry Pass: %.3f ms"  , (float)timer[0].getTime() / 1.0e6f);
@@ -247,6 +255,10 @@ void TestSSAO::OnImGuiRender()
 		ImGui::Text("Total GPU Time: %.3f ms" ,
 			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime() + timer[3].getTime()) / 1.0e6f);
 	}
+	if (ImGui::ColorEdit3("Light Color", &LightColor[0]))
+		s_LightingPass->setVec3("light.Color", LightColor);
+	if (ImGui::SliderFloat("Occlusion pow", &power, 1.0f, 16.0f))
+		s_ssaoPass->setFloat("power", power);
 
 }
 
@@ -312,6 +324,7 @@ void TestSSAO::genFrameBuffers()
 		std::cout << "Framebuffer not complete! " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 	// SSAO
 	GLCall(glDeleteFramebuffers(1, &ssaoFBO));
+	GLCall(glDeleteTextures(1, &ssaoColor));
 	GLCall(glGenFramebuffers(1, &ssaoFBO));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO));
 
@@ -327,6 +340,7 @@ void TestSSAO::genFrameBuffers()
 		std::cout << "Framebuffer not complete! " << glCheckFramebufferStatus(GL_FRAMEBUFFER) << std::endl;
 
 	GLCall(glDeleteFramebuffers(1, &ssaoBlurFBO));
+	GLCall(glDeleteTextures(1, &ssaoBlurColor));
 	GLCall(glGenFramebuffers(1, &ssaoBlurFBO));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO));
 

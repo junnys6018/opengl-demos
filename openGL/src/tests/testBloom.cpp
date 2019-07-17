@@ -1,6 +1,7 @@
 #include "testBloom.h"
 #include "debug.h"
-#define BLUR_SCALE 10
+#define BLUR_SCALE 1
+#define NR_PASSES 16
 TestBloom::TestBloom(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
 {
@@ -75,7 +76,8 @@ void TestBloom::OnUpdate()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, m_isWireFrame ? GL_LINE : GL_FILL));
-	// Sponza
+	// Bloom Pass
+	timer[0].begin();
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.01f));
 	s_Bloom->setMat4("model", model);
@@ -84,22 +86,23 @@ void TestBloom::OnUpdate()
 	u_Matrices->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_Bloom);
-
+	timer[0].end();
 	// Lamps
+	timer[1].begin();
 	s_Lamp->Use();
 	o_Cube->vertexArray->Bind();
 	GLCall(glDrawElementsInstanced(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0, 4));
-
+	timer[1].end();
 	// Blur Pass
+	timer[2].begin();
 	bool horizontal = true, first_iteration = true;
 	QuadVA->Bind();
 	if (renderMode != 0 && !m_isWireFrame)
 	{
 		GLCall(glViewport(0, 0, sWidth / BLUR_SCALE, sHeight / BLUR_SCALE));
 		GLCall(glActiveTexture(GL_TEXTURE0));
-		int amount = 10;
 		s_Blur->Use();
-		for (int i = 0; i < amount; i++)
+		for (int i = 0; i < NR_PASSES; i++)
 		{
 			GLCall(glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]));
 			s_Blur->setBool("horizontal", horizontal);
@@ -111,7 +114,9 @@ void TestBloom::OnUpdate()
 		}
 		GLCall(glViewport(0, 0, sWidth, sHeight));
 	}
+	timer[2].end();
 	// Final Pass
+	timer[3].begin();
 	if (m_isWireFrame)
 		GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
@@ -122,7 +127,7 @@ void TestBloom::OnUpdate()
 	GLCall(glActiveTexture(GL_TEXTURE1));
 	GLCall(glBindTexture(GL_TEXTURE_2D, pingpongBuffer[!horizontal]));
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-
+	timer[3].end();
 }
 
 void TestBloom::OnImGuiRender()
@@ -143,6 +148,15 @@ void TestBloom::OnImGuiRender()
 	{
 		old_renderMode = renderMode;
 		s_Final->setInt("renderMode", renderMode);
+	}
+	if (ImGui::CollapsingHeader("Profiling"))
+	{
+		ImGui::Text("Scene Pass: %.3f ms", (float)timer[0].getTime() / 1.0e6f);
+		ImGui::Text("Lamp Pass: %.3f ms", (float)timer[1].getTime() / 1.0e6f);
+		ImGui::Text("Blur Pass: %.3f ms", (float)timer[2].getTime() / 1.0e6f);
+		ImGui::Text("Combining Pass: %.3f ms", (float)timer[3].getTime() / 1.0e6f);
+		ImGui::Text("Total GPU Time: %.3f ms",
+			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime() + timer[3].getTime()) / 1.0e6f);
 	}
 	if (ImGui::Button("ScreenShot"))
 	{

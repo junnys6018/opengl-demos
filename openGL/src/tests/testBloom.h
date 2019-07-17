@@ -5,7 +5,8 @@
 #include "Shader.h"
 #include "Object.h"
 #include "Camera.h"
-#include "Utils/UniformBuffer.h"
+#include "UniformBuffer.h"
+#include "Timer.h"
 
 #include <memory>
 #include "glm/gtc/type_ptr.hpp"
@@ -23,6 +24,7 @@ public:
 private:
 	Camera& m_camera;
 	GLFWwindow* m_window;
+	Timer timer[4];
 
 	std::unique_ptr<Shader> s_Bloom;
 	std::unique_ptr<Shader> s_Lamp;

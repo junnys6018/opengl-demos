@@ -28,6 +28,10 @@ uniform mat4 proj;
 uniform vec2 screenSize;
 uniform float power;
 
+const int kernelSize = 64; 
+const float radius = 0.5;
+const float bias = 0.025;
+
 // tile noise texture over screen based on screen dimensions divided by noise size
 const vec2 noiseScale = vec2(screenSize.x / 4.0, screenSize.y / 4.0);
 
@@ -36,14 +40,13 @@ void main()
 	vec3 fragPos = texture(gPosition, f_TexCoord).xyz;
 	vec3 normal = texture(gNormal, f_TexCoord).xyz;
 	vec3 randomVec = texture(texNoise, f_TexCoord * noiseScale).xyz;
-
-	// Generate TBN via the Gramm-Schmidt process
+	
+	// create TBN change-of-basis matrix: from tangent-space to view-space (Gramm-Schmidt process)
 	vec3 tangent = normalize(randomVec - normal * dot(randomVec, normal));
 	vec3 bitangent = cross(normal, tangent);
 	mat3 TBN = mat3(tangent, bitangent, normal);
 	// TBN will be parrallel to normal vector with random rotation
 
-	const int kernelSize = 64; const float radius = 0.5; const float bias = 0.025;
 	float occlusion = 0.0;
 	for (int i = 0; i < kernelSize; ++i)
 	{
