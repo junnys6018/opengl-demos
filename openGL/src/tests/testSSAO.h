@@ -5,6 +5,7 @@
 #include "Shader.h"
 #include "Object.h"
 #include "Camera.h"
+#include "Timer.h"
 
 #include <memory>
 //#include "glm/gtc/type_ptr.hpp"
@@ -22,6 +23,7 @@ private:
 	void genFrameBuffers();
 	Camera& m_camera;
 	GLFWwindow* m_window;
+	Timer timer[4];
 
 	std::unique_ptr<Object> o_NanoSuit;
 	std::unique_ptr<Object> o_Erato;

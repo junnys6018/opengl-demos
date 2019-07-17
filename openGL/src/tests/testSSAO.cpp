@@ -139,6 +139,7 @@ void TestSSAO::OnUpdate()
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	// Geometry Pass
+	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -167,7 +168,9 @@ void TestSSAO::OnUpdate()
 	CubeTexture->Bind(0);
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
+	timer[0].end();
 	// SSAO Pass
+	timer[1].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -179,11 +182,13 @@ void TestSSAO::OnUpdate()
 
 	GLCall(glActiveTexture(GL_TEXTURE2));
 	GLCall(glBindTexture(GL_TEXTURE_2D, noiseTexture));
+
 	s_ssaoPass->setMat4("proj", proj);
 	QuadVA->Bind();
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-
-	//// Blur Pass
+	timer[1].end();
+	// Blur Pass
+	timer[2].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -191,8 +196,9 @@ void TestSSAO::OnUpdate()
 	GLCall(glBindTexture(GL_TEXTURE_2D, ssaoColor));
 	s_BlurPass->Use();
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-
-	// final pass
+	timer[2].end();
+	// Lighting Pass
+	timer[3].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
@@ -209,6 +215,7 @@ void TestSSAO::OnUpdate()
 	GLCall(glBindTexture(GL_TEXTURE_2D, (renderMode == 3 ? ssaoColor : ssaoBlurColor)));
 	s_LightingPass->setVec3("light.Position", glm::vec3(view * glm::vec4(-1.7f, 2.3f, 2.0f, 1.0f)));
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
+	timer[3].end();
 }
 
 void TestSSAO::OnImGuiRender()
@@ -220,7 +227,7 @@ void TestSSAO::OnImGuiRender()
 	ImGui::RadioButton("SSAO Blur"     , &renderMode, 4);
 	ImGui::RadioButton("SSAO Lighting" , &renderMode, 5);
 	ImGui::RadioButton("Lighting"      , &renderMode, 6);
-	// only rendermode if it changed
+	// only update rendermode if it changed
 	if (renderMode != oldRenderMode)
 	{
 		oldRenderMode = renderMode;
@@ -231,6 +238,15 @@ void TestSSAO::OnImGuiRender()
 		s_LightingPass->setVec3("light.Color", LightColor);
 	if (ImGui::SliderFloat("Occlusion pow", &power, 1.0f, 16.0f))
 		s_ssaoPass->setFloat("power", power);
+	if (ImGui::CollapsingHeader("Profiling"))
+	{
+		ImGui::Text("Geometry Pass: %.3f ms"  , (float)timer[0].getTime() / 1.0e6f);
+		ImGui::Text("SSAO Pass: %.3f ms"      , (float)timer[1].getTime() / 1.0e6f);
+		ImGui::Text("Blur Pass: %.3f ms"      , (float)timer[2].getTime() / 1.0e6f);
+		ImGui::Text("Lighting Pass: %.3f ms"  , (float)timer[3].getTime() / 1.0e6f);
+		ImGui::Text("Total GPU Time: %.3f ms" ,
+			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime() + timer[3].getTime()) / 1.0e6f);
+	}
 
 }
 

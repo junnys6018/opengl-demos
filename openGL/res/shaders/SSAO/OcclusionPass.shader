@@ -45,7 +45,7 @@ void main()
 
 	const int kernelSize = 64; const float radius = 0.5; const float bias = 0.025;
 	float occlusion = 0.0;
-	for (int i = 0; i < kernelSize; i++)
+	for (int i = 0; i < kernelSize; ++i)
 	{
 		vec3 fsample = TBN * samples[i];
 		fsample = fragPos + fsample * radius;

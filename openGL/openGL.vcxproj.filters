@@ -93,6 +93,9 @@
     <ClCompile Include="src\tests\testSSAO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\TImer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -1351,6 +1354,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\testSSAO.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

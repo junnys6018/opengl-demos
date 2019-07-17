@@ -194,6 +194,7 @@
     <ClCompile Include="src\tests\testTriangle.cpp" />
     <ClCompile Include="src\Utils\Texture.cpp" />
     <ClCompile Include="src\Utils\CubeMap.cpp" />
+    <ClCompile Include="src\Utils\TImer.cpp" />
     <ClCompile Include="src\Utils\UniformBuffer.cpp" />
     <ClCompile Include="src\Utils\VertexArray.cpp" />
     <ClCompile Include="src\Utils\VertexBuffer.cpp" />
@@ -399,6 +400,7 @@
     <ClInclude Include="src\tests\__Test__.h" />
     <ClInclude Include="src\Utils\Texture.h" />
     <ClInclude Include="src\Utils\CubeMap.h" />
+    <ClInclude Include="src\Utils\Timer.h" />
     <ClInclude Include="src\Utils\UniformBuffer.h" />
     <ClInclude Include="src\Utils\VertexArray.h" />
     <ClInclude Include="src\Utils\VertexBuffer.h" />
