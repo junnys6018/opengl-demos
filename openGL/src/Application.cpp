@@ -43,9 +43,6 @@ int main(int argc, char* argv[])
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetScrollCallback(window, scroll_callback);
 
-	// Pre render loop preperation
-	glfwSwapInterval(1); // enable vsync
-
 	test_mgr.registerTest("triangle"    , [ ]()->Test* {return new TestTriangle(); }                            );
 	test_mgr.registerTest("planets"     , [&]()->Test* {return new TestPlanets(camera, window); }               );
 	test_mgr.registerTest("lighting"    , [&]()->Test* {return new TestLighting(camera, window); }              );
@@ -86,7 +83,7 @@ int main(int argc, char* argv[])
 	double previousTime = glfwGetTime();
 	unsigned int frameCount = 0;
 	unsigned int fps = 0;
-	/* Loop until the user closes the window */
+
 	while (!glfwWindowShouldClose(window))
 	{
 		double currentTime = glfwGetTime();

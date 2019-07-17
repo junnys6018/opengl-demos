@@ -131,9 +131,9 @@ void TestDeferred::OnUpdate()
 		s_FustrumCull->setVec3("camPos", m_camera.getCameraPos());
 	}
 	// Geometry Pass
+	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-
 
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
@@ -142,8 +142,9 @@ void TestDeferred::OnUpdate()
 	u_Matrix->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_GeometryPass, DRAW_FLAGS_DIFFUSE | DRAW_FLAGS_SPECULAR);
-
+	timer[0].end();
 	// Lighting Pass
+	timer[1].begin();
 	if (useTileBased && renderMode == 0)
 	{
 		s_FustrumCull->Use();
@@ -181,7 +182,8 @@ void TestDeferred::OnUpdate()
 		s_LightPass->Use();
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	}
-
+	timer[1].end();
+	timer[2].begin();
 	if (renderLights)
 	{
 		// Draw Lamps (Done in forward rendering)
@@ -193,12 +195,14 @@ void TestDeferred::OnUpdate()
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 		GLCall(glDrawElementsInstanced(GL_TRIANGLES, o_Cube->indexBuffer->getCount(), GL_UNSIGNED_INT, 0, NUM_LIGHTS));
 	}
+	timer[2].end();
 }
 
 void TestDeferred::OnImGuiRender()
 {
 	ImGui::Text("Number of Point Lights: %i", NUM_LIGHTS);
 	ImGui::Checkbox("Use Tile Based Deferred Shading", &useTileBased);
+	ImGui::Checkbox("Render Lamps", &renderLights);
 	if (useTileBased && ImGui::Checkbox("Visualise Lights", &visualiseLights))
 		s_FustrumCull->setBool("visualiseLights", visualiseLights);
 	ImGui::Separator();
@@ -225,8 +229,15 @@ void TestDeferred::OnImGuiRender()
 		s_LightPass->setFloat("exposure", exposure);
 		s_FustrumCull->setFloat("exposure", exposure);
 	}
-	ImGui::Separator();
-	ImGui::Checkbox("Render Lamps", &renderLights);
+	if (ImGui::CollapsingHeader("Profiling"))
+	{
+		ImGui::Text("Geometry Pass: %.3f ms"  , (float)timer[0].getTime() / 1.0e6f);
+		ImGui::Text("Deffered Pass: %.3f ms"  , (float)timer[1].getTime() / 1.0e6f);
+		ImGui::Text("Lamp Pass: %.3f ms"      , (float)timer[2].getTime() / 1.0e6f);
+		ImGui::Text("Total GPU Time: %.3f ms" ,
+			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime()) / 1.0e6f);
+		ImGui::Separator();
+	}
 
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);

@@ -5,7 +5,8 @@
 #include "Shader.h"
 #include "Object.h"
 #include "Camera.h"
-#include "Utils/UniformBuffer.h"
+#include "UniformBuffer.h"
+#include "Timer.h"
 
 #include <memory>
 #include <stdlib.h> // srand() and rand()
@@ -28,6 +29,7 @@ public:
 private:
 	Camera& m_camera;
 	GLFWwindow* m_window;
+	Timer timer[3];
 
 	std::unique_ptr<Shader> s_GeometryPass;
 	std::unique_ptr<Shader> s_LightPass;
