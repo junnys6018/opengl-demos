@@ -1,12 +1,12 @@
 #shader Compute
 #version 430
 
-#define THREAD_COUNT 240 // 16 * 15
-#define MAX_LIGHTS 30 // max lights in each fustra
+#define THREAD_COUNT 256 // 16 * 16
+#define MAX_LIGHTS 64 // max lights in each fustra
 #define NEAR 0.1
 #define FAR 100.0
 
-layout(local_size_x = 16, local_size_y = 15) in;
+layout(local_size_x = 16, local_size_y = 16) in;
 struct PointLight
 {
 	vec3 position;
@@ -39,7 +39,7 @@ shared uint pointLightIndex[MAX_LIGHTS];
 shared uint pointLightCount;
 shared uint minDepth;
 shared uint maxDepth;
-
+vec3 GreyScale2RGB(float t);
 void main()
 {
 	ivec2 pixelCoord = ivec2(gl_GlobalInvocationID.xy);
@@ -55,17 +55,18 @@ void main()
 	barrier();
 
 	vec3 fragPos = texture(gPosition, sampleCoord).rgb;
-	float depthf = vec3(view * vec4(fragPos, 1.0)).z;
+	//float depthf = -(view * vec4(fragPos, 1.0)).z;
 	//if (depthf < FAR && depthf > NEAR)
 	//{
-		// Avoid shading skybox/background or otherwise invalid pixels
-		uint depth = uint(depthf * 0xFFFFFFFF);
-		atomicMin(minDepth, depth);
-		atomicMax(maxDepth, depth);
+	//	// map [NEAR, FAR] -> [0, 1] linearly
+	//	depthf = (depthf - NEAR) / (FAR - NEAR);
+	//	uint depth = uint(depthf * float(0xFFFFFFFF));
+	//	atomicMin(minDepth, depth);
+	//	atomicMax(maxDepth, depth);
 	//}
 
 	barrier();
-	vec2 workGroupSize = vec2(16.0, 15.0);
+	vec2 workGroupSize = vec2(16.0, 16.0);
 	// Construct fustrum
 	vec2 tileScale = resolution / (2.0 * workGroupSize);
 	vec2 tileBias = tileScale - vec2(gl_WorkGroupID.xy);
@@ -86,8 +87,11 @@ void main()
 	//top
 	frustumPlanes[3] = c4 + c2;
 	// Near/far
-	float minDepthZ = float(minDepth / float(0xFFFFFFFF));
-	float maxDepthZ = float(maxDepth / float(0xFFFFFFFF));
+	float minDepthZ = float(minDepth) / float(0xFFFFFFFF);
+	float maxDepthZ = float(maxDepth) / float(0xFFFFFFFF);
+	// map [0, 1] -> [NEAR, FAR] linearly
+	minDepthZ = minDepthZ * (FAR - NEAR) + NEAR;
+	maxDepthZ = maxDepthZ * (FAR - NEAR) + NEAR;
 	frustumPlanes[4] = vec4(0.0f, 0.0f, 1.0f, -minDepthZ);
 	frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f, maxDepthZ);
 
@@ -97,7 +101,7 @@ void main()
 	}
 	barrier();
 	// Culling 
-	int passCount = (NUM_LIGHTS + THREAD_COUNT - 1) / THREAD_COUNT;
+	int passCount = (NUM_LIGHTS + THREAD_COUNT - 1) / THREAD_COUNT; // ceil(NUM_LIGHTS / THREAD_COUNT)
 	for (int i = 0; i < passCount; i++)
 	{
 		uint lightIndex = i * THREAD_COUNT + gl_LocalInvocationIndex;
@@ -123,22 +127,24 @@ void main()
 	}
 	barrier();
 	// Lighting
+	vec3 albedo = texture(gAlbedoSpec, sampleCoord).rgb;
 	if (visualiseLights)
 	{
 		if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0 || gl_LocalInvocationID.x == 16 || gl_LocalInvocationID.y == 16)
 			imageStore(img_output, pixelCoord, vec4(0.2, 0.2, 0.2, 1.0));
 		else
 		{
-			float lightDensity = pointLightCount / float(MAX_LIGHTS);
-			imageStore(img_output, pixelCoord, vec4(vec3(lightDensity), 1.0));
+			float lightDensity = min(float(pointLightCount) / 40, 1.0);
+			vec3 intensity = GreyScale2RGB(lightDensity);
+			
+			imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
 		}
 	}
 	else
 	{
 		vec3 normal = texture(gNormal, sampleCoord).rgb;
-		vec3 albedo = texture(gAlbedoSpec, sampleCoord).rgb;
 		float specFactor = texture(gAlbedoSpec, sampleCoord).a;
-
+		// Ambient
 		vec3 lightColor = albedo * 0.1;
 		vec3 viewDir = normalize(camPos - fragPos);
 		for (int i = 0; i < pointLightCount; i++)
@@ -154,13 +160,34 @@ void main()
 			float spec = pow(max(dot(halfDir, normal), 0.0), 24);
 			// Attenuation
 			float distance = length(p.position - fragPos);
-			float attenuation = 1.0 - distance / p.radius;
+			float attenuation = max(1.0 - distance / p.radius, 0.0);
 
 			// combine results
-			lightColor += attenuation * p.intensity * p.color * (diff + specFactor * spec) * albedo;
+			lightColor += attenuation * p.intensity * p.color * (diff + specFactor * spec);
 		}
+		lightColor *= albedo; // albedo can be factored out of summation
 		// Tone Mapping
 		lightColor = vec3(1.0) - exp(-lightColor * exposure);
 		imageStore(img_output, pixelCoord, vec4(lightColor, 1.0));
+	}
+}
+
+vec3 GreyScale2RGB(float t)
+{
+	if (0.0 <= t && t < 0.25)
+	{
+		return vec3(0.0, mix(0.0, 1.0, 4.0 * t), 1.0);
+	}
+	if (0.25 <= t && t < 0.5)
+	{
+		return vec3(0.0, 1.0, mix(1.0, 0.0, 4.0 * t - 1.0));
+	}
+	if (0.5 <= t && t < 0.75)
+	{
+		return vec3(mix(0.0, 1.0, 4.0 * t - 2.0), 1.0, 0.0);
+	}
+	if (0.75 <= t && t <= 1.0)
+	{
+		return vec3(1, mix(1.0, 0.0, 4.0 * t - 3.0), 0.0);
 	}
 }

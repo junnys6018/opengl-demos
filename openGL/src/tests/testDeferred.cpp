@@ -17,7 +17,7 @@ struct PointLight
 };
 TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), useTileBased(true), visualiseLights(false),
-	NUM_LIGHTS(32), exposure(0.5f)
+	NUM_LIGHTS(128), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -156,7 +156,7 @@ void TestDeferred::OnUpdate()
 		GLCall(glActiveTexture(GL_TEXTURE2));
 		GLCall(glBindTexture(GL_TEXTURE_2D, gColorSpec));
 		u_Matrix->Bind(1);
-		GLCall(glDispatchCompute(sWidth / 16, sHeight / 15, 1));
+		GLCall(glDispatchCompute(sWidth / 16, sHeight / 16, 1));
 
 		GLCall(glActiveTexture(GL_TEXTURE0));
 		GLCall(glBindTexture(GL_TEXTURE_2D, tex_output));
@@ -202,9 +202,9 @@ void TestDeferred::OnImGuiRender()
 {
 	ImGui::Text("Number of Point Lights: %i", NUM_LIGHTS);
 	ImGui::Checkbox("Use Tile Based Deferred Shading", &useTileBased);
-	ImGui::Checkbox("Render Lamps", &renderLights);
 	if (useTileBased && ImGui::Checkbox("Visualise Lights", &visualiseLights))
 		s_FustrumCull->setBool("visualiseLights", visualiseLights);
+	ImGui::Checkbox("Render Lamps", &renderLights);
 	ImGui::Separator();
 	ImGui::RadioButton("Show Lighting Only", &renderMode, 0);
 	ImGui::RadioButton("Show Position Only", &renderMode, 1);
@@ -241,7 +241,7 @@ void TestDeferred::OnImGuiRender()
 
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
-	bool isSizeMod16 = (width % 16 == 0) && (height % 15 == 0);
+	bool isSizeMod16 = (width % 16 == 0) && (height % 16 == 0);
 	ImGui::Text("Width: %i, Height: %i, %s", width, height, isSizeMod16 ? "true" : "false");
 }
 
@@ -249,9 +249,9 @@ void TestDeferred::framebuffer_size_callback(int width, int height)
 {
 	if (width != 0 && height != 0)
 	{
-		// Screensize needs to be a multiple of 16 x 15
+		// Screensize needs to be a multiple of 16 x 16
 		sWidth = width - width % 16;
-		sHeight = height - height % 15;
+		sHeight = height - height % 16;
 		s_FustrumCull->setVec2("resolution", sWidth, sHeight);
 		glfwSetWindowSize(m_window, sWidth, sHeight);
 		genFrameBuffers();
