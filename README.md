@@ -12,4 +12,8 @@ Demo's and code examples I've written while learning OpenGL
   [site]: https://www.dropbox.com/sh/jshliyx0iwjcr1c/AADhZai7CA_NxOCipyVPLpwBa?dl=0
 # Controls
 Press ESC to toggle menu  
-Scroll wheel changes FOV
+Scroll wheel changes FOV  
+# TODO:
+1. Point Shadows  
+2. PBR rendering  
+3. Implement Depth testing in Tile Based Deffered Shader  
