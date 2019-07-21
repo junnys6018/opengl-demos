@@ -1,9 +1,8 @@
 #include "testBloom.h"
 #include "debug.h"
-#define BLUR_SCALE 1
-#define NR_PASSES 16
-TestBloom::TestBloom(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
+TestBloom::TestBloom(Camera& cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes)
+	:m_camera(cam), m_window(win), BLUR_SCALE(blur_scale), NR_PASSES(nr_passes),
+	m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
 {
 	s_Bloom = std::make_unique<Shader>("res/Shaders/Bloom/Bloom.shader");
 	s_Bloom->setVec3("viewPos", m_camera.getCameraPos());

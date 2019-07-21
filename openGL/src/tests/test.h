@@ -6,7 +6,10 @@
 #include <sstream>
 
 #include "imgui.h"
-#include <iostream> // remove after temp
+#include "GL/glew.h"
+#include "GLFW/glfw3.h"
+
+#include "Camera.h"
 class Test
 {
 public:
@@ -22,19 +25,25 @@ public:
 class TestManager
 {
 public:
-	TestManager();
+	TestManager(Camera& cam, GLFWwindow** win);
 	~TestManager();
 
 	void parseInput(std::string);
-	void registerTest(std::string, std::function<Test*()>);
+	void registerTest(std::string, std::function<Test* (Camera&, GLFWwindow*)>);
+	void registerTests();
 
-	void OnImGuiRender(unsigned int fps, float posX, float posY, float posZ, bool camInUse);
-
+	void gameLoop();
 	Test* m_currentTest;
 private:
-	std::vector<std::pair<std::string, std::function<Test*()>>> m_tests;
+	void OnImGuiRender(unsigned int fps);
+
+	std::vector<std::pair<std::string, std::function<Test* (Camera&, GLFWwindow*)>>> m_tests;
 	bool show_demo_window;
-	bool show_pos, show_overlay;
+	bool show_overlay;
+
+	// Used to initalise tests
+	Camera& m_camera;
+	GLFWwindow** m_window;
 };
 
-#endif 
+#endif

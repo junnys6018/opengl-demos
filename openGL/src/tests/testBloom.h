@@ -15,7 +15,7 @@
 class TestBloom : public Test
 {
 public:
-	TestBloom(Camera& cam, GLFWwindow* win);
+	TestBloom(Camera& cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes);
 	~TestBloom();
 
 	void OnUpdate() override;
@@ -39,6 +39,9 @@ private:
 
 	std::unique_ptr<UniformBuffer> u_Matrices;
 	std::unique_ptr<UniformBuffer> u_Lights;
+
+	const uint16_t BLUR_SCALE;
+	const uint16_t NR_PASSES;
 
 	unsigned int hdrFBO, depthRBO;
 	unsigned int colorBuffers[2];

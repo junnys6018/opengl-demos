@@ -15,9 +15,9 @@ struct PointLight
 	PointLight(glm::vec4 pos, glm::vec4 col, float intensity, float rad)
 		:position(pos), color(col), intensity(intensity), radius(rad)	{}
 };
-TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true), useTileBased(true), visualiseLights(false),
-	NUM_LIGHTS(128), exposure(0.5f)
+TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win, uint16_t nr_lights)
+	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true),
+	useTileBased(true), visualiseLights(false), NR_LIGHTS(nr_lights), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -27,7 +27,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	s_LightPass->setInt("gPosition", 0);
 	s_LightPass->setInt("gNormal", 1);
 	s_LightPass->setInt("gAlbedoSpec", 2);
-	s_LightPass->setInt("NUM_LIGHTS", NUM_LIGHTS);
+	s_LightPass->setInt("NUM_LIGHTS", NR_LIGHTS);
 	s_LightPass->setFloat("exposure", exposure);
 	s_Lamp = std::make_unique<Shader>("res/shaders/DeferredShading/Lamp4.shader");
 	s_FustrumCull = std::make_unique<Shader>("res/shaders/DeferredShading/cFustrumCull.shader");
@@ -35,7 +35,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	s_FustrumCull->setInt("gNormal", 1);
 	s_FustrumCull->setInt("gAlbedoSpec", 2);
 	s_FustrumCull->setVec2("resolution", sWidth, sHeight);
-	s_FustrumCull->setInt("NUM_LIGHTS", NUM_LIGHTS);
+	s_FustrumCull->setInt("NUM_LIGHTS", NR_LIGHTS);
 	s_FustrumCull->setFloat("exposure", exposure);
 	s_FinalPass = std::make_unique<Shader>("res/shaders/DeferredShading/FinalPass.shader");
 	s_FinalPass->setInt("Texture", 0);
@@ -64,7 +64,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	u_Matrix->Bind(1);
 	// Generate Lights
 	std::vector<PointLight> vecLight;
-	vecLight.reserve(NUM_LIGHTS);
+	vecLight.reserve(NR_LIGHTS);
 	genLightsInCylinder(vecLight, 12, 12);
 	//genLightsInRect(vecLight, glm::vec3(3, 6, 3), glm::vec3(0, 3, 0));
 	GLCall(glGenBuffers(1, &lightsSSBO));
@@ -79,7 +79,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0));
 	// Generate model matrices for lights
 	std::vector<glm::mat4> modelMatrices;
-	modelMatrices.reserve(NUM_LIGHTS);
+	modelMatrices.reserve(NR_LIGHTS);
 	for (int i = 0; i < vecLight.size(); i++)
 	{
 		glm::mat4 model = glm::mat4(1.0f);
@@ -90,7 +90,7 @@ TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win)
 	o_Cube->vertexArray->Bind();
 	GLCall(glGenBuffers(1, &modelVBO));
 	GLCall(glBindBuffer(GL_ARRAY_BUFFER, modelVBO));
-	GLCall(glBufferData(GL_ARRAY_BUFFER, NUM_LIGHTS * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW));
+	GLCall(glBufferData(GL_ARRAY_BUFFER, NR_LIGHTS * sizeof(glm::mat4), &modelMatrices[0], GL_STATIC_DRAW));
 
 	GLCall(glVertexAttribPointer(3, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)0));
 	GLCall(glEnableVertexAttribArray(3));
@@ -193,14 +193,14 @@ void TestDeferred::OnUpdate()
 		GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0)); // write to default framebuffer
 		GLCall(glBlitFramebuffer(0, 0, sWidth, sHeight, 0, 0, sWidth, sHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST));
 		GLCall(glBindFramebuffer(GL_FRAMEBUFFER, 0));
-		GLCall(glDrawElementsInstanced(GL_TRIANGLES, o_Cube->indexBuffer->getCount(), GL_UNSIGNED_INT, 0, NUM_LIGHTS));
+		GLCall(glDrawElementsInstanced(GL_TRIANGLES, o_Cube->indexBuffer->getCount(), GL_UNSIGNED_INT, 0, NR_LIGHTS));
 	}
 	timer[2].end();
 }
 
 void TestDeferred::OnImGuiRender()
 {
-	ImGui::Text("Number of Point Lights: %i", NUM_LIGHTS);
+	ImGui::Text("Number of Point Lights: %i", NR_LIGHTS);
 	ImGui::Checkbox("Use Tile Based Deferred Shading", &useTileBased);
 	if (useTileBased && ImGui::Checkbox("Visualise Lights", &visualiseLights))
 		s_FustrumCull->setBool("visualiseLights", visualiseLights);
@@ -322,7 +322,7 @@ void TestDeferred::genFrameBuffers()
 void TestDeferred::genLightsInCylinder(std::vector<PointLight>& vecLight, float RADIUS, float HEIGHT)
 {
 	srand((unsigned int)glfwGetTime());
-	for (int i = 0; i < NUM_LIGHTS; i++)
+	for (int i = 0; i < NR_LIGHTS; i++)
 	{
 		float angle = rand() % 360;
 		float height = (float)rand() / RAND_MAX * HEIGHT;
@@ -336,7 +336,7 @@ void TestDeferred::genLightsInCylinder(std::vector<PointLight>& vecLight, float 
 void TestDeferred::genLightsInRect(std::vector<PointLight>& vecLight, glm::vec3 dimensions, glm::vec3 center)
 {
 	srand((unsigned int)glfwGetTime());
-	for (int i = 0; i < NUM_LIGHTS; i++)
+	for (int i = 0; i < NR_LIGHTS; i++)
 	{
 		glm::vec3 min = center - 0.5f * dimensions;
 		glm::vec3 max = center + 0.5f * dimensions;

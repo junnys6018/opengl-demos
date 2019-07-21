@@ -20,7 +20,7 @@ void genLightAttibute(std::vector<PointLight>& vecLight, glm::vec4 position);
 class TestDeferred : public Test
 {
 public:
-	TestDeferred(Camera& cam, GLFWwindow* win);
+	TestDeferred(Camera& cam, GLFWwindow* win, uint16_t nr_lights);
 	~TestDeferred();
 
 	void OnUpdate() override;
@@ -53,7 +53,7 @@ private:
 	int renderMode, old_renderMode;
 	bool renderLights;
 	bool useTileBased, visualiseLights; // visualiseLights that intersect fustrum
-	const unsigned int NUM_LIGHTS;
+	const unsigned int NR_LIGHTS;
 	float exposure;
 
 	void genFrameBuffers();
