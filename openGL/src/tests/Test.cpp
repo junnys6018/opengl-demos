@@ -7,12 +7,12 @@
 
 #include "__Test__.h"
 #include "debug.h"
-uint16_t instances = 10000; // TEST_INSTANCING
+static uint16_t instances = 10000; // TEST_INSTANCING
 
-uint16_t blur_scale = 4; // TEST_BLOOM
-uint16_t nr_passes = 8;
+static uint16_t blur_scale = 4; // TEST_BLOOM
+static uint16_t nr_passes = 8;
 
-uint16_t nr_lights = 32; // TEST_DEFERRED
+static uint16_t nr_lights = 32; // TEST_DEFERRED
 TestManager::TestManager(Camera& cam, GLFWwindow** win)
 	:m_currentTest(nullptr), show_demo_window(false), show_overlay(true), m_camera(cam), m_window(win)
 {

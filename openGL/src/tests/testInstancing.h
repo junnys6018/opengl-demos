@@ -5,7 +5,8 @@
 #include "Shader.h"
 #include "Object.h"
 #include "Camera.h"
-#include "Utils/CubeMap.h"
+#include "CubeMap.h"
+#include "Timer.h"
 
 #include <memory>
 #include <cstdlib> // for rand() and srand()
@@ -22,7 +23,7 @@ public:
 private:
 	Camera& m_camera;
 	GLFWwindow* m_window;
-
+	Timer timer;
 	std::unique_ptr<VertexArray> QuadVA;
 	std::unique_ptr<VertexBuffer> QuadVB;
 	std::unique_ptr<Shader> s_Quad;

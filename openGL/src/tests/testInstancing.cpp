@@ -128,6 +128,7 @@ TestInstancing::~TestInstancing()
 
 void TestInstancing::OnUpdate()
 {
+	timer.begin();
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	if (m_drawQuads)
 	{
@@ -158,12 +159,14 @@ void TestInstancing::OnUpdate()
 		glDrawElementsInstanced(GL_TRIANGLES, o_Rock->indexBuffer->getCount(), GL_UNSIGNED_INT, (void*)0, m_amount);
 
 		m_skyBox->Draw(proj * glm::mat4(glm::mat3(m_camera.getViewMatrix())));
-
 	}
+	timer.end();
 }
 
 void TestInstancing::OnImGuiRender()
 {
+	ImGui::Text("Number of Instances: %i", m_amount);
+	ImGui::Text("Total GPU time: %.3f ms", timer.getTime() / 1.0e6f);
 	ImGui::Checkbox("toggle mode", &m_drawQuads);
 	if (ImGui::Checkbox("Wireframe Mode", &m_isWireFrame))
 		GLCall(glPolygonMode(GL_FRONT_AND_BACK, (m_isWireFrame ? GL_LINE : GL_FILL)));
