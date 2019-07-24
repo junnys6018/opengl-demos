@@ -107,7 +107,6 @@ TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
 	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	GLCall(glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor));
 	
-
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
 	GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0));
 	GLCall(glDrawBuffer(GL_NONE));
@@ -154,9 +153,15 @@ void TestShadows::OnUpdate()
 {
 	m_camera.move(m_window);
 
+	timer[0].begin();
 	shadowPass();
-	renderPass();
+	timer[0].end();
 
+	timer[1].begin();
+	renderPass();
+	timer[1].end();
+
+	timer[2].begin();
 	if (renderDepthMap)
 	{
 		m_quadVA->Bind();
@@ -165,6 +170,7 @@ void TestShadows::OnUpdate()
 		GLCall(glBindTexture(GL_TEXTURE_2D, depthMap));
 		GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	}
+	timer[2].end();
 }
 
 void TestShadows::OnImGuiRender()
@@ -172,6 +178,11 @@ void TestShadows::OnImGuiRender()
 	ImGui::Checkbox("Render depth map", &renderDepthMap);
 	if (ImGui::SliderFloat("angle", &m_lightAngle, 10.0f, 170.0f, "%.0f"))
 		calcLightFromAngle();
+	ImGui::Text("Shadow Pass: %.3f ms", (float)timer[0].getTime() / 1.0e6f);
+	ImGui::Text("Render (Lighting) Pass: %.3f ms", (float)timer[1].getTime() / 1.0e6f);
+	ImGui::Text("Rendering Depth: %.3f ms", (float)timer[2].getTime() / 1.0e6f);
+	ImGui::Text("Total GPU Time: %.3f ms",
+		(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime()) / 1.0e6f);
 }
 
 void TestShadows::shadowPass()
@@ -220,7 +231,7 @@ void TestShadows::renderPass()
 
 	glm::mat4 view = m_camera.getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	s_renderPass->setMat4("VP", proj * view);
 	s_renderPass->setVec3("viewPos", m_camera.getCameraPos());
 	u_matrix->Bind(0);

@@ -13,14 +13,15 @@ public:
 	glm::vec3 getCameraDir() const;
 	glm::vec3 getCameraRight() const;
 	glm::vec3 getCameraForward() const;
-
 	glm::mat4 getViewMatrix() const;
+	float getDeltaT() const;
+	float getFOV() const;
 
 	void setSpeed(const float speed);
+	void setFOV(const float FOV);
 
 	bool InUse() const { return m_InUse; }
 
-	float m_FOV;
 
 	void key_callback(GLFWwindow *window, int key, int action);
 	void mouse_callback(double xpos, double ypos);
@@ -29,12 +30,13 @@ public:
 	void resetPos();
 
 private:
+	float m_FOV;
 	float m_yaw, m_pitch;
 	float m_lastX, m_lastY;
 	float m_sensitivity, m_speed;
 	
 	bool m_firstMouse, m_InUse;
-	float prevtime, currtime;
+	float prevtime, currtime, delta;
 	glm::vec3 m_cameraPos;
 	glm::vec3 m_cameraDir;
 	glm::vec3 m_cameraRight;

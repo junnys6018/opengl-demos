@@ -174,6 +174,7 @@
   <ItemGroup>
     <ClCompile Include="src\Application.cpp" />
     <ClCompile Include="src\tests\testDeferred.cpp" />
+    <ClCompile Include="src\tests\testPointShadow.cpp" />
     <ClCompile Include="src\tests\testSSAO.cpp" />
     <ClCompile Include="src\Utils\Camera.cpp" />
     <ClCompile Include="src\Utils\IndexBuffer.cpp" />
@@ -231,6 +232,9 @@
     <None Include="res\Shaders\Rocks.shader" />
     <None Include="res\Shaders\QuadInstance.shader" />
     <None Include="res\Shaders\Shadows\DepthMap.shader" />
+    <None Include="res\shaders\Shadows\lamp5.shader" />
+    <None Include="res\shaders\Shadows\PointRenderPass.shader" />
+    <None Include="res\shaders\Shadows\PointShadowPass.shader" />
     <None Include="res\Shaders\Shadows\RenderPass.shader" />
     <None Include="res\Shaders\Shadows\ShadowPass.shader" />
     <None Include="res\Shaders\Simple.shader" />
@@ -376,6 +380,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\tests\testDeferred.h" />
+    <ClInclude Include="src\tests\testPointShadow.h" />
     <ClInclude Include="src\tests\testSSAO.h" />
     <ClInclude Include="src\Utils\callback.h" />
     <ClInclude Include="src\Utils\Camera.h" />

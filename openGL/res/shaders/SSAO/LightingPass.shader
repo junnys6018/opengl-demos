@@ -71,6 +71,6 @@ void main()
 		float distance = length(light.Position - fragPos);
 		float attenuation = 1.0 / (1.0 + 0.09 * distance + 0.032 * (distance * distance));
 
-		FragColor = vec4(attenuation * (diff + spec + 0.27 * ambientOcclusion) * light.Color * diffuse, 1.0);
+		FragColor = vec4((attenuation * (diff + spec) * light.Color + 0.27 * ambientOcclusion) * diffuse, 1.0);
 	}
 }

@@ -6,7 +6,7 @@ uniform mat4 model;
 layout(std140, binding = 0) uniform Matrix
 {
 	mat4 lightSpace;
-};;
+};
 
 
 void main()

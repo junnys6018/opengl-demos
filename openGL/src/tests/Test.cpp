@@ -73,6 +73,7 @@ void TestManager::registerTests()
 	});
 	registerTest("advLight", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
 	registerTest("Shadows", [](Camera & cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
+	registerTest("Point-Shadow", [](Camera & cam, GLFWwindow * win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
 	registerTest("NormMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); }, noInit);
 	registerTest("ParaMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
 	registerTest("Bloom", [](Camera & cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },

@@ -5,7 +5,8 @@
 #include "Shader.h"
 #include "Object.h"
 #include "Camera.h"
-#include "Utils/UniformBuffer.h"
+#include "UniformBuffer.h"
+#include "Timer.h"
 
 #include <memory>
 #include "glm/gtc/type_ptr.hpp"
@@ -22,6 +23,7 @@ public:
 private:
 	Camera& m_camera;
 	GLFWwindow* m_window;
+	Timer timer[3];
 
 	int sWidth, sHeight;
 	static const int SHADOW_WIDTH = 2048, SHADOW_HEIGHT = 2048;

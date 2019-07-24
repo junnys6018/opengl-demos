@@ -11,6 +11,7 @@
 	#include "testInstancing.h"
 	#include "testAdvLight.h"
 	#include "testShadows.h"
+	#include "testPointShadow.h"
 	#include "testNormalMap.h"
 	#include "testParallaxMap.h"
 	#include "testBloom.h"

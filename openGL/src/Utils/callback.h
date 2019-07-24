@@ -40,18 +40,19 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	if (camera.InUse())
 	{
-		if (camera.m_FOV >= 1.0f && camera.m_FOV <= 90.0f)
-			camera.m_FOV -= yoffset;
-		if (camera.m_FOV <= 1.0f)
-			camera.m_FOV = 1.0f;
-		if (camera.m_FOV >= 90.0f)
-			camera.m_FOV = 90.0f;
+		if (camera.getFOV() >= 1.0f && camera.getFOV() <= 90.0f)
+			camera.setFOV(camera.getFOV() - yoffset);
+		if (camera.getFOV() <= 1.0f)
+			camera.setFOV(1.0f);
+		if (camera.getFOV() >= 90.0f)
+			camera.setFOV(90.0f);
 
 	}
 
 }
 void printBasicInfo()
 {
+	std::cout << "HARDWARE INFO: "     <<                                  std::endl;
 	std::cout << "Status: Using GLEW " <<  glewGetString(GLEW_VERSION)  << std::endl;
 	std::cout << "OpenGl version: "    <<  glGetString(GL_VERSION)      << std::endl;
 	std::cout << "GLFW version: "      <<  glfwGetVersionString()       << std::endl;
@@ -72,5 +73,6 @@ void printBasicInfo()
 	GLCall(glGetIntegeri_v(GL_MAX_COMPUTE_WORK_GROUP_SIZE, 2, &work_grp_size[2]));
 	printf("max local (in one shader) work group sizes x:%i y:%i z:%i\n",
 		work_grp_size[0], work_grp_size[1], work_grp_size[2]);
+	std::cout << "-------------------------------------------------------------" << std::endl;
 }
 #endif

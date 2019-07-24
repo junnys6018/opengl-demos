@@ -30,9 +30,21 @@ glm::mat4 Camera::getViewMatrix() const
 {
 	return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
 }
+float Camera::getDeltaT() const
+{
+	return delta;
+}
+float Camera::getFOV() const
+{
+	return m_FOV;
+}
 void Camera::setSpeed(const float speed)
 {
 	m_speed = speed;
+}
+void Camera::setFOV(const float FOV)
+{
+	m_FOV = FOV;
 }
 void Camera::resetPos()
 {
@@ -92,7 +104,7 @@ void Camera::key_callback(GLFWwindow *window, int key, int action)
 bool Camera::move(GLFWwindow* window)
 {
 	currtime = glfwGetTime();
-	float delta = currtime - prevtime;
+	delta = currtime - prevtime;
 	prevtime = currtime;
 	bool activated = false;
 	if (m_InUse)

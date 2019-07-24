@@ -71,7 +71,7 @@ void TestFrameBuf::OnUpdate()
 	glm::mat4 view = m_camera.getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	// Floor
 	FloorVA->Bind();
 	FloorTex->Bind(0);

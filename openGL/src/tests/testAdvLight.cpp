@@ -62,7 +62,7 @@ void TestAdvLight::OnUpdate()
 	glm::mat4 view = m_camera.getViewMatrix();
 	u_matrix->setData(0, (void*)glm::value_ptr(view), MAT4);
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	u_matrix->setData(1, (void*)glm::value_ptr(proj), MAT4);
 
 	s_blinnPhong->Use();

@@ -81,7 +81,7 @@ void TestBloom::OnUpdate()
 	model = glm::scale(model, glm::vec3(0.01f));
 	s_Bloom->setMat4("model", model);
 	u_Matrices->setData(0, (void*)glm::value_ptr(m_camera.getViewMatrix()), MAT4);
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.m_FOV), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	u_Matrices->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_Bloom);

@@ -123,7 +123,7 @@ void TestAdvancedGL::OnUpdate()
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(camera.m_FOV), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
 
 	GLCall(glEnable(GL_STENCIL_TEST));
 	// floor

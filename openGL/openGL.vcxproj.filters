@@ -96,6 +96,9 @@
     <ClCompile Include="src\Utils\TImer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\testPointShadow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -532,6 +535,9 @@
     <None Include="res\shaders\SSAO\LightingPass.shader" />
     <None Include="res\shaders\SSAO\OcclusionPass.shader" />
     <None Include="res\shaders\SSAO\BlurPass.shader" />
+    <None Include="res\shaders\Shadows\PointShadowPass.shader" />
+    <None Include="res\shaders\Shadows\PointRenderPass.shader" />
+    <None Include="res\shaders\Shadows\lamp5.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
@@ -1357,6 +1363,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Utils\Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\testPointShadow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
