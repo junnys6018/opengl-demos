@@ -7,6 +7,10 @@
 
 #include "__Test__.h"
 #include "debug.h"
+
+#define NAME 0
+#define INIT 1
+#define VARS 2
 static uint16_t instances = 10000; // TEST_INSTANCING
 
 static uint16_t blur_scale = 4; // TEST_BLOOM
@@ -32,10 +36,10 @@ void TestManager::parseInput(std::string line)
 		bool success = false;
 		s >> token;
 		for (auto test : m_tests)
-			if (test.first == token)
+			if (std::get<NAME>(test) == token)
 			{
 				delete m_currentTest;
-				m_currentTest = test.second(m_camera, *m_window);
+				m_currentTest = std::get<INIT>(test)(m_camera, *m_window);
 				success = true;
 				break;
 			}
@@ -44,54 +48,52 @@ void TestManager::parseInput(std::string line)
 	}
 }
 
-void TestManager::registerTest(std::string name, std::function<Test* (Camera&, GLFWwindow*)> fp)
+void TestManager::registerTest(std::string name, std::function<Test* (Camera&, GLFWwindow*)> initalizer, std::function<bool()> varInit)
 {
-	m_tests.push_back(std::make_pair(name, fp));
+	m_tests.push_back(std::make_tuple(name, initalizer, varInit));
 }
 
 void TestManager::registerTests()
 {
-	registerTest("triangle", [](Camera& cam, GLFWwindow* win)->Test * {return new TestTriangle(); });
-	registerTest("planets", [](Camera & cam, GLFWwindow * win)->Test * {return new TestPlanets(cam, win); });
-	registerTest("lighting", [](Camera & cam, GLFWwindow * win)->Test * {return new TestLighting(cam, win); });
-	registerTest("advOpenGL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvancedGL(cam, win); });
-	registerTest("frameBuf", [](Camera & cam, GLFWwindow * win)->Test * {return new TestFrameBuf(cam, win); });
-	registerTest("cubeMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestCubeMap(cam, win); });
-	registerTest("advGLSL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); });
-	registerTest("Instancing", [](Camera & cam, GLFWwindow * win)->Test * {
+	auto noInit = []()->bool {return true; };
+	registerTest("triangle", [](Camera & cam, GLFWwindow * win)->Test * {return new TestTriangle(); }, noInit);
+	registerTest("planets", [](Camera & cam, GLFWwindow * win)->Test * {return new TestPlanets(cam, win); }, noInit);
+	registerTest("lighting", [](Camera & cam, GLFWwindow * win)->Test * {return new TestLighting(cam, win); }, noInit);
+	registerTest("advOpenGL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvancedGL(cam, win); }, noInit);
+	registerTest("frameBuf", [](Camera & cam, GLFWwindow * win)->Test * {return new TestFrameBuf(cam, win); }, noInit);
+	registerTest("cubeMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestCubeMap(cam, win); }, noInit);
+	registerTest("advGLSL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
+	registerTest("Instancing", [](Camera & cam, GLFWwindow * win)->Test * { return new TestInstancing(cam, win, instances); },
+		[]()->bool {
 		ImGui::Text("#instances:");
 		ImGui::PushItemWidth(-1);
 		ImGui::InputScalar("##Value", ImGuiDataType_U16, &instances);
 		ImGui::PopItemWidth();
-		if (ImGui::Button("Enter"))
-			return new TestInstancing(cam, win, instances);
-		else return nullptr;
+		return ImGui::Button("Enter");
 	});
-	registerTest("advLight", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); });
-	registerTest("Shadows", [](Camera & cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); });
-	registerTest("NormMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); });
-	registerTest("ParaMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); });
-	registerTest("Bloom", [](Camera & cam, GLFWwindow * win)->Test * {
+	registerTest("advLight", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
+	registerTest("Shadows", [](Camera & cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
+	registerTest("NormMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); }, noInit);
+	registerTest("ParaMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
+	registerTest("Bloom", [](Camera & cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
+		[]()->bool {
 		ImGui::PushItemWidth(-1);
 		ImGui::Text("Blur Scale:");
 		ImGui::InputScalar("##Value0", ImGuiDataType_U16, &blur_scale);
 		ImGui::Text("# of Blur passes");
 		ImGui::InputScalar("##Value1", ImGuiDataType_U16, &nr_passes);
 		ImGui::PopItemWidth();
-		if (ImGui::Button("Enter"))
-			return new TestBloom(cam, win, blur_scale, nr_passes);
-		else return nullptr;
+		return ImGui::Button("Enter");
 	});
-	registerTest("Deferred", [](Camera & cam, GLFWwindow * win)->Test * {
+	registerTest("Deferred", [](Camera & cam, GLFWwindow * win)->Test * { return new TestDeferred(cam, win, nr_lights); },
+		[]()->bool {
 		ImGui::Text("# Lights");
 		ImGui::PushItemWidth(-1);
 		ImGui::InputScalar("##Value", ImGuiDataType_U16, &nr_lights);
 		ImGui::PopItemWidth();
-		if (ImGui::Button("Enter"))
-			return new TestDeferred(cam, win, nr_lights);
-		else return nullptr;
+		return ImGui::Button("Enter");
 	});
-	registerTest("SSAO", [](Camera & cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); });
+	registerTest("SSAO", [](Camera & cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
 }
 
 void TestManager::OnImGuiRender(unsigned int fps)
@@ -125,9 +127,9 @@ void TestManager::OnImGuiRender(unsigned int fps)
 				unsigned int index = i;
 				while (true)
 				{
-					if (ImGui::Button(m_tests[index].first.c_str(), ImVec2(120.0f, 25.0f)))
+					if (ImGui::Button(std::get<NAME>(m_tests[index]).c_str(), ImVec2(120.0f, 25.0f)))
 					{
-						ImGui::OpenPopup(m_tests[index].first.c_str());
+						ImGui::OpenPopup(std::get<NAME>(m_tests[index]).c_str());
 					}
 					index += maxButtonCol;
 					if (index < m_tests.size())
@@ -138,9 +140,12 @@ void TestManager::OnImGuiRender(unsigned int fps)
 
 			for (int i = 0; i < m_tests.size(); ++i)
 			{
-				if (ImGui::BeginPopup(m_tests[i].first.c_str()))
+				if (ImGui::BeginPopup(std::get<NAME>(m_tests[i]).c_str()))
 				{
-					m_currentTest = m_tests[i].second(m_camera, *m_window);
+					if (std::get<VARS>(m_tests[i])())
+					{
+						m_currentTest = std::get<INIT>(m_tests[i])(m_camera, *m_window);
+					}
 					ImGui::EndPopup();
 				}
 			}

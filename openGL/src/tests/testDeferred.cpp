@@ -242,7 +242,7 @@ void TestDeferred::OnImGuiRender()
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	bool isSizeMod16 = (width % 16 == 0) && (height % 16 == 0);
-	ImGui::Text("Width: %i, Height: %i, %s", width, height, isSizeMod16 ? "true" : "false");
+	ImGui::Text("Width: %i, Height: %i, isSizeMod16 ? %s", width, height, isSizeMod16 ? "true" : "false");
 }
 
 void TestDeferred::framebuffer_size_callback(int width, int height)
@@ -254,6 +254,7 @@ void TestDeferred::framebuffer_size_callback(int width, int height)
 		sHeight = height - height % 16;
 		s_FustrumCull->setVec2("resolution", sWidth, sHeight);
 		glfwSetWindowSize(m_window, sWidth, sHeight);
+		GLCall(glViewport(0, 0, sWidth, sHeight));
 		genFrameBuffers();
 	}
 }

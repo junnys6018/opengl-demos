@@ -29,7 +29,7 @@ public:
 	~TestManager();
 
 	void parseInput(std::string);
-	void registerTest(std::string, std::function<Test* (Camera&, GLFWwindow*)>);
+	void registerTest(std::string, std::function<Test* (Camera&, GLFWwindow*)>, std::function<bool()>);
 	void registerTests();
 
 	void gameLoop();
@@ -37,7 +37,7 @@ public:
 private:
 	void OnImGuiRender(unsigned int fps);
 
-	std::vector<std::pair<std::string, std::function<Test* (Camera&, GLFWwindow*)>>> m_tests;
+	std::vector<std::tuple<std::string, std::function<Test* (Camera&, GLFWwindow*)>, std::function<bool()>>> m_tests;
 	bool show_demo_window;
 	bool show_overlay;
 
