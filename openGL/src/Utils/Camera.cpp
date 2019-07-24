@@ -46,6 +46,10 @@ void Camera::setFOV(const float FOV)
 {
 	m_FOV = FOV;
 }
+void Camera::setPos(const glm::vec3 pos)
+{
+	m_cameraPos = pos;
+}
 void Camera::resetPos()
 {
 	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace

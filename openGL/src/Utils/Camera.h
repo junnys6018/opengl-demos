@@ -19,6 +19,7 @@ public:
 
 	void setSpeed(const float speed);
 	void setFOV(const float FOV);
+	void setPos(const glm::vec3 pos);
 
 	bool InUse() const { return m_InUse; }
 

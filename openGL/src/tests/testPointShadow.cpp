@@ -146,7 +146,9 @@ TestPointShadows::~TestPointShadows()
 
 void TestPointShadows::OnUpdate()
 {
-	if (m_camera.move(m_window))
+	if (snapToLight)
+		m_camera.setPos(lightPos);
+	else if (m_camera.move(m_window))
 		s_RenderPass->setVec3("viewPos", m_camera.getCameraPos());
 	if (movePointLight)
 	{
@@ -156,7 +158,6 @@ void TestPointShadows::OnUpdate()
 			time = 0.0f;
 		lightPos = glm::vec3(cosf(1.5f * time), 0.75, sinf(1.5f * time));
 	}
-
 	// Shadow Pass
 	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO));
@@ -220,6 +221,7 @@ void TestPointShadows::configureModelsAndDraw(Shader& shader, Draw_Flags flags)
 
 void TestPointShadows::OnImGuiRender()
 {
+	ImGui::Checkbox("Snap to Light", &snapToLight);
 	if (ImGui::Checkbox("Visualise Depth Map", &visualiseDepthMap))
 		s_RenderPass->setBool("renderDepthMap", visualiseDepthMap);
 	ImGui::Checkbox("Move Point Light", &movePointLight);

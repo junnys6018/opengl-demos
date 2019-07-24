@@ -28,7 +28,7 @@ private:
 
 	int sWidth, sHeight;
 	const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-	bool visualiseDepthMap, movePointLight;
+	bool visualiseDepthMap, movePointLight, snapToLight;
 	glm::vec3 lightPos;
 	glm::vec3 lightColor;
 	float time;
