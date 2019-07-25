@@ -95,6 +95,8 @@ void TestManager::registerTests()
 		return ImGui::Button("Enter");
 	});
 	registerTest("SSAO", [](Camera & cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
+	registerTest("Direct-PBR", [](Camera & cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
+	registerTest("IBL-PBR", [](Camera & cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win); }, noInit);
 }
 
 void TestManager::OnImGuiRender(unsigned int fps)
@@ -133,10 +135,21 @@ void TestManager::OnImGuiRender(unsigned int fps)
 						ImGui::OpenPopup(std::get<NAME>(m_tests[index]).c_str());
 					}
 					index += maxButtonCol;
-					if (index < m_tests.size())
+					if (index < 16) // first 16 tests are non pbr
 						ImGui::SameLine(0.0f, 20.0f);
 					else break;
 				}
+			}
+			// PBR tests
+			ImGui::Separator();
+			ImGui::Text("Physically Based Rendering");
+			for (int i = 16; i != 18; i++)
+			{
+				if (ImGui::Button(std::get<NAME>(m_tests[i]).c_str(), ImVec2(120.0f, 25.0f)))
+				{
+					ImGui::OpenPopup(std::get<NAME>(m_tests[i]).c_str());
+				}
+					ImGui::SameLine(0.0f, 20.0f);
 			}
 
 			for (int i = 0; i < m_tests.size(); ++i)

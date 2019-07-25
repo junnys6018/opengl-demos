@@ -188,12 +188,15 @@ void TestPointShadows::OnUpdate()
 	timer[1].end();
 	// Lamp Pass
 	timer[2].begin();
-	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::translate(model, lightPos);
-	model = glm::scale(model, glm::vec3(0.1f));
-	s_LampPass->setMat4("MVP", proj * view * model);
-	m_CubeVA->Bind();
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+	if (!snapToLight)
+	{
+		glm::mat4 model = glm::mat4(1.0f);
+		model = glm::translate(model, lightPos);
+		model = glm::scale(model, glm::vec3(0.1f));
+		s_LampPass->setMat4("MVP", proj * view * model);
+		m_CubeVA->Bind();
+		GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+	}	
 	timer[2].end();
 }
 void TestPointShadows::configureModelsAndDraw(Shader& shader, Draw_Flags flags)

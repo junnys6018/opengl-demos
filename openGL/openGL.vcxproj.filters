@@ -99,6 +99,12 @@
     <ClCompile Include="src\tests\testPointShadow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\tests\PBR\testDirectPBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\PBR\testIBL_PBR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -1366,6 +1372,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\testPointShadow.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\PBR\testDirectPBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\PBR\testIBL_PBR.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

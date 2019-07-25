@@ -18,5 +18,8 @@
 	#include "testDeferred.h"
 	#include "testSSAO.h"
 
+	#include "PBR/testDirectPBR.h"
+	#include "PBR/testIBL_PBR.h"
+
 #endif
 
