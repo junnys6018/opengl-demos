@@ -24,6 +24,7 @@ private:
 
 	int sWidth, sHeight, renderMode, oldrenderMode;
 	float metalness, roughness;
+	bool paraMapping;
 
 	glm::vec3 lightPos[4] = {
 		glm::vec3(0.2f,  1.3f,  3.2f),
@@ -32,16 +33,15 @@ private:
 		glm::vec3(-0.3f, -0.4f, -3.0f),
 	};
 	glm::vec3 lightColor[4] = {
-		glm::vec3(23.47f, 21.31f, 20.79f),
-		glm::vec3(15.12f, 20.23f, 2.024f),
-		glm::vec3(4.021f, 23.03f, 20.23f),
-		glm::vec3(10.23f, 12.03f, 11.20f),
+		glm::vec3(0.070f , 21.31f, 0.01f ),
+		glm::vec3(15.12f, 20.23f, 0.024f),
+		glm::vec3(0.021f, 23.03f, 20.23f),
+		glm::vec3(12.23f, 12.03f, 11.20f),
 	};
 
 	std::unique_ptr<Object> o_Sphere;
+	std::unique_ptr<Object> o_Cylinder;
 	std::unique_ptr<Object> o_Cube;
-	std::unique_ptr<VertexBuffer> QuadVB;
-	std::unique_ptr<VertexArray> QuadVA;
 
 	std::unique_ptr<Shader> s_Shader;
 	std::unique_ptr<Shader> s_Lamp;
@@ -50,6 +50,7 @@ private:
 	std::unique_ptr<Texture> t_Normal;
 	std::unique_ptr<Texture> t_Metalness;
 	std::unique_ptr<Texture> t_Roughness;
+	std::unique_ptr<Texture> t_Displacement;
 
 };
 #endif

@@ -2,24 +2,13 @@
 #include "debug.h"
 
 TestDirectPBR::TestDirectPBR(Camera& cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), renderMode(0), oldrenderMode(0), metalness(0.0f), roughness(0.001f)
+	:m_camera(cam), m_window(win), renderMode(0), oldrenderMode(0), metalness(0.0f), roughness(0.001f), paraMapping(false)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
 	o_Sphere = std::make_unique<Object>("res/Objects/sphere.obj");
+	o_Cylinder = std::make_unique<Object>("res/Objects/cylinder.obj", OBJECT_INIT_FLAGS_GEN_TANGENT);
 	o_Cube = std::make_unique<Object>("res/Objects/cube.obj");
-	float quadVertices[] = {
-		// positions        // Normals       // texture Coords
-		 2.0f,  2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-		-2.0f,  2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 1.0f,
-		-2.0f, -2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-
-		 2.0f,  2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 1.0f,
-		-2.0f, -2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  0.0f, 0.0f,
-		 2.0f, -2.0f, 0.0f,  0.0f, 0.0f, 1.0f,  1.0f, 0.0f
-	};
-	QuadVB = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices));
-	QuadVA = std::unique_ptr<VertexArray>(new VertexArray(*QuadVB, GL_FLOAT, { 3,3,2 }));
 
 	s_Shader = std::make_unique<Shader>("res/shaders/PBR/Direct.shader");
 	s_Lamp = std::make_unique<Shader>("res/shaders/Shadows/lamp5.shader");
@@ -35,16 +24,19 @@ TestDirectPBR::TestDirectPBR(Camera& cam, GLFWwindow* win)
 	s_Shader->setInt("Normal", 1);
 	s_Shader->setInt("Metalness", 2);
 	s_Shader->setInt("Roughness", 3);
+	s_Shader->setInt("DispMap", 4);
 
 	t_Albedo = std::make_unique<Texture>("res/Textures/PBR/future_panel/d.jpg");
 	t_Normal = std::make_unique<Texture>("res/Textures/PBR/future_panel/n.jpg");
 	t_Metalness = std::make_unique<Texture>("res/Textures/PBR/future_panel/m.jpg");
 	t_Roughness = std::make_unique<Texture>("res/Textures/PBR/future_panel/r.jpg");
+	t_Displacement = std::make_unique<Texture>("res/Textures/PBR/future_panel/h.jpg");
 
 	t_Albedo->Bind(0);
 	t_Normal->Bind(1);
 	t_Metalness->Bind(2);
 	t_Roughness->Bind(3);
+	t_Displacement->Bind(4);
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
@@ -75,13 +67,11 @@ void TestDirectPBR::OnUpdate()
 
 	model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(-4.0f, 0.0f, 0.0f));
-	//model = glm::scale(model, glm::vec3(1.5f));
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::rotate(model, 0.05f * (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::scale(model, glm::vec3(3.0f));
 	s_Shader->setMat4("model", model);
 	s_Shader->setBool("useSamplers", true);
-	QuadVA->Bind();
-	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
-	// o_Sphere->Draw(*s_Shader, DRAW_FLAGS_TRIANGLE_STRIP);
+	o_Cylinder->Draw(*s_Shader);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -111,6 +101,11 @@ void TestDirectPBR::OnImGuiRender()
 	{
 		s_Shader->setFloat("roughness", roughness);
 	}
+	if (ImGui::RadioButton("Normal Mapping", (int*)& paraMapping, 0) || ImGui::RadioButton("Para Mapping", (int*)& paraMapping, 1))
+	{
+		s_Shader->setBool("paraMapping", paraMapping);
+	}
+	ImGui::Separator();
 	ImGui::RadioButton("Lighting", &renderMode, 0);
 	ImGui::RadioButton("Diffuse", &renderMode, 1);
 	ImGui::RadioButton("Specular", &renderMode, 2);

@@ -91,6 +91,7 @@ bool write_to_file(const std::string& filename,
 	std::vector<std::string>& mtlPaths,
 	std::vector<Material_ptr>& mat_ptrs);
 bool generate_sphere(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& indexBuffer);
+void generate_cylinder(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& indexBuffer);
 int main()
 {
 	std::string inputfile, outputfile;
@@ -109,7 +110,8 @@ int main()
 
 	std::vector<Vertex> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
-	generate_sphere(vertexBuffer, indexBuffer);
+	//generate_sphere(vertexBuffer, indexBuffer);
+	generate_cylinder(vertexBuffer, indexBuffer);
 	//expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
 	write_to_file(inputfile + ".expanded", vertexBuffer, indexBuffer, mtlPaths, mat_ptrs);
 
@@ -302,6 +304,49 @@ bool generate_sphere(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& i
 		oddRow = !oddRow;
 	}
 	return true;
+}
+void generate_cylinder(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& indexBuffer)
+{
+	const int NR_TEXTURE_WRAPS = 3;
+	const float PI = 3.14159265359;
+	float height = 1.0f;
+	float radius = NR_TEXTURE_WRAPS / (2.0f * PI); // circumference is NR_TEXTURE_WRAPS;
+	const unsigned int X_SEGMENTS = 64;
+	const unsigned int Y_SEGMENTS = 64;
+
+	for (unsigned int y = 0; y < Y_SEGMENTS; ++y)
+	{
+		for (unsigned int x = 0; x < X_SEGMENTS; ++x)
+		{
+			float xSegment = (float)x / (float)(X_SEGMENTS - 1);
+			float ySegment = (float)y / (float)(Y_SEGMENTS - 1);
+
+			float xPos = radius * cosf(xSegment * 2.0f * PI);
+			float yPos = (ySegment - 0.5f) * height;
+			float zPos = radius * sinf(xSegment * 2.0f * PI);
+
+			vec3 Pos(xPos, yPos, zPos);
+			vec3 Norm(xPos, 0.0f, zPos);
+			vec2 UV(xSegment * NR_TEXTURE_WRAPS, ySegment);
+
+			vertexBuffer.emplace_back(Pos, UV, Norm);
+		}
+	}
+	auto index = [X_SEGMENTS](int x, int y)->unsigned int { return (y - 1) * X_SEGMENTS + x; };
+	for (unsigned int y = 1; y < Y_SEGMENTS; ++y)
+	{
+		for (unsigned int x = 1; x < X_SEGMENTS; ++x)
+		{
+			indexBuffer.push_back(index(x, y));
+			indexBuffer.push_back(index(x + 1, y + 1));
+			indexBuffer.push_back(index(x, y + 1));
+
+			indexBuffer.push_back(index(x, y));
+			indexBuffer.push_back(index(x + 1, y));
+			indexBuffer.push_back(index(x + 1, y + 1));
+		}
+
+	}
 }
 inline std::string calc_root_dir(std::string filepath)
 // given "res/Objects/Pokemon/Pikachu.obj" returns "res/Objects/Pokemon/"
