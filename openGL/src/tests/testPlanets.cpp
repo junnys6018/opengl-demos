@@ -105,7 +105,7 @@ void TestPlanets::OnUpdate()
 		model_sphere = glm::translate(model_sphere, glm::vec3(m_radii[i], 0.0f, 0.0f));
 		model_sphere = glm::scale(model_sphere, glm::vec3(m_size[i]));
 		m_simpleShader->setMat4("MVP", proj * view * model_sphere);
-		m_sphere->Draw(*m_simpleShader);
+		m_sphere->Draw(*m_simpleShader, DRAW_FLAGS_TRIANGLE_STRIP);
 	}
 
 	m_cubeShader->Use();

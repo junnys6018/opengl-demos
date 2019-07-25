@@ -90,7 +90,7 @@ bool write_to_file(const std::string& filename,
 	const std::vector<unsigned>& indexBuffer,
 	std::vector<std::string>& mtlPaths,
 	std::vector<Material_ptr>& mat_ptrs);
-
+bool generate_sphere(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& indexBuffer);
 int main()
 {
 	std::string inputfile, outputfile;
@@ -105,11 +105,12 @@ int main()
 	std::vector<std::string> mtlPaths;
 	std::vector<Material_ptr> mat_ptrs;
 
-	buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
+	//buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
 
 	std::vector<Vertex> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
-	expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
+	generate_sphere(vertexBuffer, indexBuffer);
+	//expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
 	write_to_file(inputfile + ".expanded", vertexBuffer, indexBuffer, mtlPaths, mat_ptrs);
 
 	std::chrono::steady_clock::time_point b = std::chrono::steady_clock::now();
@@ -259,7 +260,49 @@ bool write_to_file(const std::string& filename,
 	}
 	return true;
 }
+bool generate_sphere(std::vector<Vertex>& vertexBuffer, std::vector<unsigned>& indexBuffer)
+{
+	const unsigned int X_SEGMENTS = 64;
+	const unsigned int Y_SEGMENTS = 64;
+	const float PI = 3.14159265359;
+	for (unsigned int y = 0; y <= Y_SEGMENTS; ++y)
+	{
+		for (unsigned int x = 0; x <= X_SEGMENTS; ++x)
+		{
+			float xSegment = (float)x / (float)X_SEGMENTS;
+			float ySegment = (float)y / (float)Y_SEGMENTS;
+			float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+			float yPos = std::cos(ySegment * PI);
+			float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
 
+			vec3 pos(xPos, yPos, zPos);
+			vec2 UV(xSegment, ySegment);
+			vertexBuffer.emplace_back(pos, UV, pos);
+		}
+	}
+	bool oddRow = false;
+	for (int y = 0; y < Y_SEGMENTS; ++y)
+	{
+		if (!oddRow) // even rows: y == 0, y == 2; and so on
+		{
+			for (int x = 0; x <= X_SEGMENTS; ++x)
+			{
+				indexBuffer.push_back(y * (X_SEGMENTS + 1) + x);
+				indexBuffer.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+			}
+		}
+		else
+		{
+			for (int x = X_SEGMENTS; x >= 0; --x)
+			{
+				indexBuffer.push_back((y + 1) * (X_SEGMENTS + 1) + x);
+				indexBuffer.push_back(y * (X_SEGMENTS + 1) + x);
+			}
+		}
+		oddRow = !oddRow;
+	}
+	return true;
+}
 inline std::string calc_root_dir(std::string filepath)
 // given "res/Objects/Pokemon/Pikachu.obj" returns "res/Objects/Pokemon/"
 {

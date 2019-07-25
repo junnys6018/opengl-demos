@@ -35,6 +35,8 @@ enum Draw_Flags
 	DRAW_FLAGS_DIFFUSE = 1,
 	DRAW_FLAGS_SPECULAR = 1 << 1,
 	DRAW_FLAGS_NORMAL = 1 << 2,
+
+	DRAW_FLAGS_TRIANGLE_STRIP = 1 << 3,
 };
 Draw_Flags operator|(Draw_Flags lhs, Draw_Flags rhs);
 

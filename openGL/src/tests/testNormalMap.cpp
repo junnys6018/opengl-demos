@@ -93,7 +93,7 @@ void TestNormMap::OnUpdate()
 		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(0.05f));
 		s_lamp->setMat4("MVP", proj * view * model);
-		o_sphere->Draw(*s_lamp);
+		o_sphere->Draw(*s_lamp, DRAW_FLAGS_TRIANGLE_STRIP);
 	}
 }
 

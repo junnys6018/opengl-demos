@@ -70,7 +70,7 @@ void TestAdvLight::OnUpdate()
 	floorVA->Bind();
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	if (m_renderLamps)
-		o_sphere->Draw(*s_lamp);
+		o_sphere->Draw(*s_lamp, DRAW_FLAGS_TRIANGLE_STRIP);
 }
 
 void TestAdvLight::OnImGuiRender()

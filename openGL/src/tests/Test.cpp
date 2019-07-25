@@ -143,7 +143,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 			// PBR tests
 			ImGui::Separator();
 			ImGui::Text("Physically Based Rendering");
-			for (int i = 16; i != 18; i++)
+			for (int i = 16; i != m_tests.size(); i++)
 			{
 				if (ImGui::Button(std::get<NAME>(m_tests[i]).c_str(), ImVec2(120.0f, 25.0f)))
 				{

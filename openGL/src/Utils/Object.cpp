@@ -161,6 +161,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 				unsigned int i;
 				sscanf_s(token, "%ui", &i);
 				iBuf.push_back(i - 1);
+				fIndex++;
 
 				size_t n = strspn(token, "/1234567890");
 				token += n;
@@ -172,7 +173,6 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 			{
 				mat_ptrs.emplace_back(-1, 0);
 			}
-			fIndex += 3;
 			continue;
 		}
 
@@ -388,7 +388,8 @@ void Object::Draw(const Shader& shader, Draw_Flags flags)
 				shader.setInt("SpecMap", 2);
 			}
 		}
-		GLCall(glDrawElements(GL_TRIANGLES, mat_ptr.m_count, GL_UNSIGNED_INT,
+		GLenum mode = flags & DRAW_FLAGS_TRIANGLE_STRIP ? GL_TRIANGLE_STRIP : GL_TRIANGLES;
+		GLCall(glDrawElements(mode, mat_ptr.m_count, GL_UNSIGNED_INT,
 			(void*)(mat_ptr.m_offset * sizeof(unsigned int))));
 	}
 }

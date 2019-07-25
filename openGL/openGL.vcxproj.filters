@@ -544,6 +544,7 @@
     <None Include="res\shaders\Shadows\PointShadowPass.shader" />
     <None Include="res\shaders\Shadows\PointRenderPass.shader" />
     <None Include="res\shaders\Shadows\lamp5.shader" />
+    <None Include="res\shaders\PBR\Direct.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
