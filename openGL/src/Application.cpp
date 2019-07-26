@@ -22,6 +22,7 @@ int main(int argc, char* argv[])
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		return -1;
+	glfwWindowHint(GLFW_SAMPLES, 4);
 	window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
 	test_mgr.registerTests(); // tests need to be registered after window is initilaised
 	if (!window)
@@ -33,7 +34,7 @@ int main(int argc, char* argv[])
 	glfwSwapInterval(1); // enable vsync
 	if (glewInit() != GLEW_OK)
 		std::cout << "GLEW init error\n";
-
+	GLCall(glEnable(GL_MULTISAMPLE));
 	printBasicInfo();
 
 	// Set callback functions

@@ -26,17 +26,7 @@ TestDirectPBR::TestDirectPBR(Camera& cam, GLFWwindow* win)
 	s_Shader->setInt("Roughness", 3);
 	s_Shader->setInt("DispMap", 4);
 
-	t_Albedo = std::make_unique<Texture>("res/Textures/PBR/future_panel/d.jpg");
-	t_Normal = std::make_unique<Texture>("res/Textures/PBR/future_panel/n.jpg");
-	t_Metalness = std::make_unique<Texture>("res/Textures/PBR/future_panel/m.jpg");
-	t_Roughness = std::make_unique<Texture>("res/Textures/PBR/future_panel/r.jpg");
-	t_Displacement = std::make_unique<Texture>("res/Textures/PBR/future_panel/h.jpg");
-
-	t_Albedo->Bind(0);
-	t_Normal->Bind(1);
-	t_Metalness->Bind(2);
-	t_Roughness->Bind(3);
-	t_Displacement->Bind(4);
+	generateTextures("ivory_panel", ".jpg");
 
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
@@ -105,18 +95,33 @@ void TestDirectPBR::OnImGuiRender()
 	{
 		s_Shader->setBool("paraMapping", paraMapping);
 	}
-	ImGui::Separator();
-	ImGui::RadioButton("Lighting", &renderMode, 0);
-	ImGui::RadioButton("Diffuse", &renderMode, 1);
-	ImGui::RadioButton("Specular", &renderMode, 2);
-	ImGui::RadioButton("Distribution", &renderMode, 3);
-	ImGui::RadioButton("Freshnel", &renderMode, 4);
-	ImGui::RadioButton("Geometry", &renderMode, 5);
-	// only update flags if it changed
-	if (renderMode != oldrenderMode)
+	if (ImGui::CollapsingHeader("Render Target"))
 	{
-		oldrenderMode = renderMode;
-		s_Shader->setInt("renderMode", renderMode);
+		ImGui::RadioButton("Lighting", &renderMode, 0);
+		ImGui::RadioButton("Diffuse", &renderMode, 1);
+		ImGui::RadioButton("Specular", &renderMode, 2);
+		ImGui::RadioButton("Distribution", &renderMode, 3);
+		ImGui::RadioButton("Freshnel", &renderMode, 4);
+		ImGui::RadioButton("Geometry", &renderMode, 5);
+		// only update flags if it changed
+		if (renderMode != oldrenderMode)
+		{
+			oldrenderMode = renderMode;
+			s_Shader->setInt("renderMode", renderMode);
+		}
+	}
+	if (ImGui::CollapsingHeader("Textures"))
+	{
+		if (ImGui::Button("Future Panel", ImVec2(120.0f, 25.0f)))
+			generateTextures("future_panel", ".jpg");
+		if (ImGui::Button("Ivory Panel", ImVec2(120.0f, 25.0f)))
+			generateTextures("ivory_panel", ".jpg");
+		if (ImGui::Button("Bath Tile", ImVec2(120.0f, 25.0f)))
+			generateTextures("bath_tile", ".jpg");
+		if (ImGui::Button("Mosaic", ImVec2(120.0f, 25.0f)))
+			generateTextures("mosaic", ".jpg");
+		if (ImGui::Button("Subway Tile", ImVec2(120.0f, 25.0f)))
+			generateTextures("subway_tile", ".jpg");
 	}
 }
 
@@ -127,4 +132,25 @@ void TestDirectPBR::framebuffer_size_callback(int width, int height)
 		sWidth = width;
 		sHeight = height;
 	}
+}
+
+void TestDirectPBR::generateTextures(std::string name, std::string format)
+{
+	t_Albedo.get_deleter();
+	t_Normal.get_deleter();
+	t_Metalness.get_deleter();
+	t_Roughness.get_deleter();
+	t_Displacement.get_deleter();
+
+	t_Albedo = std::make_unique<Texture>("res/Textures/PBR/" + name + "/d" + format);
+	t_Normal = std::make_unique<Texture>("res/Textures/PBR/" + name + "/n" + format);
+	t_Metalness = std::make_unique<Texture>("res/Textures/PBR/" + name + "/m" + format);
+	t_Roughness = std::make_unique<Texture>("res/Textures/PBR/" + name + "/r" + format);
+	t_Displacement = std::make_unique<Texture>("res/Textures/PBR/" + name + "/h" + format);
+
+	t_Albedo->Bind(0);
+	t_Normal->Bind(1);
+	t_Metalness->Bind(2);
+	t_Roughness->Bind(3);
+	t_Displacement->Bind(4);
 }

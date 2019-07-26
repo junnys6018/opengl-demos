@@ -18,6 +18,8 @@ public:
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
+	void generateTextures(std::string name, std::string format);
+
 	Camera& m_camera;
 	GLFWwindow* m_window;
 	Timer timer;

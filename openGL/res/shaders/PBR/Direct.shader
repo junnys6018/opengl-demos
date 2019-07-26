@@ -17,9 +17,7 @@ out mat3 TBN;
 
 void main()
 {
-	// Gramm-Schmidt process
-	vec3 T = normalize(v_tangent.xyz - v_normal * dot(v_tangent.xyz, v_normal));
-	T = normalize(vec3(model * vec4(T, 0.0)));
+	vec3 T = normalize(vec3(model * vec4(v_tangent.xyz, 0.0)));
 	vec3 N = normalize(vec3(model * vec4(v_normal, 0.0)));
 	vec3 B = v_tangent.w * cross(N, T);
 	TBN = mat3(T, B, N);
@@ -146,7 +144,7 @@ void main()
 			Irradiance += vec3(G);
 		}
 	}
-	if (renderMode == 0 || renderMode == 1 || renderMode == 2)
+	if (renderMode == 0)
 	{
 		Irradiance = 0.03 * albedo + Irradiance;
 	}
