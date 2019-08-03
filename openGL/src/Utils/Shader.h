@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <iostream>
+#include <map>
 
 /*	Shader class loads, comlies and links shader from a single .shader file. Vertex and fragment shaders are
  *	seperated by #shader Vertex and #shader Fragment in .shader file.
@@ -20,8 +21,11 @@ private:
 	unsigned int ID;
 	bool failedToLoad, isComputeShader;
 	std::string m_shaderpath;
+	mutable std::map<std::string, GLint> m_uniformLocations;
+private:
 	unsigned CompileShader(std::string, GLenum);
 	bool validateShader();
+	GLint getUniformLocation(const std::string &name) const;
 public:
 	// Functions sets Uniforms in the shader code
 	void setInt(const std::string &name, const int &value) const;
