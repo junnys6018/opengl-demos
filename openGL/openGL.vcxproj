@@ -197,7 +197,7 @@
     <ClCompile Include="src\tests\testTriangle.cpp" />
     <ClCompile Include="src\Utils\Texture.cpp" />
     <ClCompile Include="src\Utils\CubeMap.cpp" />
-    <ClCompile Include="src\Utils\TImer.cpp" />
+    <ClCompile Include="src\Utils\Timer.cpp" />
     <ClCompile Include="src\Utils\UniformBuffer.cpp" />
     <ClCompile Include="src\Utils\VertexArray.cpp" />
     <ClCompile Include="src\Utils\VertexBuffer.cpp" />

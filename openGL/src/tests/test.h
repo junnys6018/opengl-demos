@@ -38,8 +38,8 @@ private:
 	void OnImGuiRender(unsigned int fps);
 
 	std::vector<std::tuple<std::string, std::function<Test* (Camera&, GLFWwindow*)>, std::function<bool()>>> m_tests;
-	bool show_demo_window;
-	bool show_overlay;
+	bool show_controls_window;
+	bool show_test_window;
 
 	// Used to initalise tests
 	Camera& m_camera;

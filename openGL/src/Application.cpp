@@ -17,6 +17,10 @@ Camera camera;
 GLFWwindow* window;
 TestManager test_mgr(camera, &window);
 #include "callback.h"
+
+void ImGui_Init();
+void ImGui_Shutdown();
+
 int main(int argc, char* argv[])
 {
 	glfwSetErrorCallback(error_callback);
@@ -51,24 +55,43 @@ int main(int argc, char* argv[])
 		test_mgr.parseInput(command);
 	}
 	
-	// Setup Dear ImGui context
+	ImGui_Init();
+	
+	test_mgr.gameLoop();
+
+	ImGui_Shutdown();
+
+	glfwTerminate();
+	return 0;
+}
+
+void ImGui_Init()
+{
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
+	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+	ImGuiStyle& style = ImGui::GetStyle();
+	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+
+	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Font loading
-	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("res/Fonts/Consola.ttf", 16);
-	
-	test_mgr.gameLoop();
-
+}
+void ImGui_Shutdown()
+{
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 
-	glfwTerminate();
-	return 0;
 }

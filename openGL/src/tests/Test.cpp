@@ -18,7 +18,7 @@ static uint16_t nr_passes = 8;
 
 static uint16_t nr_lights = 32; // TEST_DEFERRED
 TestManager::TestManager(Camera& cam, GLFWwindow** win)
-	:m_currentTest(nullptr), show_demo_window(false), show_overlay(true), m_camera(cam), m_window(win)
+	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), m_camera(cam), m_window(win)
 {
 }
 TestManager::~TestManager()
@@ -101,12 +101,18 @@ void TestManager::registerTests()
 
 void TestManager::OnImGuiRender(unsigned int fps)
 {
-	if (!m_camera.InUse())
+	if (show_controls_window)
 	{
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
+		ImGui::Begin("Controls", &show_controls_window);
+		ImGui::Text("ESC - Toggle Camera");
+		ImGui::Text("SCROLL - Change FOV");
+		ImGui::Text("WASD - Move");
+		ImGui::End();
+	}
 
-		ImGui::Begin("Test Menu");
+	if (show_test_window)
+	{
+		ImGui::Begin("Test Menu", &show_test_window);
 		if (m_currentTest)
 		{
 			if (ImGui::Button("<-"))
@@ -119,12 +125,8 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		}
 		else
 		{
-			const int maxButtonCol = 8;
-			ImGui::Checkbox("Demo Window", &show_demo_window);
-			ImGui::SameLine();
-			ImGui::Checkbox("Overlay", &show_overlay);
-			ImGui::Separator();
 			ImGui::Text("Tests:");
+			const int maxButtonCol = 8;
 			for (int i = 0; i < maxButtonCol; ++i)
 			{
 				unsigned int index = i;
@@ -166,19 +168,23 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		}
 		ImGui::End();
 	}
+	
 	// FPS counter
-	if (show_overlay)
 	{
-		ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f), ImGuiCond_Always);
+		// FIXME-VIEWPORT: Select a default viewport
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+
+		ImGui::SetNextWindowPos(ImVec2(viewport->Pos.x + 10.0f, viewport->Pos.y + 10.0f), ImGuiCond_Always);
 		ImGui::SetNextWindowBgAlpha(0.3f); // Transparent background
-		ImGui::Begin("Example: Simple overlay", NULL, ImGuiWindowFlags_NoMove |
+		ImGui::Begin("My Overlay", NULL, ImGuiWindowFlags_NoMove |
 			ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_AlwaysAutoResize |
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
 
 		ImGui::Text("%.3f ms/frame (%i FPS)", 1000.0f / fps, fps);
 		if (ImGui::BeginPopupContextWindow("item context menu"))
 		{
-			ImGui::Checkbox("Overlay", &show_overlay);
+			ImGui::Checkbox("Test Menu", &show_test_window);
+			ImGui::Checkbox("Controls Window", &show_controls_window);
 			ImGui::End();
 		}
 		ImGui::End();
@@ -218,6 +224,13 @@ void TestManager::gameLoop()
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+		// Update and Render additional Platform Windows
+		// (Platform functions may change the current OpenGL context, so we save/restore it to make it easier to paste this code elsewhere.
+		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
+		ImGui::UpdatePlatformWindows();
+		ImGui::RenderPlatformWindowsDefault();
+		glfwMakeContextCurrent(*m_window);
 
 		glfwSwapBuffers(*m_window);
 		glfwPollEvents();
