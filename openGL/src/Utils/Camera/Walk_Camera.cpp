@@ -3,6 +3,7 @@
 Walk_Camera::Walk_Camera()
 	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_sensitivity(0.1f)
 {
+	resetPos();
 	prevtime = glfwGetTime();
 	currtime = glfwGetTime();
 }

@@ -21,8 +21,9 @@ static uint16_t nr_passes = 8;
 
 static uint16_t nr_lights = 32; // TEST_DEFERRED
 TestManager::TestManager(GLFWwindow** win)
-	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), m_camera(new Walk_Camera()), m_window(win)
+	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), show_pos(true), m_window(win)
 {
+	m_camera = new Walk_Camera();
 }
 TestManager::~TestManager()
 {
@@ -197,10 +198,15 @@ void TestManager::OnImGuiRender(unsigned int fps)
 			ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav);
 
 		ImGui::Text("%.3f ms/frame (%i FPS)", 1000.0f / fps, fps);
+		if (show_pos)
+		{
+			ImGui::Text("CamPos: x: %.1f y: %.1f z: %.1f", m_camera->getCameraPos().x, m_camera->getCameraPos().y, m_camera->getCameraPos().z);
+		}
 		if (ImGui::BeginPopupContextWindow("item context menu"))
 		{
 			ImGui::Checkbox("Test Menu", &show_test_window);
 			ImGui::Checkbox("Controls Window", &show_controls_window);
+			ImGui::Checkbox("Show Camera Pos", &show_pos);
 			ImGui::End();
 		}
 		ImGui::End();

@@ -40,7 +40,7 @@ TestNormMap::TestNormMap(Base_Camera* cam, GLFWwindow* win)
 
 	s_NormMap = std::make_unique<Shader>("res/Shaders/NormMap.shader");
 
-	s_NormMap->setVec3("light.position", glm::vec3(0.0f, 1.0f, 1.0f));
+	s_NormMap->setVec3("light.position", glm::vec3(0.0f, 0.0f, 1.0f));
 	s_NormMap->setFloat("light.constant", 1.0f);
 	s_NormMap->setFloat("light.lin", 0.09f);
 	s_NormMap->setFloat("light.quadratic", 0.032f);
@@ -65,6 +65,7 @@ void TestNormMap::OnUpdate()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
 	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
@@ -82,6 +83,7 @@ void TestNormMap::OnUpdate()
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	// Nanosuit
 	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0f));
 	model = glm::rotate(model, glm::radians(5.0f * (float)glfwGetTime()), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.1f));
 	s_NormMap->setMat4("model", model);
@@ -90,7 +92,7 @@ void TestNormMap::OnUpdate()
 	if (drawLamp)
 	{
 		model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 1.0f, 1.0f));
+		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, glm::vec3(0.05f));
 		s_lamp->setMat4("MVP", proj * view * model);
 		o_sphere->Draw(*s_lamp, DRAW_FLAGS_TRIANGLE_STRIP);

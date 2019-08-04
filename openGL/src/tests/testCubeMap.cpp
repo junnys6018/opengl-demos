@@ -84,6 +84,7 @@ void TestCubeMap::OnUpdate()
 	GLCall(glDepthFunc(GL_LESS));
 
 	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -1.3f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.22f, 0.22f, 0.22f));
 	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);

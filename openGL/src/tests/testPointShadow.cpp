@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestPointShadows::TestPointShadows(Base_Camera* cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), visualiseDepthMap(false), lightPos(1.0f, 0.75f, 0.0f), lightColor(0.9f), time(0.0f)
+	:m_camera(cam), m_window(win), visualiseDepthMap(false), lightPos(1.0f, -0.75f, 0.0f), lightColor(0.9f), time(0.0f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
@@ -70,34 +70,34 @@ TestPointShadows::TestPointShadows(Base_Camera* cam, GLFWwindow* win)
 	// Generate Model Matrices
 	// cube
 	glm::mat4 model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(0.0f, -1.51f, 0.0f));
 	model = glm::scale(model, glm::vec3(10.0f, 7.0f, 10.0f));
 	model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
 	modelMatrices[0] = model;
 	// Sphere
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.2f));
 	modelMatrices[1] = model;
 	// Blastoise
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -1.5f, -2.0f));
 	model = glm::scale(model, glm::vec3(0.12f, 0.12f, 0.12f));
 	modelMatrices[2] = model;
 	// Pikachu
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -1.5f, 2.0f));
 	model = glm::scale(model, glm::vec3(0.2f, 0.2f, 0.2f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrices[3] = model;
 	// Nidoqueen
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(-2.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(-2.0f, -1.5f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.012f, 0.012f, 0.012f));
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrices[4] = model;
 	// Piplup
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(3.0f, 0.0f, 0.0f));
+	model = glm::translate(model, glm::vec3(3.0f, -1.5f, 0.0f));
 	model = glm::rotate(model, glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	modelMatrices[5] = model;
 
@@ -154,9 +154,7 @@ void TestPointShadows::OnUpdate()
 	{
 		// Update Light position
 		time = glfwGetTime();
-		if (time > 4.188790) // period is 4.188790s
-			time = 0.0f;
-		lightPos = glm::vec3(cosf(1.5f * time), 0.75, sinf(1.5f * time));
+		lightPos = glm::vec3(cosf(1.5f * time), -0.75, sinf(1.5f * time));
 	}
 	// Shadow Pass
 	timer[0].begin();

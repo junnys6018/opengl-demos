@@ -41,6 +41,7 @@ private:
 	std::vector<std::tuple<std::string, std::function<Test* (Base_Camera*, GLFWwindow*)>, std::function<bool()>>> m_tests;
 	bool show_controls_window;
 	bool show_test_window;
+	bool show_pos;
 	int active_camera, old_active_camera;
 
 	// Used to initalise tests

@@ -1,8 +1,9 @@
 #include "Static_Camera.h"
 
 Static_Camera::Static_Camera()
-	:m_yaw(270.0f), m_pitch(0.0f), m_radius(1.0f), m_lastX(0.0f), m_lastY(0.0f), m_sensitivity(0.3f)
+	:m_yaw(270.0f), m_pitch(0.0f), m_radius(1.0f), m_lastX(0.0f), m_lastY(0.0f), m_sensitivity(0.3f), m_scroll_sensitivity(0.4f)
 {
+	resetPos();
 }
 
 Static_Camera::~Static_Camera()
@@ -46,7 +47,7 @@ void Static_Camera::mouse_callback(double xpos, double ypos)
 
 void Static_Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	m_radius -= yoffset;
+	m_radius -= m_scroll_sensitivity * yoffset;
 	if (m_radius < 0.1f)
 		m_radius = 0.1f;
 	updateVectors();

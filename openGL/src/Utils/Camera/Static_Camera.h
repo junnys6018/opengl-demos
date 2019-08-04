@@ -18,7 +18,7 @@ private:
 	void updateVectors();
 	float m_yaw, m_pitch, m_radius;
 	float m_lastX, m_lastY;
-	float m_sensitivity;
+	float m_sensitivity, m_scroll_sensitivity;
 
 	bool m_mouseHeld;
 };
