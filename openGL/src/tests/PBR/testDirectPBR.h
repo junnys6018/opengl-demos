@@ -11,7 +11,7 @@
 class TestDirectPBR : public Test
 {
 public:
-	TestDirectPBR(Camera& cam, GLFWwindow* win);
+	TestDirectPBR(Base_Camera* cam, GLFWwindow* win);
 	~TestDirectPBR();
 
 	void OnUpdate() override;
@@ -20,7 +20,7 @@ public:
 private:
 	void generateTextures(std::string name, std::string format);
 
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer;
 

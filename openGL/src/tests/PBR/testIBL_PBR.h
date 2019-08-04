@@ -7,14 +7,14 @@
 class TestIBL_PBR : public Test
 {
 public:
-	TestIBL_PBR(Camera& cam, GLFWwindow* win);
+	TestIBL_PBR(Base_Camera* cam, GLFWwindow* win);
 	~TestIBL_PBR();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 
 };

@@ -1,7 +1,7 @@
 #include "testShadows.h"
 #include "debug.h"
 
-TestShadows::TestShadows(Camera& cam, GLFWwindow* win)
+TestShadows::TestShadows(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderDepthMap(false), m_lightAngle(45.0f)
 {
 	// Object Loading
@@ -151,7 +151,7 @@ TestShadows::~TestShadows()
 
 void TestShadows::OnUpdate()
 {
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 
 	timer[0].begin();
 	shadowPass();
@@ -229,11 +229,11 @@ void TestShadows::renderPass()
 	GLCall(glActiveTexture(GL_TEXTURE1));
 	GLCall(glBindTexture(GL_TEXTURE_2D, depthMap));
 
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	s_renderPass->setMat4("VP", proj * view);
-	s_renderPass->setVec3("viewPos", m_camera.getCameraPos());
+	s_renderPass->setVec3("viewPos", m_camera->getCameraPos());
 	u_matrix->Bind(0);
 	// Floor
 	s_renderPass->setMat4("model", modelMats[0]);

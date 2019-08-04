@@ -15,7 +15,7 @@
 class TestLighting : public Test
 {
 public:
-	TestLighting(Camera&, GLFWwindow*);
+	TestLighting(Base_Camera*, GLFWwindow*);
 	~TestLighting();
 
 	void OnUpdate() override;
@@ -23,7 +23,7 @@ public:
 	void key_callback(int key, int action) override;
 private:
 	GLFWwindow *m_window;
-	Camera &m_camera;
+	Base_Camera* m_camera;
 
 	std::unique_ptr<VertexBuffer> m_cubeBuf;
 	std::unique_ptr<VertexArray> m_cubeVA;

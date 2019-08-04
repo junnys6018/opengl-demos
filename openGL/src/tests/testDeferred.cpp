@@ -15,7 +15,7 @@ struct PointLight
 	PointLight(glm::vec4 pos, glm::vec4 col, float intensity, float rad)
 		:position(pos), color(col), intensity(intensity), radius(rad)	{}
 };
-TestDeferred::TestDeferred(Camera& cam, GLFWwindow* win, uint16_t nr_lights)
+TestDeferred::TestDeferred(Base_Camera* cam, GLFWwindow* win, uint16_t nr_lights)
 	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true),
 	useTileBased(true), visualiseLights(false), NR_LIGHTS(nr_lights), exposure(0.5f)
 {
@@ -125,18 +125,18 @@ TestDeferred::~TestDeferred()
 
 void TestDeferred::OnUpdate()
 {
-	if (m_camera.move(m_window))
+	if (m_camera->handleWindowInput(m_window))
 	{
-		s_LightPass->setVec3("camPos", m_camera.getCameraPos());
-		s_FustrumCull->setVec3("camPos", m_camera.getCameraPos());
+		s_LightPass->setVec3("camPos", m_camera->getCameraPos());
+		s_FustrumCull->setVec3("camPos", m_camera->getCameraPos());
 	}
 	// Geometry Pass
 	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	glm::mat4 view = m_camera.getViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	glm::mat4 view = m_camera->getViewMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 
 	u_Matrix->setData(0, glm::value_ptr(view), MAT4);
 	u_Matrix->setData(1, glm::value_ptr(proj), MAT4);

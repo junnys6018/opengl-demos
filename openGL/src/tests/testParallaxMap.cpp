@@ -1,7 +1,7 @@
 #include "testParallaxMap.h"
 #include "debug.h"
 
-TestParaMap::TestParaMap(Camera& cam, GLFWwindow* win)
+TestParaMap::TestParaMap(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderMode(0), oldrenderMode(0)
 {
 	float quadVertices[] = {
@@ -43,7 +43,7 @@ TestParaMap::TestParaMap(Camera& cam, GLFWwindow* win)
 
 	s_ParaMap = std::make_unique<Shader>("res/Shaders/ParaMap.shader");
 	s_ParaMap->setVec3("v_lightPos", 0.0f, 0.0f, 1.5f);
-	s_ParaMap->setVec3("v_viewPos", m_camera.getCameraPos());
+	s_ParaMap->setVec3("v_viewPos", m_camera->getCameraPos());
 
 	s_ParaMap->setInt("Texture1", 0);
 	s_ParaMap->setInt("NormMap", 1);
@@ -59,16 +59,16 @@ TestParaMap::~TestParaMap()
 void TestParaMap::OnUpdate()
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	if (m_camera.move(m_window))
-		s_ParaMap->setVec3("v_viewPos", m_camera.getCameraPos());
+	if (m_camera->handleWindowInput(m_window))
+		s_ParaMap->setVec3("v_viewPos", m_camera->getCameraPos());
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, 0.0f, -3.0f));
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 	s_ParaMap->setMat4("model", model);
 	s_ParaMap->setMat4("view", view);
 	s_ParaMap->setMat4("proj", proj);

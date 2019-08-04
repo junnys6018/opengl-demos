@@ -1,7 +1,7 @@
 #include "testDirectPBR.h"
 #include "debug.h"
 
-TestDirectPBR::TestDirectPBR(Camera& cam, GLFWwindow* win)
+TestDirectPBR::TestDirectPBR(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderMode(0), oldrenderMode(0), metalness(0.0f), roughness(0.001f), paraMapping(false)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
@@ -13,7 +13,7 @@ TestDirectPBR::TestDirectPBR(Camera& cam, GLFWwindow* win)
 	s_Shader = std::make_unique<Shader>("res/shaders/PBR/Direct.shader");
 	s_Lamp = std::make_unique<Shader>("res/shaders/Shadows/lamp5.shader");
 	// initalise shader uniforms
-	s_Shader->setVec3("viewPos", m_camera.getCameraPos());
+	s_Shader->setVec3("viewPos", m_camera->getCameraPos());
 	s_Shader->setFloat("roughness", roughness);
 	for (int i = 0; i < 4; i++)
 	{
@@ -38,14 +38,14 @@ TestDirectPBR::~TestDirectPBR()
 void TestDirectPBR::OnUpdate()
 {
 	timer.begin();
-	if (m_camera.move(m_window))
+	if (m_camera->handleWindowInput(m_window))
 	{
-		s_Shader->setVec3("viewPos", m_camera.getCameraPos());
+		s_Shader->setVec3("viewPos", m_camera->getCameraPos());
 	}
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	glm::mat4 view = m_camera.getViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	glm::mat4 view = m_camera->getViewMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	s_Shader->setMat4("VP", proj * view);
 
 	glm::mat4 model = glm::mat4(1.0f);

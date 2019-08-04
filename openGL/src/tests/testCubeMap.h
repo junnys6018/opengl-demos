@@ -12,13 +12,13 @@
 class TestCubeMap : public Test
 {
 public:
-	TestCubeMap(Camera& cam, GLFWwindow* win);
+	TestCubeMap(Base_Camera* cam, GLFWwindow* win);
 	~TestCubeMap();
 
 	void OnUpdate() override;
 private:
 	void loadCubeMap(std::vector<std::string> faces);
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 
 	std::unique_ptr<Object> oBlastoise;

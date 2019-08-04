@@ -11,7 +11,7 @@
 class TestFrameBuf : public Test
 {
 public:
-	TestFrameBuf(Camera& cam, GLFWwindow* win);
+	TestFrameBuf(Base_Camera* cam, GLFWwindow* win);
 	~TestFrameBuf();
 
 	void OnUpdate() override;
@@ -20,7 +20,7 @@ public:
 private:
 	bool GenFrameBuffer(int width, int height);
 	GLFWwindow* m_window;
-	Camera& m_camera;
+	Base_Camera* m_camera;
 
 	std::unique_ptr<Object> oBlastoise;
 	std::unique_ptr<Object> oPikachu;

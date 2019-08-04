@@ -1,7 +1,7 @@
 #include "testIBL_PBR.h"
 #include "debug.h"
 
-TestIBL_PBR::TestIBL_PBR(Camera& cam, GLFWwindow* win)
+TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win)
 {
 }

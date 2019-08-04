@@ -63,9 +63,6 @@
     <ClCompile Include="src\tests\testBloom.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\Utils\Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\Utils\IndexBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -103,6 +100,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Camera\Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Camera\Walk_Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Utils\Camera\Static_Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1336,9 +1342,6 @@
     <ClInclude Include="src\tests\testBloom.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Utils\Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Utils\debug.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1379,6 +1382,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\PBR\testIBL_PBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Camera\Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Camera\Walk_Camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\Camera\Static_Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

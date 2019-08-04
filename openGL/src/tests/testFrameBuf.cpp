@@ -1,7 +1,7 @@
 #include "testFrameBuf.h"
 #include "debug.h"
 
-TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
+TestFrameBuf::TestFrameBuf(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_isWireFrame(false), m_camSpeed(5.0f), flags(0), oldFlags(0), m_convOffset(10.0f)
 {
 	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
@@ -49,7 +49,7 @@ TestFrameBuf::TestFrameBuf(Camera& cam, GLFWwindow* win)
 TestFrameBuf::~TestFrameBuf()
 {
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-	m_camera.setSpeed(5.0f);
+	m_camera->setSpeed(5.0f);
 
 	GLCall(glDeleteFramebuffers(1, &FBO));
 	GLCall(glDeleteTextures(1, &texture));
@@ -58,7 +58,7 @@ TestFrameBuf::~TestFrameBuf()
 
 void TestFrameBuf::OnUpdate()
 {
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 
 	// First Pass
 	GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
@@ -68,10 +68,10 @@ void TestFrameBuf::OnUpdate()
 
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, (m_isWireFrame ? GL_LINE : GL_FILL)));
 
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	// Floor
 	FloorVA->Bind();
 	FloorTex->Bind(0);
@@ -125,7 +125,7 @@ void TestFrameBuf::OnImGuiRender()
 {
 	ImGui::Checkbox("Wireframe Mode", &m_isWireFrame);
 	if (ImGui::SliderFloat("Cam Speed", &m_camSpeed, 1.0f, 10.0f))
-		m_camera.setSpeed(m_camSpeed);
+		m_camera->setSpeed(m_camSpeed);
 	if (ImGui::SliderFloat("kernel offset", &m_convOffset, 1, 50, "%.0f"))
 	{
 		m_FramebufShader->setFloat("offset", m_convOffset / 3000.0f);
@@ -139,7 +139,7 @@ void TestFrameBuf::OnImGuiRender()
 	if (ImGui::Button("Reset Speed"))
 	{
 		m_camSpeed = 5.0f;
-		m_camera.setSpeed(m_camSpeed);
+		m_camera->setSpeed(m_camSpeed);
 	}
 	if (ImGui::CollapsingHeader("Post-processing effects"))
 	{

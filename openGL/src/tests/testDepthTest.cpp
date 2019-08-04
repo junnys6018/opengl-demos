@@ -1,7 +1,7 @@
 #include "testDepthTest.h"
 #include "debug.h"
 
-TestAdvancedGL::TestAdvancedGL(Camera& cam, GLFWwindow* win)
+TestAdvancedGL::TestAdvancedGL(Base_Camera* cam, GLFWwindow* win)
 	:camera(cam), window(win), func_type(GL_LESS), old_func_type(GL_LESS)
 	,visDepBuf(false), visLinDepBuf(false), useStencil(false), transRender(false)
 {
@@ -114,16 +114,16 @@ void TestAdvancedGL::OnUpdate()
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT));
 
 	// camera movement
-	if (camera.move(window) && transRender)
+	if (camera->handleWindowInput(window) && transRender)
 		sortDist();
 	// MVP matrix
-	glm::mat4 view = camera.getViewMatrix();
+	glm::mat4 view = camera->getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 
 	GLCall(glEnable(GL_STENCIL_TEST));
 	// floor
@@ -188,7 +188,7 @@ void TestAdvancedGL::OnUpdate()
 
 void TestAdvancedGL::sortDist()
 {
-	glm::vec3 camPos = camera.getCameraPos();
+	glm::vec3 camPos = camera->getCameraPos();
 	std::sort(transPos.begin(), transPos.end(), [&camPos](const glm::vec3 & v1, const glm::vec3 & v2)->bool {
 		return glm::length2(camPos - v1) >= glm::length2(camPos - v2);
 		});

@@ -18,7 +18,7 @@
 class TestPlanets : public Test
 {
 public:
-	TestPlanets(Camera&, GLFWwindow*&);
+	TestPlanets(Base_Camera*, GLFWwindow*&);
 	~TestPlanets();
 public:
 	void OnUpdate() override;
@@ -39,7 +39,7 @@ private:
 	std::vector<float> m_radii;
 	std::vector<float> m_size;
 
-	Camera& m_camera;
+	Base_Camera* m_camera;
 
 	bool m_isRotating;
 	bool m_isWireFrame;

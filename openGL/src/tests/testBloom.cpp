@@ -1,11 +1,11 @@
 #include "testBloom.h"
 #include "debug.h"
-TestBloom::TestBloom(Camera& cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes)
+TestBloom::TestBloom(Base_Camera* cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes)
 	:m_camera(cam), m_window(win), BLUR_SCALE(blur_scale), NR_PASSES(nr_passes),
 	m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
 {
 	s_Bloom = std::make_unique<Shader>("res/Shaders/Bloom/Bloom.shader");
-	s_Bloom->setVec3("viewPos", m_camera.getCameraPos());
+	s_Bloom->setVec3("viewPos", m_camera->getCameraPos());
 	s_Lamp = std::make_unique<Shader>("res/Shaders/Bloom/lamp3.shader");
 	s_Blur = std::make_unique<Shader>("res/Shaders/Bloom/Blur.shader");
 	s_Blur->setInt("image", 0);
@@ -68,8 +68,8 @@ TestBloom::~TestBloom()
 
 void TestBloom::OnUpdate()
 {
-	if (m_camera.move(m_window))
-		s_Bloom->setVec3("viewPos", m_camera.getCameraPos());
+	if (m_camera->handleWindowInput(m_window))
+		s_Bloom->setVec3("viewPos", m_camera->getCameraPos());
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
@@ -80,8 +80,8 @@ void TestBloom::OnUpdate()
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.01f));
 	s_Bloom->setMat4("model", model);
-	u_Matrices->setData(0, (void*)glm::value_ptr(m_camera.getViewMatrix()), MAT4);
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	u_Matrices->setData(0, (void*)glm::value_ptr(m_camera->getViewMatrix()), MAT4);
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	u_Matrices->setData(1, glm::value_ptr(proj), MAT4);
 
 	o_Sponza->Draw(*s_Bloom);

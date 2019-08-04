@@ -12,7 +12,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 }
 void mouse_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	camera.mouse_callback(xpos, ypos);
+	test_mgr.m_camera->mouse_callback(xpos, ypos);
 }
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
@@ -34,21 +34,11 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 	}
 	else if (test_mgr.m_currentTest)
 		test_mgr.m_currentTest->key_callback(key, action);
-	camera.key_callback(window, key, action);
+	test_mgr.m_camera->key_callback(window, key, action);
 }
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if (camera.InUse())
-	{
-		if (camera.getFOV() >= 1.0f && camera.getFOV() <= 90.0f)
-			camera.setFOV(camera.getFOV() - yoffset);
-		if (camera.getFOV() <= 1.0f)
-			camera.setFOV(1.0f);
-		if (camera.getFOV() >= 90.0f)
-			camera.setFOV(90.0f);
-
-	}
-
+	test_mgr.m_camera->scroll_callback(window, xoffset, yoffset);
 }
 void printBasicInfo()
 {

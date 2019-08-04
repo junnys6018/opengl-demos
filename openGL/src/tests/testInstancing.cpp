@@ -1,7 +1,7 @@
 #include "testInstancing.h"
 #include "debug.h"
 
-TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
+TestInstancing::TestInstancing(Base_Camera* cam, GLFWwindow* win, uint16_t instances)
 	:m_camera(cam), m_window(win), m_drawQuads(false), m_isWireFrame(false), m_amount(instances)
 {
 	// Quad setup
@@ -114,7 +114,7 @@ TestInstancing::TestInstancing(Camera& cam, GLFWwindow* win, uint16_t instances)
 	GLCall(glVertexAttribDivisor(5, 1));
 	GLCall(glVertexAttribDivisor(6, 1));
 	
-	m_camera.setSpeed(35);
+	m_camera->setSpeed(35);
 	GLCall(glEnable(GL_DEPTH_TEST));
 }
 
@@ -122,8 +122,8 @@ TestInstancing::~TestInstancing()
 {
 	GLCall(glDeleteBuffers(1, &offsetVBO));
 	GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_FILL));
-	m_camera.setSpeed(5.0f);
-	m_camera.resetPos();
+	m_camera->setSpeed(5.0f);
+	m_camera->resetPos();
 }
 
 void TestInstancing::OnUpdate()
@@ -138,15 +138,15 @@ void TestInstancing::OnUpdate()
 	}
 	else
 	{
-		m_camera.move(m_window);
+		m_camera->handleWindowInput(m_window);
 
-		glm::mat4 view = m_camera.getViewMatrix();
+		glm::mat4 view = m_camera->getViewMatrix();
 
 		glm::mat4 proj = glm::mat4(1.0f);
 		int width, height;
 		glfwGetFramebufferSize(m_window, &width, &height);
 		if (width != 0 && height != 0)
-			proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.4f, 400.0f);
+			proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.4f, 400.0f);
 
 		s_rock->setMat4("VP", proj * view);
 		s_planet->setMat4("VP", proj * view);
@@ -158,7 +158,7 @@ void TestInstancing::OnUpdate()
 		o_Rock->vertexArray->Bind();
 		glDrawElementsInstanced(GL_TRIANGLES, o_Rock->indexBuffer->getCount(), GL_UNSIGNED_INT, (void*)0, m_amount);
 
-		m_skyBox->Draw(proj * glm::mat4(glm::mat3(m_camera.getViewMatrix())));
+		m_skyBox->Draw(proj * glm::mat4(glm::mat3(m_camera->getViewMatrix())));
 	}
 	timer.end();
 }

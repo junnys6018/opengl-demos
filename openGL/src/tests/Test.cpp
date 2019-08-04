@@ -5,6 +5,9 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
+#include "Walk_Camera.h"
+#include "Static_Camera.h"
+
 #include "__Test__.h"
 #include "debug.h"
 
@@ -17,8 +20,8 @@ static uint16_t blur_scale = 4; // TEST_BLOOM
 static uint16_t nr_passes = 8;
 
 static uint16_t nr_lights = 32; // TEST_DEFERRED
-TestManager::TestManager(Camera& cam, GLFWwindow** win)
-	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), m_camera(cam), m_window(win)
+TestManager::TestManager(GLFWwindow** win)
+	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), m_camera(new Walk_Camera()), m_window(win)
 {
 }
 TestManager::~TestManager()
@@ -48,7 +51,7 @@ void TestManager::parseInput(std::string line)
 	}
 }
 
-void TestManager::registerTest(std::string name, std::function<Test* (Camera&, GLFWwindow*)> initalizer, std::function<bool()> varInit)
+void TestManager::registerTest(std::string name, std::function<Test* (Base_Camera*, GLFWwindow*)> initalizer, std::function<bool()> varInit)
 {
 	m_tests.push_back(std::make_tuple(name, initalizer, varInit));
 }
@@ -56,14 +59,14 @@ void TestManager::registerTest(std::string name, std::function<Test* (Camera&, G
 void TestManager::registerTests()
 {
 	auto noInit = []()->bool {return true; };
-	registerTest("triangle", [](Camera & cam, GLFWwindow * win)->Test * {return new TestTriangle(); }, noInit);
-	registerTest("planets", [](Camera & cam, GLFWwindow * win)->Test * {return new TestPlanets(cam, win); }, noInit);
-	registerTest("lighting", [](Camera & cam, GLFWwindow * win)->Test * {return new TestLighting(cam, win); }, noInit);
-	registerTest("advOpenGL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvancedGL(cam, win); }, noInit);
-	registerTest("frameBuf", [](Camera & cam, GLFWwindow * win)->Test * {return new TestFrameBuf(cam, win); }, noInit);
-	registerTest("cubeMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestCubeMap(cam, win); }, noInit);
-	registerTest("advGLSL", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
-	registerTest("Instancing", [](Camera & cam, GLFWwindow * win)->Test * { return new TestInstancing(cam, win, instances); },
+	registerTest("triangle", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestTriangle(); }, noInit);
+	registerTest("planets", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestPlanets(cam, win); }, noInit);
+	registerTest("lighting", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestLighting(cam, win); }, noInit);
+	registerTest("advOpenGL", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvancedGL(cam, win); }, noInit);
+	registerTest("frameBuf", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestFrameBuf(cam, win); }, noInit);
+	registerTest("cubeMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestCubeMap(cam, win); }, noInit);
+	registerTest("advGLSL", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
+	registerTest("Instancing", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestInstancing(cam, win, instances); },
 		[]()->bool {
 		ImGui::Text("#instances:");
 		ImGui::PushItemWidth(-1);
@@ -71,12 +74,12 @@ void TestManager::registerTests()
 		ImGui::PopItemWidth();
 		return ImGui::Button("Enter");
 	});
-	registerTest("advLight", [](Camera & cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
-	registerTest("Shadows", [](Camera & cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
-	registerTest("Point-Shadow", [](Camera & cam, GLFWwindow * win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
-	registerTest("NormMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); }, noInit);
-	registerTest("ParaMap", [](Camera & cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
-	registerTest("Bloom", [](Camera & cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
+	registerTest("advLight", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
+	registerTest("Shadows", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
+	registerTest("Point-Shadow", [](Base_Camera * cam, GLFWwindow * win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
+	registerTest("NormMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); }, noInit);
+	registerTest("ParaMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
+	registerTest("Bloom", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
 		[]()->bool {
 		ImGui::PushItemWidth(-1);
 		ImGui::Text("Blur Scale:");
@@ -86,7 +89,7 @@ void TestManager::registerTests()
 		ImGui::PopItemWidth();
 		return ImGui::Button("Enter");
 	});
-	registerTest("Deferred", [](Camera & cam, GLFWwindow * win)->Test * { return new TestDeferred(cam, win, nr_lights); },
+	registerTest("Deferred", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestDeferred(cam, win, nr_lights); },
 		[]()->bool {
 		ImGui::Text("# Lights");
 		ImGui::PushItemWidth(-1);
@@ -94,9 +97,9 @@ void TestManager::registerTests()
 		ImGui::PopItemWidth();
 		return ImGui::Button("Enter");
 	});
-	registerTest("SSAO", [](Camera & cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
-	registerTest("Direct-PBR", [](Camera & cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
-	registerTest("IBL-PBR", [](Camera & cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win); }, noInit);
+	registerTest("SSAO", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
+	registerTest("Direct-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
+	registerTest("IBL-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win); }, noInit);
 }
 
 void TestManager::OnImGuiRender(unsigned int fps)
@@ -109,7 +112,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		ImGui::Text("WASD - Move");
 		ImGui::End();
 	}
-
+	
 	if (show_test_window)
 	{
 		ImGui::Begin("Test Menu", &show_test_window);
@@ -125,6 +128,19 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		}
 		else
 		{
+			ImGui::RadioButton("Walk Cam", &active_camera, 0);
+			ImGui::SameLine();
+			ImGui::RadioButton("Circle Cam", &active_camera, 1);
+			ImGui::Separator();
+			if (active_camera != old_active_camera)
+			{
+				old_active_camera = active_camera;
+				delete m_camera;
+				if (active_camera == 0)
+					m_camera = new Walk_Camera();
+				else if (active_camera == 1)
+					m_camera = new Static_Camera();
+			}
 			ImGui::Text("Tests:");
 			const int maxButtonCol = 8;
 			for (int i = 0; i < maxButtonCol; ++i)

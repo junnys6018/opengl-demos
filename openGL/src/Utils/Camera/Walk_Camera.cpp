@@ -1,63 +1,38 @@
-#include "Camera.h"
+#include "Walk_Camera.h"
 
-#include <iostream>
-
-Camera::Camera()
-	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_FOV(45.0f)
-	, m_sensitivity(0.1f), m_speed(5.0f), m_firstMouse(true), m_InUse(false)
+Walk_Camera::Walk_Camera()
+	:m_yaw(270.0f), m_pitch(0.0f), m_lastX(0.0f), m_lastY(0.0f), m_sensitivity(0.1f)
 {
-	resetPos();
 	prevtime = glfwGetTime();
 	currtime = glfwGetTime();
 }
-glm::vec3 Camera::getCameraPos() const
+
+Walk_Camera::~Walk_Camera()
 {
-	return m_cameraPos;
 }
-glm::vec3 Camera::getCameraDir() const
+void Walk_Camera::resetPos()
 {
-	return m_cameraDir;
-}
-glm::vec3 Camera::getCameraRight() const
-{
-	return m_cameraRight;
-}
-glm::vec3 Camera::getCameraForward() const
-{
-	return m_cameraForward;
-}
-glm::mat4 Camera::getViewMatrix() const
-{
-	return glm::lookAt(m_cameraPos, m_cameraPos + m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f));
-}
-float Camera::getDeltaT() const
-{
-	return delta;
-}
-float Camera::getFOV() const
-{
-	return m_FOV;
-}
-void Camera::setSpeed(const float speed)
-{
-	m_speed = speed;
-}
-void Camera::setFOV(const float FOV)
-{
-	m_FOV = FOV;
-}
-void Camera::setPos(const glm::vec3 pos)
-{
-	m_cameraPos = pos;
-}
-void Camera::resetPos()
-{
-	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace
+	m_cameraPos = glm::vec3(1.0f, 0.0f, 0.0f);	// Position in worldspace
 	m_cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);	// direction the camera is facing relative to position in world space
 	m_cameraRight = glm::normalize(glm::cross(m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
 	m_cameraForward = glm::vec3(m_cameraRight.z, 0.0f, -m_cameraRight.x);
 }
-void Camera::mouse_callback(double xpos, double ypos)
+void Walk_Camera::key_callback(GLFWwindow* window, int key, int action)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+	{
+		if (m_InUse)
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			m_firstMouse = true;
+		}
+		else
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_InUse = !m_InUse;
+	}
+}
+
+void Walk_Camera::mouse_callback(double xpos, double ypos)
 {
 	if (m_InUse)
 	{
@@ -89,23 +64,21 @@ void Camera::mouse_callback(double xpos, double ypos)
 		m_cameraForward = glm::vec3(m_cameraRight.z, 0.0f, -m_cameraRight.x);
 	}
 }
-void Camera::key_callback(GLFWwindow *window, int key, int action)
+
+void Walk_Camera::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
+	if (m_InUse)
 	{
-		if (m_InUse)
-		{
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-			m_firstMouse = true;
-		}
-		else
-			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		m_InUse = !m_InUse;
+		if (m_FOV >= 1.0f && m_FOV <= 90.0f)
+			m_FOV -= yoffset;
+		if (m_FOV <= 1.0f)
+			m_FOV = 1.0f;
+		if (m_FOV >= 90.0f)
+			m_FOV = 90.0f;
 	}
 }
 
-// returns whether camera moved
-bool Camera::move(GLFWwindow* window)
+bool Walk_Camera::handleWindowInput(GLFWwindow* window)
 {
 	currtime = glfwGetTime();
 	delta = currtime - prevtime;
@@ -130,4 +103,3 @@ bool Camera::move(GLFWwindow* window)
 	else
 		return false;
 }
-

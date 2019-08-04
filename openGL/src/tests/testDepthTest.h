@@ -19,7 +19,7 @@
 class TestAdvancedGL : public Test
 {
 public:
-	TestAdvancedGL(Camera&, GLFWwindow*);
+	TestAdvancedGL(Base_Camera*, GLFWwindow*);
 	~TestAdvancedGL();
 
 	void OnUpdate() override;
@@ -42,7 +42,7 @@ private:
 	std::vector<glm::vec3> transPos;
 	void sortDist();
 
-	Camera& camera;
+	Base_Camera* camera;
 	GLFWwindow* window;
 
 	int func_type;

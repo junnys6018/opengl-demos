@@ -2,7 +2,7 @@
 #include "debug.h"
 
 
-TestLighting::TestLighting(Camera& cam, GLFWwindow* win)
+TestLighting::TestLighting(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_theta(0.0f), m_isRotating(false), m_isSpotLighton(false)
 	, m_dirLightColor(0.2f, 0.2f, 1.0f)
 {
@@ -127,7 +127,7 @@ TestLighting::~TestLighting()
 void TestLighting::OnUpdate()
 {
 	// camera movement
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 	// update light pos
 	if (m_isRotating)
 	{
@@ -137,13 +137,13 @@ void TestLighting::OnUpdate()
 
 	// MVP matrix
 	glm::mat4 view;
-	view = m_camera.getViewMatrix();
+	view = m_camera->getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 
 
 	// render

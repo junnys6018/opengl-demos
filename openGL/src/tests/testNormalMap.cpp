@@ -1,7 +1,7 @@
 #include "testNormalMap.h"
 #include "debug.h"
 
-TestNormMap::TestNormMap(Camera& cam, GLFWwindow* win)
+TestNormMap::TestNormMap(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), useNormMap(false), visNormMap(false), drawLamp(true)
 {
 	float quadVertices[] = {
@@ -60,18 +60,18 @@ TestNormMap::~TestNormMap()
 
 void TestNormMap::OnUpdate()
 {
-	if (m_camera.move(m_window))
-		s_NormMap->setVec3("camPos", m_camera.getCameraPos());
+	if (m_camera->handleWindowInput(m_window))
+		s_NormMap->setVec3("camPos", m_camera->getCameraPos());
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(-1.0f, 0.0f, 0.0f));
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 	s_NormMap->setMat4("model", model);
 	s_NormMap->setMat4("view", view);
 	s_NormMap->setMat4("proj", proj);

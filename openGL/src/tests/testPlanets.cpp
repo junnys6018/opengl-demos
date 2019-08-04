@@ -1,7 +1,7 @@
 #include "testPlanets.h"
 #include "debug.h"
 
-TestPlanets::TestPlanets(Camera& cam, GLFWwindow* &win)
+TestPlanets::TestPlanets(Base_Camera* cam, GLFWwindow* &win)
 	:m_theta(0.0f), m_radii({ 2.0f, 4.0f, 7.0f, 10.0f, 15.0f }), m_size({ 0.6f, 1.0f, 0.9f, 1.8f, 0.2f })
 	,m_camera(cam), m_isRotating(false), m_window(win), m_isWireFrame(false)
 {
@@ -72,7 +72,7 @@ TestPlanets::~TestPlanets()
 void TestPlanets::OnUpdate()
 {
 	// camera movement
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 
 	if (m_isRotating)
 	{
@@ -85,13 +85,13 @@ void TestPlanets::OnUpdate()
 	glm::mat4 model_cube = glm::mat4(1.0f);
 	model_cube = glm::rotate(model_cube, glm::radians(m_theta), glm::vec3(0.5f, 0.3f, 0.0f));
 
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 	// Render
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 

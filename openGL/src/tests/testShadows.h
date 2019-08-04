@@ -14,14 +14,14 @@
 class TestShadows : public Test
 {
 public:
-	TestShadows(Camera& cam, GLFWwindow* win);
+	TestShadows(Base_Camera* cam, GLFWwindow* win);
 	~TestShadows();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer[3];
 

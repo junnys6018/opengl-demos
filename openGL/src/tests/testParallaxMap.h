@@ -11,13 +11,13 @@
 class TestParaMap : public Test
 {
 public:
-	TestParaMap(Camera& cam, GLFWwindow* win);
+	TestParaMap(Base_Camera* cam, GLFWwindow* win);
 	~TestParaMap();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 
 	std::unique_ptr<VertexBuffer> quadVB;

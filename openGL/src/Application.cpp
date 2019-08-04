@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "debug.h"
-#include "Camera.h"
 
 #include "tests/__Test__.h"
 
@@ -13,9 +12,8 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-Camera camera;
 GLFWwindow* window;
-TestManager test_mgr(camera, &window);
+TestManager test_mgr(&window);
 #include "callback.h"
 
 void ImGui_Init();

@@ -13,7 +13,7 @@
 class TestSSAO : public Test
 {
 public:
-	TestSSAO(Camera& cam, GLFWwindow* win);
+	TestSSAO(Base_Camera* cam, GLFWwindow* win);
 	~TestSSAO();
 
 	void OnUpdate() override;
@@ -21,7 +21,7 @@ public:
 	void framebuffer_size_callback(int width, int height) override;
 private:
 	void genFrameBuffers();
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer[4];
 

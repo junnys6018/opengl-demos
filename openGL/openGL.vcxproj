@@ -91,7 +91,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils\Camera;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils\Camera;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -131,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils\Camera;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -155,7 +155,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)dependencies\Includes;$(ProjectDir)src;$(ProjectDir)Vendor;$(SolutionDir)stb_image\src;$(SolutionDir)ImGui\src;$(ProjectDir)src\Utils\Camera;$(ProjectDir)src\Utils</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DisableSpecificWarnings>
       </DisableSpecificWarnings>
@@ -178,7 +178,9 @@
     <ClCompile Include="src\tests\testDeferred.cpp" />
     <ClCompile Include="src\tests\testPointShadow.cpp" />
     <ClCompile Include="src\tests\testSSAO.cpp" />
-    <ClCompile Include="src\Utils\Camera.cpp" />
+    <ClCompile Include="src\Utils\Camera\Camera.cpp" />
+    <ClCompile Include="src\Utils\Camera\Static_Camera.cpp" />
+    <ClCompile Include="src\Utils\Camera\Walk_Camera.cpp" />
     <ClCompile Include="src\Utils\IndexBuffer.cpp" />
     <ClCompile Include="src\Utils\Object.cpp" />
     <ClCompile Include="src\Utils\Shader.cpp" />
@@ -388,7 +390,9 @@
     <ClInclude Include="src\tests\testPointShadow.h" />
     <ClInclude Include="src\tests\testSSAO.h" />
     <ClInclude Include="src\Utils\callback.h" />
-    <ClInclude Include="src\Utils\Camera.h" />
+    <ClInclude Include="src\Utils\Camera\Camera.h" />
+    <ClInclude Include="src\Utils\Camera\Static_Camera.h" />
+    <ClInclude Include="src\Utils\Camera\Walk_Camera.h" />
     <ClInclude Include="src\Utils\Object.h" />
     <ClInclude Include="src\Utils\debug.h" />
     <ClInclude Include="src\Utils\IndexBuffer.h" />

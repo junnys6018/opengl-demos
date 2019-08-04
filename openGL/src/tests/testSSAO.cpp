@@ -3,7 +3,7 @@
 #include <cstdlib> // for rand() and srand()
 float rand_float(float a, float b);
 
-TestSSAO::TestSSAO(Camera& cam, GLFWwindow* win)
+TestSSAO::TestSSAO(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), renderMode(5), oldRenderMode(5), LightColor(1.0f, 1.0f, 1.0f), power(1.0f)
 {
 	srand((unsigned int)glfwGetTime());
@@ -143,11 +143,11 @@ TestSSAO::~TestSSAO()
 
 void TestSSAO::OnUpdate()
 {
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	glm::mat4 view = m_camera.getViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	glm::mat4 view = m_camera->getViewMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	// Geometry Pass
 	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));

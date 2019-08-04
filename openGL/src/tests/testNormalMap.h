@@ -11,13 +11,13 @@
 class TestNormMap : public Test
 {
 public:
-	TestNormMap(Camera& cam, GLFWwindow* win);
+	TestNormMap(Base_Camera* cam, GLFWwindow* win);
 	~TestNormMap();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	
 	std::unique_ptr<VertexBuffer> quadVB;

@@ -15,14 +15,14 @@
 class TestBloom : public Test
 {
 public:
-	TestBloom(Camera& cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes);
+	TestBloom(Base_Camera* cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes);
 	~TestBloom();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer[4];
 

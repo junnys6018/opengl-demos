@@ -1,7 +1,7 @@
 #include "testAdvLight.h"
 #include "debug.h"
 
-TestAdvLight::TestAdvLight(Camera& cam, GLFWwindow* win)
+TestAdvLight::TestAdvLight(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_shadingMode(0), m_oldShadingMode(0), m_useGamma(1), m_oldUseGamma(1),
 	m_shininess(4.0f)
 	, m_renderLamps(true)
@@ -57,12 +57,12 @@ TestAdvLight::~TestAdvLight()
 void TestAdvLight::OnUpdate()
 {
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 	u_matrix->setData(0, (void*)glm::value_ptr(view), MAT4);
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	u_matrix->setData(1, (void*)glm::value_ptr(proj), MAT4);
 
 	s_blinnPhong->Use();

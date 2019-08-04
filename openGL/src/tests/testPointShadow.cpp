@@ -1,7 +1,7 @@
 #include "testPointShadow.h"
 #include "debug.h"
 
-TestPointShadows::TestPointShadows(Camera& cam, GLFWwindow* win)
+TestPointShadows::TestPointShadows(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), visualiseDepthMap(false), lightPos(1.0f, 0.75f, 0.0f), lightColor(0.9f), time(0.0f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
@@ -63,7 +63,7 @@ TestPointShadows::TestPointShadows(Camera& cam, GLFWwindow* win)
 	s_ShadowPass = std::make_unique<Shader>("res/shaders/Shadows/PointShadowPass.shader");
 	s_RenderPass = std::make_unique<Shader>("res/shaders/Shadows/PointRenderPass.shader");
 	s_RenderPass->setInt("depthMap", 1);
-	s_RenderPass->setVec3("viewPos", m_camera.getCameraPos());
+	s_RenderPass->setVec3("viewPos", m_camera->getCameraPos());
 	s_RenderPass->setVec3("lightColor", lightColor);
 	s_LampPass = std::make_unique<Shader>("res/shaders/Shadows/lamp5.shader");
 	s_LampPass->setVec3("lightColor", lightColor);
@@ -147,13 +147,13 @@ TestPointShadows::~TestPointShadows()
 void TestPointShadows::OnUpdate()
 {
 	if (snapToLight)
-		m_camera.setPos(lightPos);
-	else if (m_camera.move(m_window))
-		s_RenderPass->setVec3("viewPos", m_camera.getCameraPos());
+		m_camera->setPos(lightPos);
+	else if (m_camera->handleWindowInput(m_window))
+		s_RenderPass->setVec3("viewPos", m_camera->getCameraPos());
 	if (movePointLight)
 	{
 		// Update Light position
-		time += m_camera.getDeltaT();
+		time = glfwGetTime();
 		if (time > 4.188790) // period is 4.188790s
 			time = 0.0f;
 		lightPos = glm::vec3(cosf(1.5f * time), 0.75, sinf(1.5f * time));
@@ -176,8 +176,8 @@ void TestPointShadows::OnUpdate()
 	GLCall(glViewport(0, 0, sWidth, sHeight));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
-	glm::mat4 view = m_camera.getViewMatrix();
-	glm::mat4 proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	glm::mat4 view = m_camera->getViewMatrix();
+	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 	s_RenderPass->setMat4("VP", proj * view);
 	GLCall(glActiveTexture(GL_TEXTURE1));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, depthCubeMap));
@@ -244,7 +244,7 @@ void TestPointShadows::OnImGuiRender()
 
 	ImGui::Separator();
 
-	ImGui::Text("x: %.2f y: %.2f z: %.2f", m_camera.getCameraPos().x, m_camera.getCameraPos().y, m_camera.getCameraPos().z);
+	ImGui::Text("x: %.2f y: %.2f z: %.2f", m_camera->getCameraPos().x, m_camera->getCameraPos().y, m_camera->getCameraPos().z);
 }
 
 void TestPointShadows::framebuffer_size_callback(int width, int height)

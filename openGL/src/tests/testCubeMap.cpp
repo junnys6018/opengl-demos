@@ -1,7 +1,7 @@
 #include "testCubeMap.h"
 #include "debug.h"
 
-TestCubeMap::TestCubeMap(Camera& cam, GLFWwindow* win)
+TestCubeMap::TestCubeMap(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win)
 {
 	oBlastoise = std::make_unique<Object>("res/Objects/Pokemon/Blastoise/Blastoise.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
@@ -77,7 +77,7 @@ TestCubeMap::~TestCubeMap()
 
 void TestCubeMap::OnUpdate()
 {
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 	
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	// objects
@@ -85,19 +85,19 @@ void TestCubeMap::OnUpdate()
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::scale(model, glm::vec3(0.22f, 0.22f, 0.22f));
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::mat4(1.0f);
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	if (width != 0 && height != 0)
-		proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(width) / height, 0.1f, 100.0f);
+		proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(width) / height, 0.1f, 100.0f);
 
 	GLCall(glActiveTexture(GL_TEXTURE1));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, m_cubeMap));
 	m_shader->Use();
 	m_shader->setMat4("MVP", proj * view * model);
 	m_shader->setMat4("model", model);
-	m_shader->setVec3("camPos", m_camera.getCameraPos());
+	m_shader->setVec3("camPos", m_camera->getCameraPos());
 	oBlastoise->Draw(*m_shader);
 
 	// skybox
@@ -105,7 +105,7 @@ void TestCubeMap::OnUpdate()
 
 	skyBoxVA->Bind();
 	skyBoxShader->Use();
-	skyBoxShader->setMat4("VP", proj * glm::mat4(glm::mat3(m_camera.getViewMatrix())));
+	skyBoxShader->setMat4("VP", proj * glm::mat4(glm::mat3(m_camera->getViewMatrix())));
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
 
 }

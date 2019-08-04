@@ -20,14 +20,14 @@ void genLightAttibute(std::vector<PointLight>& vecLight, glm::vec4 position);
 class TestDeferred : public Test
 {
 public:
-	TestDeferred(Camera& cam, GLFWwindow* win, uint16_t nr_lights);
+	TestDeferred(Base_Camera* cam, GLFWwindow* win, uint16_t nr_lights);
 	~TestDeferred();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer[3];
 

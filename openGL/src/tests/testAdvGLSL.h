@@ -12,14 +12,14 @@
 class TestAdvGLSL : public Test
 {
 public:
-	TestAdvGLSL(Camera& cam, GLFWwindow* win);
+	TestAdvGLSL(Base_Camera* cam, GLFWwindow* win);
 	~TestAdvGLSL();
 
 	void OnUpdate() override;
 	void OnImGuiRender() override;
 	void framebuffer_size_callback(int width, int height) override;
 private:
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 
 	std::unique_ptr<Object> o_Cube;

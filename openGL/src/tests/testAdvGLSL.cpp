@@ -1,7 +1,7 @@
 #include "testAdvGLSL.h"
 #include "debug.h"
 
-TestAdvGLSL::TestAdvGLSL(Camera& cam, GLFWwindow* win)
+TestAdvGLSL::TestAdvGLSL(Base_Camera* cam, GLFWwindow* win)
 	:m_camera(cam), m_window(win), m_time(0.0f), m_isWireFrame(false), m_hasNormals(false)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
@@ -75,14 +75,14 @@ TestAdvGLSL::~TestAdvGLSL()
 
 void TestAdvGLSL::OnUpdate()
 {
-	m_camera.move(m_window);
+	m_camera->handleWindowInput(m_window);
 
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 	// Render
-	glm::mat4 view = m_camera.getViewMatrix();
+	glm::mat4 view = m_camera->getViewMatrix();
 
 	glm::mat4 proj = glm::mat4(1.0f);
-	proj = glm::perspective(glm::radians(m_camera.getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
 
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(view));
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(proj));

@@ -13,7 +13,7 @@
 class TestPointShadows : public Test
 {
 public:
-	TestPointShadows(Camera& cam, GLFWwindow* win);
+	TestPointShadows(Base_Camera* cam, GLFWwindow* win);
 	~TestPointShadows();
 
 	void OnUpdate() override;
@@ -22,7 +22,7 @@ public:
 private:
 	void configureModelsAndDraw(Shader& shader, Draw_Flags flags);
 
-	Camera& m_camera;
+	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer[3];
 
