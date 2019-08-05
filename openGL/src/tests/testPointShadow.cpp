@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestPointShadows::TestPointShadows(Base_Camera* cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), visualiseDepthMap(false), lightPos(1.0f, -0.75f, 0.0f), lightColor(0.9f), time(0.0f)
+	:m_camera(cam), m_window(win), visualiseDepthMap(false), lightPos(1.0f, -0.75f, 0.0f), lightColor(0.9f), timePoint(0.0f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
@@ -150,11 +150,14 @@ void TestPointShadows::OnUpdate()
 		m_camera->setPos(lightPos);
 	else if (m_camera->handleWindowInput(m_window))
 		s_RenderPass->setVec3("viewPos", m_camera->getCameraPos());
+		currTime = glfwGetTime();
+		float delta = currTime - lastTime;
+		lastTime = currTime;
 	if (movePointLight)
 	{
 		// Update Light position
-		time = glfwGetTime();
-		lightPos = glm::vec3(cosf(1.5f * time), -0.75, sinf(1.5f * time));
+		timePoint += delta;
+		lightPos = glm::vec3(cosf(1.5f * timePoint), -0.75, sinf(1.5f * timePoint));
 	}
 	// Shadow Pass
 	timer[0].begin();

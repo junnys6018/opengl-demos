@@ -31,7 +31,7 @@ private:
 	bool visualiseDepthMap, movePointLight, snapToLight;
 	glm::vec3 lightPos;
 	glm::vec3 lightColor;
-	float time;
+	float currTime, lastTime, timePoint;
 	// Objects
 	std::unique_ptr<VertexBuffer> m_CubeVB;
 	std::unique_ptr<VertexArray> m_CubeVA;

@@ -9,7 +9,7 @@ TestSSAO::TestSSAO(Base_Camera* cam, GLFWwindow* win)
 	srand((unsigned int)glfwGetTime());
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	o_NanoSuit = std::make_unique<Object>("res/Objects/nanosuit/nanosuit.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
-	o_Erato = std::make_unique<Object>("res/Objects/erato/erato-1.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
+	o_Pikachu = std::make_unique<Object>("res/Objects/Pokemon/Pikachu/Pikachu.obj", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
 	s_GeometryPass = std::make_unique<Shader>("res/shaders/SSAO/GeometryPass.shader");
 	s_ssaoPass = std::make_unique<Shader>("res/shaders/SSAO/OcclusionPass.shader");
@@ -27,6 +27,7 @@ TestSSAO::TestSSAO(Base_Camera* cam, GLFWwindow* win)
 	s_LightingPass->setInt("SSAO", 3);
 	s_LightingPass->setInt("renderMode", 5);
 	s_LightingPass->setVec3("light.Color", LightColor);
+	s_LampPass = std::make_unique<Shader>("res/shaders/Shadows/lamp5.shader");
 
 	// Screen quad VAO
 	float quadVertices[] = {
@@ -88,7 +89,7 @@ TestSSAO::TestSSAO(Base_Camera* cam, GLFWwindow* win)
 	};
 	CubeVB = std::make_unique<VertexBuffer>(cubeVertices, sizeof(cubeVertices));
 	CubeVA = std::unique_ptr<VertexArray>(new VertexArray(*CubeVB, GL_FLOAT, { 3,3,2 }));
-	CubeTexture = std::make_unique<Texture>("res/Textures/container.jpg");
+	CubeTexture = std::make_unique<Texture>("res/Textures/wood.png");
 
 	genFrameBuffers();
 
@@ -148,29 +149,29 @@ void TestSSAO::OnUpdate()
 
 	glm::mat4 view = m_camera->getViewMatrix();
 	glm::mat4 proj = glm::perspective(glm::radians(m_camera->getFOV()), (float)(sWidth) / sHeight, 0.1f, 100.0f);
+	LightViewPos = glm::vec3(view * glm::vec4(-1.7f, 0.3f, 0.0f, 1.0f));
 	// Geometry Pass
 	timer[0].begin();
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, gBuffer));
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 
 	glm::mat4 model = glm::mat4(1.0f);
-	model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(0.1f));
-	model = glm::translate(model, glm::vec3(11440.0f, 13000.0f, 12730.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -2.0f, -2.0f));
+	model = glm::scale(model, glm::vec3(0.4f));
 	s_GeometryPass->setMat4("model", model);
 	s_GeometryPass->setMat4("view", view);
 	s_GeometryPass->setMat4("proj", proj);
-	o_Erato->Draw(*s_GeometryPass);
+	o_Pikachu->Draw(*s_GeometryPass);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 3.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -2.0f, 1.0f));
 	model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(0.2f));
 	s_GeometryPass->setMat4("model", model);
 	o_NanoSuit->Draw(*s_GeometryPass);
 
 	model = glm::mat4(1.0f);
-	model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
+	model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
 	model = glm::scale(model, glm::vec3(8.0f));
 	model = glm::translate(model, glm::vec3(0.0f, 0.5f, 0.0f));
 	s_GeometryPass->setMat4("model", model);
@@ -223,9 +224,24 @@ void TestSSAO::OnUpdate()
 
 	GLCall(glActiveTexture(GL_TEXTURE3));
 	GLCall(glBindTexture(GL_TEXTURE_2D, (renderMode == 3 ? ssaoColor : ssaoBlurColor)));
-	s_LightingPass->setVec3("light.Position", glm::vec3(view * glm::vec4(-1.7f, 2.3f, 2.0f, 1.0f)));
+	s_LightingPass->setVec3("light.Position", LightViewPos);
 	GLCall(glDrawArrays(GL_TRIANGLES, 0, 6));
 	timer[3].end();
+	// Lamp Pass
+	timer[4].begin();
+
+	GLCall(glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer));
+	GLCall(glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0)); // write to default framebuffer
+	GLCall(glBlitFramebuffer(0, 0, sWidth, sHeight, 0, 0, sWidth, sHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST));
+
+	CubeVA->Bind();
+	model = glm::mat4(1.0f);
+	model = glm::translate(model, glm::vec3(-1.7f, 0.3f, 0.0f));
+	model = glm::scale(model, glm::vec3(0.3f));
+	s_LampPass->setMat4("MVP", proj * view * model);
+	s_LampPass->setVec3("lightColor", LightColor);
+	GLCall(glDrawArrays(GL_TRIANGLES, 0, 36));
+	timer[4].end();
 }
 
 void TestSSAO::OnImGuiRender()
@@ -252,8 +268,9 @@ void TestSSAO::OnImGuiRender()
 		ImGui::Text("SSAO Pass: %.3f ms"      , (float)timer[1].getTime() / 1.0e6f);
 		ImGui::Text("Blur Pass: %.3f ms"      , (float)timer[2].getTime() / 1.0e6f);
 		ImGui::Text("Lighting Pass: %.3f ms"  , (float)timer[3].getTime() / 1.0e6f);
+		ImGui::Text("Lamp Pass: %.3f ms"      , (float)timer[4].getTime() / 1.0e6f);
 		ImGui::Text("Total GPU Time: %.3f ms" ,
-			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime() + timer[3].getTime()) / 1.0e6f);
+			(float)(timer[0].getTime() + timer[1].getTime() + timer[2].getTime() + timer[3].getTime() + timer[4].getTime()) / 1.0e6f);
 	}
 	if (ImGui::ColorEdit3("Light Color", &LightColor[0]))
 		s_LightingPass->setVec3("light.Color", LightColor);

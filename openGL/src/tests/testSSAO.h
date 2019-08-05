@@ -23,15 +23,16 @@ private:
 	void genFrameBuffers();
 	Base_Camera* m_camera;
 	GLFWwindow* m_window;
-	Timer timer[4];
+	Timer timer[5];
 
 	std::unique_ptr<Object> o_NanoSuit;
-	std::unique_ptr<Object> o_Erato;
+	std::unique_ptr<Object> o_Pikachu;
 
 	std::unique_ptr<Shader> s_GeometryPass;
 	std::unique_ptr<Shader> s_ssaoPass;
 	std::unique_ptr<Shader> s_BlurPass;
 	std::unique_ptr<Shader> s_LightingPass;
+	std::unique_ptr<Shader> s_LampPass;
 
 	std::unique_ptr<VertexBuffer> QuadVB;
 	std::unique_ptr<VertexArray> QuadVA;
@@ -43,7 +44,7 @@ private:
 	int sWidth, sHeight;
 	unsigned int gBuffer, gPosition, gNormal, gColor, rboDepth, noiseTexture, ssaoFBO, ssaoColor, ssaoBlurFBO, ssaoBlurColor;
 	int renderMode, oldRenderMode;
-	glm::vec3 LightColor;
+	glm::vec3 LightColor, LightViewPos;
 	float power;
 };
 

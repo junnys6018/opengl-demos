@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestAdvGLSL::TestAdvGLSL(Base_Camera* cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), m_time(0.0f), m_isWireFrame(false), m_hasNormals(false)
+	:m_camera(cam), m_window(win), timePoint(0.0f), m_isWireFrame(false), m_hasNormals(false)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
@@ -98,10 +98,15 @@ void TestAdvGLSL::OnUpdate()
 	//o_Cube->Draw(*s_NormVisualise);
 
 	// geometry shader demo
+	currTime = glfwGetTime();
+	float delta = currTime - lastTime;
+	lastTime = currTime;
 	if (m_isplaying)
 	{
-		m_time = (sin(glfwGetTime()) + 1.0f) / 2.0f;
-		s_ExplodeShader->setFloat("time", m_time);
+		timePoint += delta;
+		if (timePoint > 6.28318530718f)
+			timePoint = 0.0f;
+		s_ExplodeShader->setFloat("time", (1.0f - cosf(timePoint)) / 2.0f);
 	}
 	o_Blastoise->Draw(*s_ExplodeShader);
 
@@ -114,8 +119,8 @@ void TestAdvGLSL::OnImGuiRender()
 {
 	if (ImGui::Checkbox("Wireframe Mode", &m_isWireFrame))
 		GLCall(glPolygonMode(GL_FRONT_AND_BACK, (m_isWireFrame ? GL_LINE : GL_FILL)));
-	if (ImGui::SliderFloat("Offset", &m_time, 0.0f, 1.0f, "%.3f"))
-		s_ExplodeShader->setFloat("time", m_time);
+	if (ImGui::SliderFloat("Offset", &timePoint, 0.0f, 6.28318530718f, "%.3f"))
+		s_ExplodeShader->setFloat("time", (1.0f - cosf(timePoint)) / 2.0f);
 	ImGui::Checkbox("play", &m_isplaying);
 	ImGui::SameLine();
 	ImGui::Checkbox("normals", &m_hasNormals);

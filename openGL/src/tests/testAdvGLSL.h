@@ -38,7 +38,7 @@ private:
 
 	int sWidth, sHeight;
 	unsigned int UBO;
-	float m_time;
+	float currTime, lastTime, timePoint;
 	bool m_isplaying; // true if m_time is oscillating
 	bool m_isWireFrame;
 	bool m_hasNormals;

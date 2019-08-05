@@ -524,9 +524,6 @@
     <None Include="res\Shaders\Explode.shader" />
     <None Include="res\Shaders\NormVisualize.shader" />
     <None Include="res\Shaders\Nidoqueen.shader" />
-    <None Include="res\Shaders\QuadInstance.shader" />
-    <None Include="res\Shaders\Rocks.shader" />
-    <None Include="res\Shaders\Planet.shader" />
     <None Include="res\Shaders\BlinnPhong.shader" />
     <None Include="res\Shaders\lamp2.shader" />
     <None Include="res\Shaders\Shadows\ShadowPass.shader" />
@@ -551,6 +548,9 @@
     <None Include="res\shaders\Shadows\PointRenderPass.shader" />
     <None Include="res\shaders\Shadows\lamp5.shader" />
     <None Include="res\shaders\PBR\Direct.shader" />
+    <None Include="res\shaders\Instancing\QuadInstance.shader" />
+    <None Include="res\shaders\Instancing\Planet.shader" />
+    <None Include="res\shaders\Instancing\Rocks.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">

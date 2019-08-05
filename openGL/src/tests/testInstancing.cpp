@@ -18,7 +18,7 @@ TestInstancing::TestInstancing(Base_Camera* cam, GLFWwindow* win, uint16_t insta
 	QuadVB = std::make_unique<VertexBuffer>(quadVertices, sizeof(quadVertices));
 	QuadVA = std::unique_ptr<VertexArray>(new VertexArray(*QuadVB, GL_FLOAT, { 2,3 }));
 
-	s_Quad = std::make_unique<Shader>("res/Shaders/QuadInstance.shader");
+	s_Quad = std::make_unique<Shader>("res/Shaders/Instancing/QuadInstance.shader");
 
 	glm::vec2 translations[100];
 	int index = 0;
@@ -57,19 +57,19 @@ TestInstancing::TestInstancing(Base_Camera* cam, GLFWwindow* win, uint16_t insta
 	o_Planet = std::make_unique<Object>("res/Objects/planet/planet.obj.expanded", OBJECT_INIT_FLAGS_GEN_TEXTURE);
 	o_Rock = std::make_unique<Object>("res/Objects/planet/rock.obj.expanded", OBJECT_INIT_FLAGS_GEN_MIPMAP | OBJECT_INIT_FLAGS_GEN_TEXTURE);
 
-	s_rock = std::make_unique<Shader>("res/Shaders/Rocks.shader");
-	s_planet = std::make_unique<Shader>("res/Shaders/Planet.shader");
+	s_rock = std::make_unique<Shader>("res/Shaders/Instancing/Rocks.shader");
+	s_planet = std::make_unique<Shader>("res/Shaders/Instancing/Planet.shader");
 
 	glm::mat4 model = glm::mat4(1.0f);
 	model = glm::translate(model, glm::vec3(0.0f, -3.0f, 0.0f));
-	model = glm::scale(model, glm::vec3(4.0f, 4.0f, 4.0f));
+	model = glm::scale(model, glm::vec3(2.0f, 2.0f, 2.0f));
 	s_planet->setMat4("model", model);
 
 	// generate model mat4's
 	std::vector<glm::mat4> modelMatrices;
 	modelMatrices.reserve(m_amount);
-	float radius = 80.0f;
-	offset = 10.0f;
+	float radius = 40.0f;
+	offset = 5.0f;
 	srand((unsigned int)glfwGetTime());
 	for (unsigned int i = 0; i < m_amount; i++)
 	{
@@ -84,8 +84,8 @@ TestInstancing::TestInstancing(Base_Camera* cam, GLFWwindow* win, uint16_t insta
 		float z = cos(angle) * radius + displacement;
 		model = glm::translate(model, glm::vec3(x, y, z));
 
-		// 2. scale: Scale between 0.05 and 0.25f
-		float scale = (rand() % 20) / 100.0f + 0.05;
+		// 2. scale: Scale between 0.03 and 0.13f
+		float scale = (rand() % 20) / 200.0f + 0.03;
 		model = glm::scale(model, glm::vec3(scale));
 
 		// 3. rotation: add random rotation around a (semi)randomly picked rotation axis vector
