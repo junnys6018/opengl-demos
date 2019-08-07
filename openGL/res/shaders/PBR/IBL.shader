@@ -45,7 +45,10 @@ uniform sampler2D Albedo;
 uniform sampler2D Normal;
 uniform sampler2D Metalness;
 uniform sampler2D Roughness;
+
 uniform samplerCube irradianceMap;
+uniform samplerCube prefilterMap;
+uniform sampler2D brdfLUT;
 
 uniform vec3 viewPos;
 uniform bool useSamplers;
@@ -69,21 +72,34 @@ void main()
 	}
 	else
 	{
-		albedo = vec3(1.00, 0.71, 0.29); // F0 for gold
+		albedo = vec3(1.00, 0.71, 0.07); // F0 for gold
 		normal = normalize(f_normal);
 		metal = metalness;
 		rough = roughness;
 	}
+	// Diffuse
 	vec3 irradiance = texture(irradianceMap, normal).rgb;
 	vec3 viewDir = normalize(viewPos - f_fragPos);
 
 	vec3 F0 = vec3(0.04);
 	F0 = mix(F0, albedo, metal);
-	vec3 F = fresnelSchlickRoughness(max(dot(normal, viewDir), 0.0), F0, rough);
+	float NdotV = max(dot(normal, viewDir), 0.0);	
+	vec3 F = fresnelSchlickRoughness(NdotV, F0, rough);
 	vec3 Kd = 1.0 - F;
 	Kd *= 1.0 - metal;
 
-	vec3 color = Kd * albedo * irradiance;
+	vec3 diffuse = albedo * irradiance;
+
+	// Specular
+
+	vec3 reflectDir = reflect(-viewDir, normal);
+	const float MAX_LOD = 4.0;
+	vec3 prefilterColor = textureLod(prefilterMap, reflectDir, rough * MAX_LOD).rgb;
+	vec2 envBRDF = texture(brdfLUT, vec2(NdotV, rough)).rg;
+	vec3 specular = prefilterColor * (F * envBRDF.r + envBRDF.g);
+
+	vec3 color = Kd * diffuse + specular;
+
 	// HDR tonemapping
 	color = color / (color + vec3(1.0));
 	// gamma correct

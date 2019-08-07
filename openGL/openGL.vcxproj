@@ -239,6 +239,8 @@
     <None Include="res\shaders\Instancing\QuadInstance.shader" />
     <None Include="res\shaders\PBR\Equirectangular2CubeMap.shader" />
     <None Include="res\shaders\PBR\IBL.shader" />
+    <None Include="res\shaders\PBR\PreFilter.shader" />
+    <None Include="res\shaders\PBR\SkyBox.shader" />
     <None Include="res\Shaders\Shadows\DepthMap.shader" />
     <None Include="res\shaders\Shadows\lamp5.shader" />
     <None Include="res\shaders\Shadows\PointRenderPass.shader" />

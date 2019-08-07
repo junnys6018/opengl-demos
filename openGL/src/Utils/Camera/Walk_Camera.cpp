@@ -13,7 +13,7 @@ Walk_Camera::~Walk_Camera()
 }
 void Walk_Camera::resetPos()
 {
-	m_cameraPos = glm::vec3(1.0f, 0.0f, 0.0f);	// Position in worldspace
+	m_cameraPos = glm::vec3(0.0f, 0.0f, 0.0f);	// Position in worldspace
 	m_cameraDir = glm::vec3(0.0f, 0.0f, -1.0f);	// direction the camera is facing relative to position in world space
 	m_cameraRight = glm::normalize(glm::cross(m_cameraDir, glm::vec3(0.0f, 1.0f, 0.0f)));
 	m_cameraForward = glm::vec3(m_cameraRight.z, 0.0f, -m_cameraRight.x);

@@ -20,6 +20,8 @@ static uint16_t blur_scale = 4; // TEST_BLOOM
 static uint16_t nr_passes = 8;
 
 static uint16_t nr_lights = 32; // TEST_DEFERRED
+
+static std::string hdrPath = "res/Textures/RadianceMap/Alexs_Apt_2k.hdr"; // TEST-IBL
 TestManager::TestManager(GLFWwindow** win)
 	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), show_pos(true), m_window(win)
 {
@@ -100,7 +102,29 @@ void TestManager::registerTests()
 	});
 	registerTest("SSAO", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
 	registerTest("Direct-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
-	registerTest("IBL-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win); }, noInit);
+	registerTest("IBL-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win, hdrPath); },
+		[]()->bool {
+			ImGui::PushItemWidth(-1);
+			ImGui::Text("Skybox:");
+			if (ImGui::Button("Alexs Apt"))
+			{
+				hdrPath = "res/Textures/RadianceMap/Alexs_Apt_2k.hdr";
+				return true;
+			}
+			if (ImGui::Button("Circus Stage"))
+			{
+				hdrPath = "res/Textures/RadianceMap/Circus_Backstage_3k.hdr";
+				return true;
+			}
+			if (ImGui::Button("Canyon"))
+			{
+				hdrPath = "res/Textures/RadianceMap/GCanyon_C_YumaPoint_3k.hdr";
+				return true;
+			}
+			ImGui::PopItemWidth();
+			return false;
+
+	});
 }
 
 void TestManager::OnImGuiRender(unsigned int fps)
@@ -111,6 +135,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		ImGui::Text("ESC - Toggle Camera");
 		ImGui::Text("SCROLL - Change FOV");
 		ImGui::Text("WASD - Move");
+		ImGui::Text("F - Toggle Fullscreen");
 		ImGui::End();
 	}
 	

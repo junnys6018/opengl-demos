@@ -1,8 +1,9 @@
 #include "testIBL_PBR.h"
 #include "debug.h"
 
-TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
-	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.01f), renderFlags(14), renderMode(1), oldRenderMode(1), useIrradianceMap(false)
+TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& hdrPath)
+	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.001f), mipLevel(0.0), renderFlags(14), renderMode(1),
+	oldRenderMode(1), skyboxTarget(4), oldSkyboxTarget(4)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
@@ -11,19 +12,22 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
 	o_Cerberus = std::make_unique<Object>("res/Objects/Cerberus/Cerberus.obj.expanded", OBJECT_INIT_FLAGS_GEN_TANGENT);
 
 	s_Shader = std::make_unique<Shader>("res/shaders/PBR/IBL.shader");
+	s_Shader->setVec3("viewPos", m_camera->getCameraPos());
 	s_Shader->setInt("Albedo", 0);
 	s_Shader->setInt("Normal", 1);
 	s_Shader->setInt("Metalness", 2);
 	s_Shader->setInt("Roughness", 3);
 	s_Shader->setInt("irradianceMap", 5);
+	s_Shader->setInt("prefilterMap", 6);
+	s_Shader->setInt("brdfLUT", 7);
 	s_Shader->setInt("renderMode", renderMode);
 
-	s_SkyBox = std::make_unique<Shader>("res/shaders/SkyBox.shader");
+	s_SkyBox = std::make_unique<Shader>("res/shaders/PBR/SkyBox.shader");
 	s_SkyBox->setInt("skybox", 4);
 	// Load Radiance HDR map
 	stbi_set_flip_vertically_on_load(true);
 	int width, height, nrComponents;
-	float* data = stbi_loadf("res/Textures/RadianceMap/Alexs_Apt_2k.hdr", &width, &height, &nrComponents, 0);
+	float* data = stbi_loadf(hdrPath.c_str(), &width, &height, &nrComponents, 0);
 	if (data)
 	{
 		GLCall(glGenTextures(1, &hdrTexture));
@@ -39,6 +43,8 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
 	}
 	else std::cout << "Failed to load HDR image\n";
 
+	/* DIFFUSE PRECOMPUTING */
+
 	// Convert Radiance HDR map to cubemap
 	o_Cube = std::make_unique<Object>("res/Objects/cube.obj");
 	s_Equ2Cube = std::make_unique<Shader>("res/shaders/PBR/Equirectangular2CubeMap.shader");
@@ -53,20 +59,54 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, CaptureRBO));
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, FBOwidth, FBOwidth));
 	GLCall(glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, CaptureRBO));
-	
+
+	allocate_mem_to_cube_map(&EnviromentMap, FBOwidth);
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)); // To sample mipmap levels
 	render_to_cube_map(&EnviromentMap, FBOwidth, s_Equ2Cube);
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, EnviromentMap));
+	GLCall(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
 
 	// Convolute Environment cubemap into Irradiance cubemap
 	s_Convolution = std::make_unique<Shader>("res/shaders/PBR/Convolution.shader");
 	s_Convolution->setInt("environmentMap", 1);
 	GLCall(glActiveTexture(GL_TEXTURE1));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, EnviromentMap));
+	GLCall(glActiveTexture(GL_TEXTURE0));
 
 	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, CaptureFBO));
 	GLCall(glBindRenderbuffer(GL_RENDERBUFFER, CaptureRBO));
 	GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 32, 32));
 
+	allocate_mem_to_cube_map(&IrradianceMap, 32);
 	render_to_cube_map(&IrradianceMap, 32, s_Convolution);
+
+	/* SPECULAR PRECOMPUTING */
+
+	allocate_mem_to_cube_map(&PrefilterMap, 128);
+	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+	GLCall(glGenerateMipmap(GL_TEXTURE_CUBE_MAP));
+
+	s_PreFilter = std::make_unique<Shader>("res/shaders/PBR/PreFilter.shader");
+	s_PreFilter->setInt("environmentMap", 1);
+	GLCall(glActiveTexture(GL_TEXTURE1));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, EnviromentMap));
+	GLCall(glActiveTexture(GL_TEXTURE0));
+
+	GLCall(glBindFramebuffer(GL_FRAMEBUFFER, CaptureFBO));
+	const int MIP_LEVELS = 5;
+	for (int mip = 0; mip < MIP_LEVELS; mip++)
+	{
+		unsigned int mipWidth = 128 * std::pow(0.5, mip);
+		GLCall(glBindRenderbuffer(GL_RENDERBUFFER, CaptureRBO));
+		GLCall(glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipWidth));
+		float roughness = (float)mip / (float)(MIP_LEVELS - 1);
+		s_PreFilter->setFloat("roughness", roughness);
+
+		render_to_cube_map(&PrefilterMap, mipWidth, s_PreFilter, mip);
+	}
+
+
+	/* BINDINGS */
 
 	// Bind default framebuffer
 	GLCall(glViewport(0, 0, sWidth, sHeight));
@@ -78,16 +118,19 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win)
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, EnviromentMap));
 	GLCall(glActiveTexture(GL_TEXTURE5));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, IrradianceMap));
+	GLCall(glActiveTexture(GL_TEXTURE6));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, PrefilterMap));
+	t_brdfLUT = std::make_unique<Texture>("res/Textures/PBR/brdftexture.png");
+	t_brdfLUT->Bind(7);
 
+	GLCall(glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glDepthFunc(GL_LEQUAL));
 }
-
-void TestIBL_PBR::render_to_cube_map(unsigned int* cubemap, int width, std::unique_ptr<Shader>& shader)
+void TestIBL_PBR::allocate_mem_to_cube_map(unsigned int* cubemap, int width)
 {
 	// Allocate memory for cubemap
 	GLCall(glGenTextures(1, cubemap));
-	GLCall(glActiveTexture(GL_TEXTURE0));
 	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, *cubemap));
 	for (int i = 0; i < 6; ++i)
 	{
@@ -100,6 +143,11 @@ void TestIBL_PBR::render_to_cube_map(unsigned int* cubemap, int width, std::uniq
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE));
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
 	GLCall(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+}
+void TestIBL_PBR::render_to_cube_map(unsigned int* cubemap, int width, std::unique_ptr<Shader>& shader, int mip)
+{
+	GLCall(glActiveTexture(GL_TEXTURE0));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, *cubemap));
 	// Capture shader output onto the cubemap faces
 	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
 	glm::mat4 captureViews[] =
@@ -118,7 +166,7 @@ void TestIBL_PBR::render_to_cube_map(unsigned int* cubemap, int width, std::uniq
 	for (int i = 0; i < 6; i++)
 	{
 		shader->setMat4("view", captureViews[i]);
-		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, *cubemap, 0));
+		GLCall(glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, *cubemap, mip));
 		GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 		o_Cube->Draw(*shader);
 	}
@@ -129,11 +177,13 @@ TestIBL_PBR::~TestIBL_PBR()
 	GLCall(glDeleteTextures(1, &hdrTexture));
 	GLCall(glDeleteTextures(1, &EnviromentMap));
 	GLCall(glDeleteTextures(1, &IrradianceMap));
+	GLCall(glDeleteTextures(1, &PrefilterMap));
 
 	GLCall(glDeleteFramebuffers(1, &CaptureFBO));
 	GLCall(glDeleteRenderbuffers(1, &CaptureRBO));
 
 	GLCall(glActiveTexture(GL_TEXTURE0));
+	GLCall(glDisable(GL_TEXTURE_CUBE_MAP_SEAMLESS));
 	GLCall(glDepthFunc(GL_LESS));
 }
 
@@ -184,6 +234,7 @@ void TestIBL_PBR::OnUpdate()
 		bindTextures(0);
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, glm::vec3(-5.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, 0.05f * (float)glfwGetTime(), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(3.0f));
 		s_Shader->setMat4("model", model);
 		o_Cylinder->Draw(*s_Shader);
@@ -193,8 +244,8 @@ void TestIBL_PBR::OnUpdate()
 	{
 		bindTextures(1);
 		glm::mat4 model = glm::mat4(1.0f);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.2f));
-		model = glm::scale(model, glm::vec3(0.03f));
+		model = glm::translate(model, glm::vec3(0.0f, -1.5f, 2.5f));
+		model = glm::scale(model, glm::vec3(1.8f));
 		s_Shader->setMat4("model", model);
 		o_Cerberus->Draw(*s_Shader);
 	}
@@ -211,14 +262,29 @@ void TestIBL_PBR::OnImGuiRender()
 	ImGui::CheckboxFlags("Spheres", &renderFlags, 1 << 1);
 	ImGui::CheckboxFlags("Cylinder", &renderFlags, 1 << 2);
 	ImGui::CheckboxFlags("Cerberus", &renderFlags, 1 << 3);
+
 	ImGui::Separator();
-	if (ImGui::Checkbox("Use Irradiance Map", &useIrradianceMap))
+
+	ImGui::Text("Skybox Target:");
+	ImGui::RadioButton("Environment Map", &skyboxTarget, 4);
+	ImGui::RadioButton("Irradiance Map", &skyboxTarget, 5);
+	ImGui::RadioButton("PreFilter Map", &skyboxTarget, 6);
+	if (skyboxTarget != oldSkyboxTarget)
 	{
-		s_SkyBox->setInt("skybox", useIrradianceMap ? 5 : 4);
+		oldSkyboxTarget = skyboxTarget;
+		s_SkyBox->setInt("skybox", skyboxTarget);
 	}
-	ImGui::SliderFloat("Metalness", &metalness, 0.0f, 1.0f);
-	ImGui::SliderFloat("Roughness", &roughness, 0.01f, 1.0f);
+	if (skyboxTarget == 6 && ImGui::SliderFloat("Mip Level", &mipLevel, 0.0f, 4.0f)) // Prefilter map
+	{
+		s_SkyBox->setFloat("mip", mipLevel);
+	}
 	ImGui::Separator();
+
+	ImGui::SliderFloat("Metalness", &metalness, 0.0f, 1.0f);
+	ImGui::SliderFloat("Roughness", &roughness, 0.001f, 1.0f);
+
+	ImGui::Separator();
+
 	ImGui::Text("Render Target:");
 	ImGui::RadioButton("Lighting", &renderMode, 1);
 	ImGui::RadioButton("Freshnel", &renderMode, 2);

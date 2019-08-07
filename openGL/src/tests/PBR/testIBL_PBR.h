@@ -12,7 +12,7 @@
 class TestIBL_PBR : public Test
 {
 public:
-	TestIBL_PBR(Base_Camera* cam, GLFWwindow* win);
+	TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& hdrPath);
 	~TestIBL_PBR();
 
 	void OnUpdate() override;
@@ -22,19 +22,20 @@ private:
 	void generateTextures(const std::string& path, int index);
 	void bindTextures(int index);
 
-	void render_to_cube_map(unsigned int* cubemap, int width, std::unique_ptr<Shader>& shader);
+	void allocate_mem_to_cube_map(unsigned int* cubemap, int width);
+	void render_to_cube_map(unsigned int* cubemap, int width, std::unique_ptr<Shader>& shader, int mip = 0);
 private:
 	Base_Camera* m_camera;
 	GLFWwindow* m_window;
 	Timer timer;
 
 	int sWidth, sHeight;
-	float metalness, roughness;
+	float metalness, roughness, mipLevel;
 	unsigned int renderFlags;
-	int renderMode, oldRenderMode;
-	bool useIrradianceMap;
+	int renderMode, oldRenderMode, skyboxTarget, oldSkyboxTarget;
 
 	unsigned int hdrTexture, EnviromentMap, IrradianceMap, CaptureFBO, CaptureRBO;
+	unsigned int PrefilterMap;
 	const int FBOwidth = 1024;
 
 	std::unique_ptr<Object> o_Sphere;
@@ -47,10 +48,12 @@ private:
 
 	std::unique_ptr<Shader> s_Equ2Cube;
 	std::unique_ptr<Shader> s_Convolution;
+	std::unique_ptr<Shader> s_PreFilter;
 
 	std::unique_ptr<Texture> t_Albedo[2];
 	std::unique_ptr<Texture> t_Normal[2];
 	std::unique_ptr<Texture> t_Metalness[2];
 	std::unique_ptr<Texture> t_Roughness[2];
+	std::unique_ptr<Texture> t_brdfLUT;
 };
 #endif

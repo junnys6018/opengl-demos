@@ -12,7 +12,7 @@ Static_Camera::~Static_Camera()
 
 void Static_Camera::resetPos()
 {
-	m_radius = 1.0f;
+	m_radius = 0.01f;
 	updateVectors();
 }
 
@@ -65,7 +65,7 @@ bool Static_Camera::handleWindowInput(GLFWwindow* window)
 	{
 		m_mouseHeld = false;
 	}
-	return m_mouseHeld;
+	return true; // FIX-ME return true if mouse is held or scroll wheel is in use
 }
 
 void Static_Camera::updateVectors()

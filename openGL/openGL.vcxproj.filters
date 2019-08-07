@@ -554,6 +554,8 @@
     <None Include="res\shaders\PBR\IBL.shader" />
     <None Include="res\shaders\PBR\Equirectangular2CubeMap.shader" />
     <None Include="res\shaders\PBR\Convolution.shader" />
+    <None Include="res\shaders\PBR\PreFilter.shader" />
+    <None Include="res\shaders\PBR\SkyBox.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">
