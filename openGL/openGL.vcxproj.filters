@@ -551,6 +551,9 @@
     <None Include="res\shaders\Instancing\QuadInstance.shader" />
     <None Include="res\shaders\Instancing\Planet.shader" />
     <None Include="res\shaders\Instancing\Rocks.shader" />
+    <None Include="res\shaders\PBR\IBL.shader" />
+    <None Include="res\shaders\PBR\Equirectangular2CubeMap.shader" />
+    <None Include="res\shaders\PBR\Convolution.shader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Vendor\GL\eglew.h">

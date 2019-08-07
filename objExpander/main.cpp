@@ -106,13 +106,13 @@ int main()
 	std::vector<std::string> mtlPaths;
 	std::vector<Material_ptr> mat_ptrs;
 
-	//buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
+	buffer_obj(inputfile, vPos, vNorm, vTex, iBuf, mtlPaths, mat_ptrs);
 
 	std::vector<Vertex> vertexBuffer;
 	std::vector<unsigned int> indexBuffer;
 	//generate_sphere(vertexBuffer, indexBuffer);
-	generate_cylinder(vertexBuffer, indexBuffer);
-	//expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
+	//generate_cylinder(vertexBuffer, indexBuffer);
+	expand_obj(vPos, vNorm, vTex, iBuf, vertexBuffer, indexBuffer);
 	write_to_file(inputfile + ".expanded", vertexBuffer, indexBuffer, mtlPaths, mat_ptrs);
 
 	std::chrono::steady_clock::time_point b = std::chrono::steady_clock::now();
