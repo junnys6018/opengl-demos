@@ -71,12 +71,12 @@ void TestManager::registerTests()
 	registerTest("advGLSL", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
 	registerTest("Instancing", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestInstancing(cam, win, instances); },
 		[]()->bool {
-		ImGui::Text("#instances:");
-		ImGui::PushItemWidth(-1);
-		ImGui::InputScalar("##Value", ImGuiDataType_U16, &instances);
-		ImGui::PopItemWidth();
-		return ImGui::Button("Enter");
-	});
+			ImGui::Text("#instances:");
+			ImGui::PushItemWidth(-1);
+			ImGui::InputScalar("##Value", ImGuiDataType_U16, &instances);
+			ImGui::PopItemWidth();
+			return ImGui::Button("Enter");
+		});
 	registerTest("advLight", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
 	registerTest("Shadows", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
 	registerTest("Point-Shadow", [](Base_Camera * cam, GLFWwindow * win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
@@ -84,22 +84,22 @@ void TestManager::registerTests()
 	registerTest("ParaMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
 	registerTest("Bloom", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
 		[]()->bool {
-		ImGui::PushItemWidth(-1);
-		ImGui::Text("Blur Scale:");
-		ImGui::InputScalar("##Value0", ImGuiDataType_U16, &blur_scale);
-		ImGui::Text("# of Blur passes");
-		ImGui::InputScalar("##Value1", ImGuiDataType_U16, &nr_passes);
-		ImGui::PopItemWidth();
-		return ImGui::Button("Enter");
-	});
+			ImGui::PushItemWidth(-1);
+			ImGui::Text("Blur Scale:");
+			ImGui::InputScalar("##Value0", ImGuiDataType_U16, &blur_scale);
+			ImGui::Text("# of Blur passes");
+			ImGui::InputScalar("##Value1", ImGuiDataType_U16, &nr_passes);
+			ImGui::PopItemWidth();
+			return ImGui::Button("Enter");
+		});
 	registerTest("Deferred", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestDeferred(cam, win, nr_lights); },
-		[]()->bool {
-		ImGui::Text("# Lights");
-		ImGui::PushItemWidth(-1);
-		ImGui::InputScalar("##Value", ImGuiDataType_U16, &nr_lights);
-		ImGui::PopItemWidth();
-		return ImGui::Button("Enter");
-	});
+			[]()->bool {
+			ImGui::Text("# Lights");
+			ImGui::PushItemWidth(-1);
+			ImGui::InputScalar("##Value", ImGuiDataType_U16, &nr_lights);
+			ImGui::PopItemWidth();
+			return ImGui::Button("Enter");
+		});
 	registerTest("SSAO", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
 	registerTest("Direct-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
 	registerTest("IBL-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win, hdrPath); },
@@ -123,8 +123,7 @@ void TestManager::registerTests()
 			}
 			ImGui::PopItemWidth();
 			return false;
-
-	});
+		});
 }
 
 void TestManager::OnImGuiRender(unsigned int fps)

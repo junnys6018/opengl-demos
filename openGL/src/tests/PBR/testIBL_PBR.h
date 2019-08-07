@@ -46,6 +46,7 @@ private:
 	std::unique_ptr<Shader> s_Shader;
 	std::unique_ptr<Shader> s_SkyBox;
 
+	// Preprocessing shaders
 	std::unique_ptr<Shader> s_Equ2Cube;
 	std::unique_ptr<Shader> s_Convolution;
 	std::unique_ptr<Shader> s_PreFilter;

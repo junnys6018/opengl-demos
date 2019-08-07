@@ -105,7 +105,6 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& h
 		render_to_cube_map(&PrefilterMap, mipWidth, s_PreFilter, mip);
 	}
 
-
 	/* BINDINGS */
 
 	// Bind default framebuffer

@@ -26,6 +26,12 @@ int main(int argc, char* argv[])
 		return -1;
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
+	// Set Window Icon
+	int width, height, nrChannels;
+	unsigned char* data = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
+	GLFWimage icon = { width,height,data };
+	glfwSetWindowIcon(window, 1, &icon);
+
 	test_mgr.registerTests(); // tests need to be registered after window is initilaised
 	if (!window)
 	{

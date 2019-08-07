@@ -38,7 +38,7 @@
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
-
+#include "../../stb_image/src/stb_image.h" // MY IMCLUDE
 // GLFW
 #include <GLFW/glfw3.h>
 #ifdef _WIN32
@@ -447,6 +447,15 @@ static void ImGui_ImplGlfw_CreateWindow(ImGuiViewport* viewport)
 #endif
     GLFWwindow* share_window = (g_ClientApi == GlfwClientApi_OpenGL) ? g_Window : NULL;
     data->Window = glfwCreateWindow((int)viewport->Size.x, (int)viewport->Size.y, "No Title Yet", NULL, share_window);
+
+	// MY CODE ------------------------------------------------------------------
+	// Set Window Icon
+	int width, height, nrChannels;
+	unsigned char* img = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
+	GLFWimage icon = { width,height,img };
+	glfwSetWindowIcon(data->Window, 1, &icon);
+	// MY CODE ------------------------------------------------------------------
+
     data->WindowOwned = true;
     viewport->PlatformHandle = (void*)data->Window;
 #ifdef _WIN32

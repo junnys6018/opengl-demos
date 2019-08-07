@@ -1484,4 +1484,9 @@
     <Font Include="res\Fonts\Consola.ttf" />
     <Font Include="res\Fonts\DroidSans.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\openGL.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
 </Project>

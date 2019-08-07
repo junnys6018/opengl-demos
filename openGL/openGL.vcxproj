@@ -723,6 +723,9 @@
       <Project>{d43f3ad4-fabc-4e5f-a072-4d7c4ad362f7}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="res\openGL.rc" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
