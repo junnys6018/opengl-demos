@@ -7,3 +7,4 @@ bin-int
 .vs
 objExpander/*.obj
 objExpander/*.obj.expanded
+openGL/openGL.exe

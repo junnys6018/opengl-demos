@@ -31,6 +31,7 @@ int main(int argc, char* argv[])
 	unsigned char* data = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
 	GLFWimage icon = { width,height,data };
 	glfwSetWindowIcon(window, 1, &icon);
+	stbi_image_free(data);
 
 	test_mgr.registerTests(); // tests need to be registered after window is initilaised
 	if (!window)

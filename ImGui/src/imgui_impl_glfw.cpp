@@ -454,6 +454,7 @@ static void ImGui_ImplGlfw_CreateWindow(ImGuiViewport* viewport)
 	unsigned char* img = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
 	GLFWimage icon = { width,height,img };
 	glfwSetWindowIcon(data->Window, 1, &icon);
+	stbi_image_free(img);
 	// MY CODE ------------------------------------------------------------------
 
     data->WindowOwned = true;
