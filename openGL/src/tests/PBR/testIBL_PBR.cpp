@@ -2,7 +2,7 @@
 #include "debug.h"
 
 TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& hdrPath)
-	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.001f), mipLevel(0.0), renderFlags(14), renderMode(1),
+	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.0f), mipLevel(0.0), renderFlags(14), renderMode(1),
 	oldRenderMode(1), skyboxTarget(4), oldSkyboxTarget(4)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
@@ -206,8 +206,8 @@ void TestIBL_PBR::OnUpdate()
 		{
 			for (int j = 1; j <= 6; j++)
 			{
-				s_Shader->setFloat("metalness", (float)i / 6.0f);
-				s_Shader->setFloat("roughness", (float)j / 6.0f);
+				s_Shader->setFloat("metalness", (float)(i - 1) / 5.0f);
+				s_Shader->setFloat("roughness", (float)(j - 1) / 5.0f);
 				glm::mat4 model = glm::mat4(1.0f);
 				glm::vec3 offset = glm::vec3(0.0f, (1.0f + 6.0f) / 2.0f, (1.0f + 6.0f) / 2.0f);
 				model = glm::translate(model, glm::vec3(4.0f, i * 1.0f, j * 1.0f) - offset);
@@ -280,7 +280,7 @@ void TestIBL_PBR::OnImGuiRender()
 	ImGui::Separator();
 
 	ImGui::SliderFloat("Metalness", &metalness, 0.0f, 1.0f);
-	ImGui::SliderFloat("Roughness", &roughness, 0.001f, 1.0f);
+	ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f);
 
 	ImGui::Separator();
 
