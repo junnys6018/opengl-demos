@@ -42,10 +42,13 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 void printBasicInfo()
 {
-	std::cout << "HARDWARE INFO: "     <<                                  std::endl;
-	std::cout << "Status: Using GLEW " <<  glewGetString(GLEW_VERSION)  << std::endl;
-	std::cout << "OpenGl version: "    <<  glGetString(GL_VERSION)      << std::endl;
-	std::cout << "GLFW version: "      <<  glfwGetVersionString()       << std::endl;
+	std::cout << "HARDWARE INFO: "     <<                                 std::endl;
+	std::cout << "Status: Using GLEW " << glewGetString(GLEW_VERSION)  << std::endl;
+	std::cout << "OpenGl version: "    << glGetString(GL_VERSION)      << std::endl;
+	std::cout << "GLFW version: "      << glfwGetVersionString()       << std::endl;
+	std::cout << "Renderer: "          << glGetString(GL_RENDERER)     << std::endl;
+	std::cout << "Vendor: "            << glGetString(GL_VENDOR)       << std::endl;
+	std::cout << "-------------------------------------------------------------" << std::endl;
 	int numAttributes;
 	GLCall(glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &numAttributes));
 	std::cout << "Maximum # of vertex attributes supported: " << numAttributes << '\n';
