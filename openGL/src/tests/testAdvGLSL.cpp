@@ -51,7 +51,6 @@ TestAdvGLSL::TestAdvGLSL(Base_Camera* cam, GLFWwindow* win)
 	s_Nanosuit->setMat4("model", model);
 	s_NormVisualise->setMat4("model", model);
 
-
 	// uniform buffer
 	GLCall(glGenBuffers(1, &UBO));
 	GLCall(glBindBuffer(GL_UNIFORM_BUFFER, UBO));
@@ -62,7 +61,6 @@ TestAdvGLSL::TestAdvGLSL(Base_Camera* cam, GLFWwindow* win)
 	GLCall(glEnable(GL_DEPTH_TEST));
 	GLCall(glEnable(GL_PROGRAM_POINT_SIZE));
 	GLCall(glClearColor(0.1f, 0.1f, 0.1f, 1.0f));
-
 }
 
 TestAdvGLSL::~TestAdvGLSL()

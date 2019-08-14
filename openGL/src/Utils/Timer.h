@@ -2,7 +2,7 @@
 #define TIMER_H
 
 #include <GL/glew.h>
-
+// Times OpenGL calls
 class Timer
 {
 private:
