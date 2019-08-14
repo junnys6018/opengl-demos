@@ -2,8 +2,8 @@
 #include "debug.h"
 
 TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& hdrPath)
-	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.0f), mipLevel(0.0), renderFlags(14), renderMode(1),
-	oldRenderMode(1), skyboxTarget(4), oldSkyboxTarget(4)
+	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.0f), mipLevel(0.0), albedo(1.00, 0.71, 0.07),
+	renderFlags(14), renderMode(1), oldRenderMode(1), skyboxTarget(4), oldSkyboxTarget(4)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 
@@ -17,6 +17,7 @@ TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& h
 	s_Shader->setInt("Normal", 1);
 	s_Shader->setInt("Metalness", 2);
 	s_Shader->setInt("Roughness", 3);
+	s_Shader->setVec3("albedo_", albedo);
 	s_Shader->setInt("irradianceMap", 5);
 	s_Shader->setInt("prefilterMap", 6);
 	s_Shader->setInt("brdfLUT", 7);
@@ -281,11 +282,26 @@ void TestIBL_PBR::OnImGuiRender()
 
 	ImGui::SliderFloat("Metalness", &metalness, 0.0f, 1.0f);
 	ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f);
+	if (ImGui::ColorEdit3("Albedo", &albedo[0]))
+	{
+		s_Shader->setVec3("albedo_", albedo);
+	}
+	if (ImGui::Button("Gold", ImVec2(90, 25)))
+		albedo = glm::vec3(1.00, 0.71, 0.07);
+	ImGui::SameLine();
+	if (ImGui::Button("Copper", ImVec2(90, 25)))
+		albedo = glm::vec3(0.95, 0.64, 0.54);
+	ImGui::SameLine();
+	if (ImGui::Button("Iron", ImVec2(90, 25)))
+		albedo = glm::vec3(0.56, 0.57, 0.58);
 
+	s_Shader->setVec3("albedo_", albedo);
+		
 	ImGui::Separator();
 
 	ImGui::Text("Render Target:");
 	ImGui::RadioButton("Lighting", &renderMode, 1);
+	ImGui::SameLine();
 	ImGui::RadioButton("Freshnel", &renderMode, 2);
 	if (renderMode != oldRenderMode)
 	{

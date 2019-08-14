@@ -40,6 +40,7 @@ in mat3 TBN;
 
 uniform float metalness;
 uniform float roughness;
+uniform vec3 albedo_;
 
 uniform sampler2D Albedo;
 uniform sampler2D Normal;
@@ -72,7 +73,7 @@ void main()
 	}
 	else
 	{
-		albedo = vec3(1.00, 0.71, 0.07); // F0 for gold
+		albedo = albedo_;
 		normal = normalize(f_normal);
 		metal = metalness;
 		rough = roughness;

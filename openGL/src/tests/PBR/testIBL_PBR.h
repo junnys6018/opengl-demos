@@ -31,6 +31,7 @@ private:
 
 	int sWidth, sHeight;
 	float metalness, roughness, mipLevel;
+	glm::vec3 albedo;
 	unsigned int renderFlags;
 	int renderMode, oldRenderMode, skyboxTarget, oldSkyboxTarget;
 
