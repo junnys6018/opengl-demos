@@ -70,7 +70,7 @@ void TestDirectPBR::OnUpdate()
 		model = glm::scale(model, glm::vec3(0.3f));
 
 		glm::vec3 color = lightColor[i] / (lightColor[i] + glm::vec3(1.0));
-		color = glm::pow(color, glm::vec3(1.0 / 2.2));
+		color = glm::pow(color, glm::vec3(1.0f / 2.2f));
 
 		s_Lamp->setMat4("MVP", proj * view * model);
 		s_Lamp->setVec3("lightColor", color);

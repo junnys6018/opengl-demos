@@ -2,6 +2,7 @@
 #define DEBUG_H
 
 #ifndef NDEBUG
+#define GLEW_STATIC
 #include <GL\glew.h>
 #include <iostream>
 

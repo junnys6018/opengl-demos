@@ -1,5 +1,5 @@
-#include "Texture.h"
 #include "debug.h"
+#include "Texture.h"
 
 // Forward declaration
 std::string rel_to_abs_filepath(const std::string& relative);

@@ -6,6 +6,7 @@
 #include <cstdlib> // for copy()
 
 #include "glm/glm.hpp"
+#define GLEW_STATIC
 #include "GL/glew.h"
 
 enum std140_alignment
