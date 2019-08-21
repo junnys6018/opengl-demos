@@ -1,6 +1,8 @@
 #include "Texture.h"
 #include "debug.h"
 
+#include <assert.h>
+
 // Forward declaration
 std::string rel_to_abs_filepath(const std::string& relative);
 
@@ -55,6 +57,27 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 		std::cout << "Failed to load texture at " << filepath << ' ' << (log ? log : "") << std::endl;
 	}
 	stbi_image_free(data);
+}
+
+// Generates solid color texture
+Texture::Texture(float color[4])
+{
+	GLCall(glGenTextures(1, &ID));
+	GLCall(glBindTexture(GL_TEXTURE_2D, ID));
+	// set the ID wrapping/filtering options (on the currently bound ID object)
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
+
+	unsigned char data[4];
+	for (int i = 0; i < 4; i++)
+	{
+		assert(color[i] <= 1.0f && color[i] >= 0.0f);
+		data[i] = 255 * color[i];
+	}
+
+	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
 }
 Texture::~Texture()
 {
