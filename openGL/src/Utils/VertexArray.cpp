@@ -1,5 +1,5 @@
-#include "VertexArray.h"
 #include "debug.h"
+#include "VertexArray.h"
 // Vertex array object wrapper class
 VertexArray::VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout)
 	:ID(0), typeSize(0), numAttribs(0), hasIndexBuffer(false)

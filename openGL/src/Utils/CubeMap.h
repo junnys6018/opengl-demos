@@ -2,7 +2,6 @@
 #define CUBE_MAP_H
 
 #include "VertexArray.h"
-#include "VertexBuffer.h"
 #include "Shader.h"
 
 #include "stb_image.h"

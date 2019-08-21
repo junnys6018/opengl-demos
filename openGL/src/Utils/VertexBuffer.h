@@ -1,4 +1,5 @@
 #pragma once
+#define GLEW_STATIC
 #include <GL\glew.h>
 
 /*	VertexBuffer class manages a vertex buffer object. Constructor generates a new buffer, 

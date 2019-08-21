@@ -1,6 +1,6 @@
 #ifndef TIMER_H
 #define TIMER_H
-
+#define GLEW_STATIC
 #include <GL/glew.h>
 // Times OpenGL calls
 class Timer

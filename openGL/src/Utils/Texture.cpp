@@ -1,5 +1,5 @@
-#include "Texture.h"
 #include "debug.h"
+#include "Texture.h"
 
 #include <assert.h>
 
