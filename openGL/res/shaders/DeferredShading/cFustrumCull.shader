@@ -160,15 +160,10 @@ void main()
 	}
 	else if (outTarget == 1) // Visualize lights
 	{
-		if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0 || gl_LocalInvocationID.x == 16 || gl_LocalInvocationID.y == 16)
-			imageStore(img_output, pixelCoord, vec4(0.2, 0.2, 0.2, 1.0));
-		else
-		{
-			float lightDensity = min(float(pointLightCount) / 20, 1.0);
-			vec3 intensity = GreyScale2RGB(lightDensity);
+		float lightDensity = min(float(pointLightCount) / 20, 1.0);
+		vec3 intensity = GreyScale2RGB(lightDensity);
 
-			imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
-		}
+		imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
 	}
 	else if (outTarget == 2) // Depth buffer
 	{

@@ -66,8 +66,8 @@ TestDeferred::TestDeferred(Base_Camera* cam, GLFWwindow* win, uint16_t nr_lights
 	// Generate Lights
 	std::vector<PointLight> vecLight;
 	vecLight.reserve(NR_LIGHTS);
-	genLightsInCylinder(vecLight, 12, 12);
-	//genLightsInRect(vecLight, glm::vec3(3, 6, 3), glm::vec3(0, 3, 0));
+	//genLightsInCylinder(vecLight, 12, 12);
+	genLightsInRect(vecLight, glm::vec3(20, 8, 16), glm::vec3(0, 3, 0));
 	GLCall(glGenBuffers(1, &lightsSSBO));
 	GLCall(glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightsSSBO));
 	// sizeof(PointLight) = 48 by std140 rules
