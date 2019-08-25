@@ -16,8 +16,8 @@ struct PointLight
 		:position(pos), color(col), intensity(intensity), radius(rad)	{}
 };
 TestDeferred::TestDeferred(Base_Camera* cam, GLFWwindow* win, uint16_t nr_lights)
-	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), renderLights(true),
-	useTileBased(true), visualiseLights(false), NR_LIGHTS(nr_lights), exposure(0.5f)
+	:m_camera(cam), m_window(win), renderMode(0), old_renderMode(0), computeTarget(0), oldComputeTarget(0),
+	renderLights(true), useTileBased(true), NR_LIGHTS(nr_lights), exposure(0.5f)
 {
 	glfwGetFramebufferSize(m_window, &sWidth, &sHeight);
 	genFrameBuffers();
@@ -146,7 +146,7 @@ void TestDeferred::OnUpdate()
 	timer[0].end();
 	// Lighting Pass
 	timer[1].begin();
-	if (useTileBased && renderMode == 0)
+	if (useTileBased)
 	{
 		s_FustrumCull->Use();
 
@@ -203,21 +203,34 @@ void TestDeferred::OnImGuiRender()
 {
 	ImGui::Text("Number of Point Lights: %i", NR_LIGHTS);
 	ImGui::Checkbox("Use Tile Based Deferred Shading", &useTileBased);
-	if (useTileBased && ImGui::Checkbox("Visualise Lights", &visualiseLights))
-		s_FustrumCull->setBool("visualiseLights", visualiseLights);
 	ImGui::Checkbox("Render Lamps", &renderLights);
 	ImGui::Separator();
-	ImGui::RadioButton("Show Lighting Only", &renderMode, 0);
-	ImGui::RadioButton("Show Position Only", &renderMode, 1);
-	ImGui::RadioButton("Show Normal Only", &renderMode, 2);
-	ImGui::RadioButton("Show Albedo Only", &renderMode, 3);
-	ImGui::RadioButton("Show Specular Only", &renderMode, 4);
-	ImGui::Separator();
-	if (renderMode != old_renderMode)
+	ImGui::Text("Framebuffer output");
+	if (useTileBased)
 	{
-		old_renderMode = renderMode;
-		s_LightPass->setInt("renderMode", renderMode);
+		ImGui::RadioButton("Lighting", &computeTarget, 0);
+		ImGui::RadioButton("Visualize Lights", &computeTarget, 1);
+		ImGui::RadioButton("Depth Buffer", &computeTarget, 2);
+		if (computeTarget != oldComputeTarget)
+		{
+			oldComputeTarget = computeTarget;
+			s_FustrumCull->setInt("outTarget", computeTarget);
+		}
 	}
+	else
+	{
+		ImGui::RadioButton("Lighting", &renderMode, 0);
+		ImGui::RadioButton("Position", &renderMode, 1);
+		ImGui::RadioButton("Normal", &renderMode, 2);
+		ImGui::RadioButton("Albedo", &renderMode, 3);
+		ImGui::RadioButton("Specular", &renderMode, 4);
+		if (renderMode != old_renderMode)
+		{
+			old_renderMode = renderMode;
+			s_LightPass->setInt("renderMode", renderMode);
+		}
+	}
+	ImGui::Separator();
 
 	if (ImGui::SliderFloat("Exposure", &exposure, 0.1, 5, "%.2f"))
 	{
@@ -243,7 +256,7 @@ void TestDeferred::OnImGuiRender()
 	int width, height;
 	glfwGetFramebufferSize(m_window, &width, &height);
 	bool isSizeMod16 = (width % 16 == 0) && (height % 16 == 0);
-	ImGui::Text("Width: %i, Height: %i, isSizeMod16 ? %s", width, height, isSizeMod16 ? "true" : "false");
+	ImGui::Text("Width: %i, Height: %i\nisSizeMod16 ? %s", width, height, isSizeMod16 ? "true" : "false");
 }
 
 void TestDeferred::framebuffer_size_callback(int width, int height)

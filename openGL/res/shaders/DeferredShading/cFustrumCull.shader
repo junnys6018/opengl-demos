@@ -33,7 +33,7 @@ uniform int NUM_LIGHTS;
 uniform vec2 resolution;
 uniform vec3 camPos;
 uniform float exposure;
-uniform bool visualiseLights;
+uniform int outTarget;
 
 shared uint pointLightIndex[MAX_LIGHTS];
 shared uint pointLightCount;
@@ -49,21 +49,21 @@ void main()
 	if (gl_LocalInvocationIndex == 0)
 	{
 		pointLightCount = 0;
-		minDepth = 0xFFFFFFFF;
+		minDepth = 0xFFFFFFFFu;
 		maxDepth = 0;
 	}
 	barrier();
 
 	vec3 fragPos = texture(gPosition, sampleCoord).rgb;
-	//float depthf = -(view * vec4(fragPos, 1.0)).z;
-	//if (depthf < FAR && depthf > NEAR)
-	//{
-	//	// map [NEAR, FAR] -> [0, 1] linearly
-	//	depthf = (depthf - NEAR) / (FAR - NEAR);
-	//	uint depth = uint(depthf * float(0xFFFFFFFF));
-	//	atomicMin(minDepth, depth);
-	//	atomicMax(maxDepth, depth);
-	//}
+	float depthf = -(view * vec4(fragPos, 1.0)).z;
+	if (depthf < FAR && depthf > NEAR)
+	{
+		// map [NEAR, FAR] -> [0, 1] linearly
+		depthf = (depthf - NEAR) / (FAR - NEAR);
+		uint depth = uint(depthf * float(0xFFFFFFFFu));
+		atomicMin(minDepth, depth);
+		atomicMax(maxDepth, depth);
+	}
 
 	barrier();
 	vec2 workGroupSize = vec2(16.0, 16.0);
@@ -87,13 +87,13 @@ void main()
 	//top
 	frustumPlanes[3] = c4 + c2;
 	// Near/far
-	float minDepthZ = float(minDepth) / float(0xFFFFFFFF);
-	float maxDepthZ = float(maxDepth) / float(0xFFFFFFFF);
+	float minDepthZ = float(minDepth) / float(0xFFFFFFFFu);
+	float maxDepthZ = float(maxDepth) / float(0xFFFFFFFFu);
 	// map [0, 1] -> [NEAR, FAR] linearly
 	minDepthZ = minDepthZ * (FAR - NEAR) + NEAR;
 	maxDepthZ = maxDepthZ * (FAR - NEAR) + NEAR;
-	frustumPlanes[4] = vec4(0.0f, 0.0f, 1.0f, -minDepthZ);
-	frustumPlanes[5] = vec4(0.0f, 0.0f, -1.0f, maxDepthZ);
+	frustumPlanes[4] = -vec4(0.0f, 0.0f, 1.0f, minDepthZ);
+	frustumPlanes[5] = vec4(0.0f, 0.0f, 1.0f, maxDepthZ);
 
 	for (int i = 0; i < 4; i++)
 	{
@@ -128,19 +128,7 @@ void main()
 	barrier();
 	// Lighting
 	vec3 albedo = texture(gAlbedoSpec, sampleCoord).rgb;
-	if (visualiseLights)
-	{
-		if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0 || gl_LocalInvocationID.x == 16 || gl_LocalInvocationID.y == 16)
-			imageStore(img_output, pixelCoord, vec4(0.2, 0.2, 0.2, 1.0));
-		else
-		{
-			float lightDensity = min(float(pointLightCount) / 40, 1.0);
-			vec3 intensity = GreyScale2RGB(lightDensity);
-			
-			imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
-		}
-	}
-	else
+	if (outTarget == 0)
 	{
 		vec3 normal = texture(gNormal, sampleCoord).rgb;
 		float specFactor = texture(gAlbedoSpec, sampleCoord).a;
@@ -169,6 +157,22 @@ void main()
 		// Tone Mapping
 		lightColor = vec3(1.0) - exp(-lightColor * exposure);
 		imageStore(img_output, pixelCoord, vec4(lightColor, 1.0));
+	}
+	else if (outTarget == 1) // Visualize lights
+	{
+		if (gl_LocalInvocationID.x == 0 || gl_LocalInvocationID.y == 0 || gl_LocalInvocationID.x == 16 || gl_LocalInvocationID.y == 16)
+			imageStore(img_output, pixelCoord, vec4(0.2, 0.2, 0.2, 1.0));
+		else
+		{
+			float lightDensity = min(float(pointLightCount) / 10, 1.0);
+			vec3 intensity = GreyScale2RGB(lightDensity);
+
+			imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
+		}
+	}
+	else if (outTarget == 2) // Depth buffer
+	{
+		imageStore(img_output, pixelCoord, vec4(vec3(float(minDepth) / float(0xFFFFFFFFu)), 1.0));
 	}
 }
 

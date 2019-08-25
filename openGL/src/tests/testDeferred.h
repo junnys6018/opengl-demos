@@ -50,9 +50,9 @@ private:
 	unsigned int tex_output;
 
 	int sWidth, sHeight;
-	int renderMode, old_renderMode;
+	int renderMode, old_renderMode, computeTarget, oldComputeTarget;
 	bool renderLights;
-	bool useTileBased, visualiseLights; // visualiseLights that intersect fustrum
+	bool useTileBased;
 	const unsigned int NR_LIGHTS;
 	float exposure;
 
