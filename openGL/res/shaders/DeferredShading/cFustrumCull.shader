@@ -164,7 +164,7 @@ void main()
 			imageStore(img_output, pixelCoord, vec4(0.2, 0.2, 0.2, 1.0));
 		else
 		{
-			float lightDensity = min(float(pointLightCount) / 10, 1.0);
+			float lightDensity = min(float(pointLightCount) / 20, 1.0);
 			vec3 intensity = GreyScale2RGB(lightDensity);
 
 			imageStore(img_output, pixelCoord, vec4(intensity * albedo, 1.0));
