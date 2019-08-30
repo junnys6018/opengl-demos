@@ -79,11 +79,8 @@ void ImGui_Init()
 	io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 	// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
 	ImGuiStyle& style = ImGui::GetStyle();
-	if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-	{
-		style.WindowRounding = 0.0f;
-		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-	}
+	style.WindowRounding = 0.0f;
+	style.Colors[ImGuiCol_WindowBg].w = 1.0f;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
@@ -92,11 +89,13 @@ void ImGui_Init()
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Font loading
 	io.Fonts->AddFontFromFileTTF("res/Fonts/Consola.ttf", 16);
+	// Bind my window creation callback
+	PrevWindowCreateCallback = ImGui::GetPlatformIO().Platform_CreateWindow;
+	ImGui::GetPlatformIO().Platform_CreateWindow = OnWindowCreate;
 }
 void ImGui_Shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-
 }

@@ -68,4 +68,17 @@ void printBasicInfo()
 		work_grp_size[0], work_grp_size[1], work_grp_size[2]);
 	std::cout << "-------------------------------------------------------------" << std::endl;
 }
+#include "imgui.h"
+
+static void (*PrevWindowCreateCallback)(ImGuiViewport* viewPort);
+void OnWindowCreate(ImGuiViewport* viewPort)
+{
+	PrevWindowCreateCallback(viewPort);
+
+	int width, height, nrChannels;
+	unsigned char* img = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
+	GLFWimage icon = { width,height,img };
+	glfwSetWindowIcon(*(GLFWwindow**)(viewPort->PlatformUserData), 1, &icon);
+	stbi_image_free(img);
+}
 #endif
