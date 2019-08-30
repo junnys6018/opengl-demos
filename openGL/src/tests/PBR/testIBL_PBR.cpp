@@ -335,10 +335,10 @@ void TestIBL_PBR::framebuffer_size_callback(int width, int height)
 
 void TestIBL_PBR::generateTextures(const std::string& path, int index)
 {
-	t_Albedo[index].get_deleter();
-	t_Normal[index].get_deleter();
-	t_Metalness[index].get_deleter();
-	t_Roughness[index].get_deleter();
+	t_Albedo[index].reset();
+	t_Normal[index].reset();
+	t_Metalness[index].reset();
+	t_Roughness[index].reset();
 
 	t_Albedo[index] = std::make_unique<Texture>(path + "/d.jpg");
 	t_Normal[index] = std::make_unique<Texture>(path + "/n.jpg");

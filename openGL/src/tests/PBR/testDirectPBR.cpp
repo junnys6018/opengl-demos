@@ -136,11 +136,11 @@ void TestDirectPBR::framebuffer_size_callback(int width, int height)
 
 void TestDirectPBR::generateTextures(std::string name, std::string format)
 {
-	t_Albedo.get_deleter();
-	t_Normal.get_deleter();
-	t_Metalness.get_deleter();
-	t_Roughness.get_deleter();
-	t_Displacement.get_deleter();
+	t_Albedo.reset();
+	t_Normal.reset();
+	t_Metalness.reset();
+	t_Roughness.reset();
+	t_Displacement.reset();
 
 	t_Albedo = std::make_unique<Texture>("res/Textures/PBR/" + name + "/d" + format);
 	t_Normal = std::make_unique<Texture>("res/Textures/PBR/" + name + "/n" + format);
