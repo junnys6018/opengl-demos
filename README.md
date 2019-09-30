@@ -14,6 +14,7 @@ Demo's and code examples I've written while learning OpenGL
 Press ESC to toggle menu  
 Scroll wheel changes FOV  
 # TODO:
-1. Point Shadows  
-2. PBR rendering  
-3. Implement Depth testing in Tile Based Deffered Shader  
+1. Refactor Engine  
+2. Skeletal Animation  
+3. Screen space reflections  
+4. Depth of field
