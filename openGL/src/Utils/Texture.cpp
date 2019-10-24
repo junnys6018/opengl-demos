@@ -1,16 +1,12 @@
 #include "debug.h"
 #include "Texture.h"
-
-#include <assert.h>
-
-// Forward declaration
-std::string rel_to_abs_filepath(const std::string& relative);
+#include <cassert>
 
 Texture_Init_Flags operator|(Texture_Init_Flags lhs, Texture_Init_Flags rhs)
 {
 	return (Texture_Init_Flags)((int)lhs | (int)rhs);
 }
-// Texture wrapper class
+
 Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags)
 {
 	if (flags & TEXTURE_INIT_FLAGS_NOFLIP)
@@ -26,7 +22,7 @@ Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags
 	GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 	// load and generate the ID
 	int width, height, nrChannels;
-	unsigned char* data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0); // for some reason relative file path is not accepted
+	unsigned char* data = stbi_load(filepath.c_str(), &width, &height, &nrChannels, 0);
 	if (data)
 	{
 		GLenum internal_fmt, fmt;
@@ -79,25 +75,24 @@ Texture::Texture(float color[4])
 
 	GLCall(glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, data));
 }
+
 Texture::~Texture()
 {
 	GLCall(glDeleteTextures(1, &ID));
 }
+
 void Texture::Bind(unsigned int slot) const
 {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot)); // activate the texture unit first before binding texture
 	GLCall(glBindTexture(GL_TEXTURE_2D, ID));
 }
+
 void Texture::unBind() const
 {
 	GLCall(glBindTexture(GL_TEXTURE_2D, 0));
 }
+
 unsigned int Texture::getID()
 {
 	return ID;
-}
-
-std::string rel_to_abs_filepath(const std::string& relative)
-{
-	return std::string("C:/Users/Jun Lim/source/repos/openGL/openGL/") + relative;
 }

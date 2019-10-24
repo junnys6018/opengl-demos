@@ -11,9 +11,8 @@ class VertexArray
 {
 public:
 	VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer_list<unsigned int> AttribLayout);
-	VertexArray(VertexArray&& other);
-	VertexArray& operator=(VertexArray&& other);
 	~VertexArray();
+public:
 	void Bind();
 	void unBind();
 	unsigned int getID();
@@ -23,6 +22,7 @@ private:
 	unsigned int typeSize;
 	unsigned int numAttribs;
 	bool hasIndexBuffer;
+private:
 	unsigned int getSize(GLenum type);
 };
 

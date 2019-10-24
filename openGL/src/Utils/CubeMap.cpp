@@ -1,64 +1,73 @@
 #include "CubeMap.h"
 #include "debug.h"
 
+bool CubeMap::Initialised = false;
+std::unique_ptr<VertexBuffer> CubeMap::skyBoxVB;
+std::unique_ptr<VertexArray> CubeMap::skyBoxVA;
+std::unique_ptr<Shader> CubeMap::s_cubeMap;
+
 CubeMap::CubeMap(std::vector<std::string> filepath)
 {
 	loadCubeMap(filepath);
 
-	float skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
+	if (!Initialised)
+	{
+		Initialised = true;
+		float skyboxVertices[] = {
+			// positions          
+			-1.0f,  1.0f, -1.0f,
+			-1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
 
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
 
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f,
+			-1.0f, -1.0f,  1.0f,
 
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
+			-1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f, -1.0f,
+			 1.0f,  1.0f,  1.0f,
+			 1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f,  1.0f,
+			-1.0f,  1.0f, -1.0f,
 
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-	skyBoxVB = std::make_unique<VertexBuffer>(skyboxVertices, sizeof(skyboxVertices));
-	skyBoxVA = std::unique_ptr<VertexArray>(new VertexArray(*skyBoxVB, GL_FLOAT, { 3 }));
+			-1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f, -1.0f,
+			 1.0f, -1.0f, -1.0f,
+			-1.0f, -1.0f,  1.0f,
+			 1.0f, -1.0f,  1.0f
+		};
+		skyBoxVB = std::make_unique<VertexBuffer>(skyboxVertices, sizeof(skyboxVertices));
+		skyBoxVA = std::unique_ptr<VertexArray>(new VertexArray(*skyBoxVB, GL_FLOAT, { 3 }));
 
-	s_cubeMap = std::make_unique<Shader>("res/Shaders/SkyBox.shader");
-	s_cubeMap->setInt("skybox", 0);
+		s_cubeMap = std::make_unique<Shader>("res/Shaders/SkyBox.shader");
+		s_cubeMap->setInt("skybox", 0);
+	}
 }
 
 CubeMap::~CubeMap()
 {
-	GLCall(glDeleteTextures(1, &texture_handle));
+	GLCall(glDeleteTextures(1, &ID));
 }
 
 // this should be your final draw call
@@ -66,7 +75,7 @@ void CubeMap::Draw(const glm::mat4& VP)
 {
 	GLCall(glDepthFunc(GL_LEQUAL));
 	GLCall(glActiveTexture(GL_TEXTURE0));
-	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, texture_handle));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, ID));
 	skyBoxVA->Bind();
 	s_cubeMap->Use();
 	s_cubeMap->setMat4("VP", VP);
@@ -76,8 +85,8 @@ void CubeMap::Draw(const glm::mat4& VP)
 
 void CubeMap::loadCubeMap(std::vector<std::string> faces)
 {
-	GLCall(glGenTextures(1, &texture_handle));
-	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, texture_handle));
+	GLCall(glGenTextures(1, &ID));
+	GLCall(glBindTexture(GL_TEXTURE_CUBE_MAP, ID));
 	stbi_set_flip_vertically_on_load(false);
 	int width, height, nrChannels;
 	for (int i = 0; i < faces.size(); ++i)

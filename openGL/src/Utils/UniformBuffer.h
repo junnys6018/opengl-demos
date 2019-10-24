@@ -28,15 +28,11 @@ class UniformBuffer
 public:
 	UniformBuffer(const std::initializer_list<std140_alignment>& layout, GLenum usage = GL_STATIC_DRAW);
 	~UniformBuffer();
+public:
 	void setData(unsigned int index, void* source, std140_alignment size);
 	void Bind(int bindPoint);
 	unsigned int ID;
 private:
 	std::vector<std140_alignment> m_layout;
-
-
-
 };
-
-
 #endif

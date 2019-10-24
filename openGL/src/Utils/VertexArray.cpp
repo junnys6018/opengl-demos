@@ -32,23 +32,6 @@ VertexArray::VertexArray(const VertexBuffer &vBuf, GLenum type, std::initializer
 
 }
 
-VertexArray::VertexArray(VertexArray&& other)
-	: ID(other.ID), typeSize(other.typeSize), numAttribs(other.numAttribs), hasIndexBuffer(other.hasIndexBuffer)
-{
-	other.ID = 0;
-}
-
-VertexArray& VertexArray::operator=(VertexArray&& other)
-{
-	unsigned int id = ID;
-	ID = other.ID;
-	typeSize = other.typeSize;
-	numAttribs = other.numAttribs;
-	hasIndexBuffer = other.hasIndexBuffer;
-	other.ID = id;
-	return *this;
-}
-
 VertexArray::~VertexArray()
 {
 	GLCall(glDeleteVertexArrays(1, &ID));
@@ -72,14 +55,17 @@ void VertexArray::Bind()
 {
 	GLCall(glBindVertexArray(ID));
 }
+
 void VertexArray::unBind()
 {
 	GLCall(glBindVertexArray(0));
 }
+
 unsigned int VertexArray::getID()
 {
 	return ID;
 }
+
 void VertexArray::addIndexBuffer(IndexBuffer &iBuf)
 {
 	GLCall(glBindVertexArray(ID));

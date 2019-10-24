@@ -4,11 +4,9 @@
 class IndexBuffer
 {
 public:
-	IndexBuffer();
 	IndexBuffer(unsigned int *data, unsigned int count);
-	IndexBuffer(IndexBuffer&& other);
-	IndexBuffer& operator=(IndexBuffer&& other);
 	~IndexBuffer();
+public:
 	void Bind();
 	void UnBind();
 	unsigned int getID();

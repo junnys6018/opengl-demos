@@ -14,13 +14,15 @@ class CubeMap
 public:
 	CubeMap(std::vector<std::string> filepath);
 	~CubeMap();
+public:
 	void Draw(const glm::mat4& VP);
 private:
-	unsigned int texture_handle;
-	std::unique_ptr<VertexBuffer> skyBoxVB;
-	std::unique_ptr<VertexArray> skyBoxVA;
-	std::unique_ptr<Shader> s_cubeMap;
-
+	unsigned int ID;
+	static bool Initialised;
+	static std::unique_ptr<VertexBuffer> skyBoxVB;
+	static std::unique_ptr<VertexArray> skyBoxVA;
+	static std::unique_ptr<Shader> s_cubeMap;
+private:
 	void loadCubeMap(std::vector<std::string> faces);
 };
 #endif
