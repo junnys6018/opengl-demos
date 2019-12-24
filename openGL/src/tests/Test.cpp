@@ -225,6 +225,21 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		if (show_pos)
 		{
 			ImGui::Text("CamPos: x: %.1f y: %.1f z: %.1f", m_camera->getCameraPos().x, m_camera->getCameraPos().y, m_camera->getCameraPos().z);
+			glm::vec3 dir = m_camera->getCameraDir();
+			float yaw = glm::degrees(glm::atan(dir.x, dir.z));
+			float pitch = glm::degrees(glm::asin(dir.y));
+
+			const char* facing = "";
+			if (yaw >= -45.0f && yaw < 45.0f)
+				facing = "+z";
+			else if (yaw >= 45.0f && yaw < 135.0f)
+				facing = "+x";
+			else if (yaw >= 135.0f || yaw < -135.0f)
+				facing = "-z";
+			else
+				facing = "-x";
+
+			ImGui::Text("facing: %s yaw: %.0f pitch %.0f", facing, yaw, pitch);
 		}
 		if (ImGui::BeginPopupContextWindow("item context menu"))
 		{
