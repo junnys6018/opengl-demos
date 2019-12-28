@@ -7,6 +7,7 @@
 #include "debug.h"
 
 #include "tests/__Test__.h"
+#include "architecture/test_manager.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"

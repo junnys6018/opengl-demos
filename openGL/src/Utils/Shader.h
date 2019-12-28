@@ -8,9 +8,6 @@
 #include <iostream>
 #include <map>
 
-/*	Shader class loads, comlies and links shader from a single .shader file. Vertex and fragment shaders are
- *	seperated by #shader Vertex and #shader Fragment in .shader file.
- */
 class Shader
 {
 public:

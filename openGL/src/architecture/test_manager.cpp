@@ -1,4 +1,4 @@
-#include "test.h"
+#include "test_manager.h"
 #include <iostream>
 
 #include "imgui.h"
@@ -8,7 +8,6 @@
 #include "Walk_Camera.h"
 #include "Static_Camera.h"
 
-#include "__Test__.h"
 #include "debug.h"
 
 #define NAME 0
@@ -62,14 +61,14 @@ void TestManager::registerTest(std::string name, std::function<Test* (Base_Camer
 void TestManager::registerTests()
 {
 	auto noInit = []()->bool {return true; };
-	registerTest("triangle", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestTriangle(); }, noInit);
-	registerTest("planets", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestPlanets(cam, win); }, noInit);
-	registerTest("lighting", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestLighting(cam, win); }, noInit);
-	registerTest("advOpenGL", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvancedGL(cam, win); }, noInit);
-	registerTest("frameBuf", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestFrameBuf(cam, win); }, noInit);
-	registerTest("cubeMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestCubeMap(cam, win); }, noInit);
-	registerTest("advGLSL", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
-	registerTest("Instancing", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestInstancing(cam, win, instances); },
+	registerTest("triangle", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestTriangle(); }, noInit);
+	registerTest("planets", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestPlanets(cam, win); }, noInit);
+	registerTest("lighting", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestLighting(cam, win); }, noInit);
+	registerTest("advOpenGL", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestAdvancedGL(cam, win); }, noInit);
+	registerTest("frameBuf", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestFrameBuf(cam, win); }, noInit);
+	registerTest("cubeMap", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestCubeMap(cam, win); }, noInit);
+	registerTest("advGLSL", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestAdvGLSL(cam, win); }, noInit);
+	registerTest("Instancing", [](Base_Camera* cam, GLFWwindow* win)->Test * { return new TestInstancing(cam, win, instances); },
 		[]()->bool {
 			ImGui::Text("#instances:");
 			ImGui::PushItemWidth(-1);
@@ -77,12 +76,12 @@ void TestManager::registerTests()
 			ImGui::PopItemWidth();
 			return ImGui::Button("Enter");
 		});
-	registerTest("advLight", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestAdvLight(cam, win); }, noInit);
-	registerTest("Shadows", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestShadows(cam, win); }, noInit);
-	registerTest("Point-Shadow", [](Base_Camera * cam, GLFWwindow * win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
-	registerTest("NormMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestNormMap(cam, win); }, noInit);
-	registerTest("ParaMap", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestParaMap(cam, win); }, noInit);
-	registerTest("Bloom", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
+	registerTest("advLight", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestAdvLight(cam, win); }, noInit);
+	registerTest("Shadows", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestShadows(cam, win); }, noInit);
+	registerTest("Point-Shadow", [](Base_Camera* cam, GLFWwindow* win) ->Test * {return new TestPointShadows(cam, win); }, noInit);
+	registerTest("NormMap", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestNormMap(cam, win); }, noInit);
+	registerTest("ParaMap", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestParaMap(cam, win); }, noInit);
+	registerTest("Bloom", [](Base_Camera* cam, GLFWwindow* win)->Test * { return new TestBloom(cam, win, blur_scale, nr_passes); },
 		[]()->bool {
 			ImGui::PushItemWidth(-1);
 			ImGui::Text("Blur Scale:");
@@ -92,17 +91,17 @@ void TestManager::registerTests()
 			ImGui::PopItemWidth();
 			return ImGui::Button("Enter");
 		});
-	registerTest("Deferred", [](Base_Camera * cam, GLFWwindow * win)->Test * { return new TestDeferred(cam, win, nr_lights); },
-			[]()->bool {
+	registerTest("Deferred", [](Base_Camera* cam, GLFWwindow* win)->Test * { return new TestDeferred(cam, win, nr_lights); },
+		[]()->bool {
 			ImGui::Text("# Lights");
 			ImGui::PushItemWidth(-1);
 			ImGui::InputScalar("##Value", ImGuiDataType_U16, &nr_lights);
 			ImGui::PopItemWidth();
 			return ImGui::Button("Enter");
 		});
-	registerTest("SSAO", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestSSAO(cam, win); }, noInit);
-	registerTest("Direct-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
-	registerTest("IBL-PBR", [](Base_Camera * cam, GLFWwindow * win)->Test * {return new TestIBL_PBR(cam, win, hdrPath); },
+	registerTest("SSAO", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestSSAO(cam, win); }, noInit);
+	registerTest("Direct-PBR", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestDirectPBR(cam, win); }, noInit);
+	registerTest("IBL-PBR", [](Base_Camera* cam, GLFWwindow* win)->Test * {return new TestIBL_PBR(cam, win, hdrPath); },
 		[]()->bool {
 			ImGui::PushItemWidth(-1);
 			ImGui::Text("Skybox:");
@@ -137,7 +136,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		ImGui::Text("F - Toggle Fullscreen");
 		ImGui::End();
 	}
-	
+
 	if (show_test_window)
 	{
 		ImGui::Begin("Test Menu", &show_test_window);
@@ -192,7 +191,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 				{
 					ImGui::OpenPopup(std::get<NAME>(m_tests[i]).c_str());
 				}
-					ImGui::SameLine(0.0f, 20.0f);
+				ImGui::SameLine(0.0f, 20.0f);
 			}
 
 			for (int i = 0; i < m_tests.size(); ++i)
@@ -209,7 +208,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 		}
 		ImGui::End();
 	}
-	
+
 	// FPS counter
 	{
 		// FIXME-VIEWPORT: Select a default viewport

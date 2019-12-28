@@ -21,5 +21,7 @@
 	#include "PBR/testDirectPBR.h"
 	#include "PBR/testIBL_PBR.h"
 
+	#include "test.h"
+
 #endif
 
