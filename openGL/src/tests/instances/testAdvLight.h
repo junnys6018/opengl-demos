@@ -40,5 +40,19 @@ private:
 	bool m_renderLamps;
 };
 
+class TestAdvLightDeployer : public Test_Deployer
+{
+public:
+	TestAdvLightDeployer()
+		: Test_Deployer("advLight")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestAdvLight(cam, win);
+	}
+};
 
 #endif 

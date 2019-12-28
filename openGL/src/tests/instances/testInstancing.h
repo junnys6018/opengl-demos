@@ -41,5 +41,31 @@ private:
 	const unsigned int m_amount;
 };
 
+class TestInstancingDeployer : public Test_Deployer
+{
+public:
+	TestInstancingDeployer()
+		: Test_Deployer("Instancing"), m_instances(10000)
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestInstancing(cam, win, m_instances);
+	}
+
+	bool OnImguiUpdate() override
+	{
+		ImGui::Text("#instances:");
+		ImGui::PushItemWidth(-1);
+		ImGui::InputScalar("##Value", ImGuiDataType_U16, &m_instances);
+		ImGui::PopItemWidth();
+		return ImGui::Button("Enter");
+	}
+
+private:
+	uint16_t m_instances;
+};
 
 #endif 

@@ -53,6 +53,22 @@ private:
 	bool useStencil;
 	bool transRender;
 };
+
+class TestAdvancedGLDeployer : public Test_Deployer
+{
+public:
+	TestAdvancedGLDeployer()
+		: Test_Deployer("advOpenGL")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestAdvancedGL(cam, win);
+	}
+};
+
 #endif
 
 

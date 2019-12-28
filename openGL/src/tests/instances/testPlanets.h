@@ -45,6 +45,21 @@ private:
 	bool m_isWireFrame;
 
 	GLFWwindow* m_window;
-
 };
+
+class TestPlanetsDeployer : public Test_Deployer
+{
+public:
+	TestPlanetsDeployer()
+		: Test_Deployer("planets")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestPlanets(cam, win);
+	}
+};
+
 #endif 

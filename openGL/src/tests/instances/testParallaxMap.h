@@ -32,4 +32,20 @@ private:
 	std::unique_ptr<Shader> s_ParaMap;
 	int renderMode, oldrenderMode; // 0 - nothing, 1 - normal mapping, 2 - displacement mapping
 };
+
+class TestParaMapDeployer : public Test_Deployer
+{
+public:
+	TestParaMapDeployer()
+		: Test_Deployer("ParaMap")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestParaMap(cam, win);
+	}
+};
+
 #endif

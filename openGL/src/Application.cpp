@@ -34,7 +34,6 @@ int main(int argc, char* argv[])
 	glfwSetWindowIcon(window, 1, &icon);
 	stbi_image_free(data);
 
-	test_mgr.registerTests(); // tests need to be registered after window is initilaised
 	if (!window)
 	{
 		glfwTerminate();
@@ -52,14 +51,6 @@ int main(int argc, char* argv[])
 	glfwSetCursorPosCallback(window, mouse_pos_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetScrollCallback(window, scroll_callback);
-
-	// command line arg for default test
-	if (argc == 2)
-	{
-		std::string command("/test ");
-		command.append(argv[1]);
-		test_mgr.parseInput(command);
-	}
 	
 	ImGui_Init();
 	

@@ -17,17 +17,14 @@ public:
 	TestManager(GLFWwindow** win);
 	~TestManager();
 
-	void parseInput(std::string);
-	void registerTest(std::string, std::function<Test* (Base_Camera*, GLFWwindow*)>, std::function<bool()>);
-	void registerTests();
-
 	void gameLoop();
 	Test* m_currentTest;
 	Base_Camera* m_camera;
 private:
+	void registerTests();
 	void OnImGuiRender(unsigned int fps);
 
-	std::vector<std::tuple<std::string, std::function<Test* (Base_Camera*, GLFWwindow*)>, std::function<bool()>>> m_tests;
+	std::vector<Test_Deployer*> m_tests;
 	bool show_controls_window;
 	bool show_test_window;
 	bool show_pos;

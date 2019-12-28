@@ -51,4 +51,20 @@ private:
 
 	unsigned int depthCubeMap, depthMapFBO;
 };
+
+class TestPointShadowsDeployer : public Test_Deployer
+{
+public:
+	TestPointShadowsDeployer()
+		: Test_Deployer("Point-Shadows")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestPointShadows(cam, win);
+	}
+};
+
 #endif 

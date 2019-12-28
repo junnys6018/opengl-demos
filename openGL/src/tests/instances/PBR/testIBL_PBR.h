@@ -58,4 +58,46 @@ private:
 	std::unique_ptr<Texture> t_Roughness[2];
 	std::unique_ptr<Texture> t_brdfLUT;
 };
+
+class TestIBL_PBRDeployer : public Test_Deployer
+{
+public:
+	TestIBL_PBRDeployer()
+		: Test_Deployer("IBL-PBR"), m_hdrPath("res/Textures/RadianceMap/Alexs_Apt_2k.hdr")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestIBL_PBR(cam, win, m_hdrPath);
+	}
+
+	bool OnImguiUpdate() override
+	{
+		ImGui::PushItemWidth(-1);
+		ImGui::Text("Skybox:");
+		if (ImGui::Button("Alexs Apt"))
+		{
+			m_hdrPath = "res/Textures/RadianceMap/Alexs_Apt_2k.hdr";
+			return true;
+		}
+		if (ImGui::Button("Circus Stage"))
+		{
+			m_hdrPath = "res/Textures/RadianceMap/Circus_Backstage_3k.hdr";
+			return true;
+		}
+		if (ImGui::Button("Canyon"))
+		{
+			m_hdrPath = "res/Textures/RadianceMap/GCanyon_C_YumaPoint_3k.hdr";
+			return true;
+		}
+		ImGui::PopItemWidth();
+		return false;
+	}
+
+private:
+	std::string m_hdrPath;
+};
+
 #endif

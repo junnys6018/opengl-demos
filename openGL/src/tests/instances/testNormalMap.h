@@ -33,4 +33,20 @@ private:
 
 	bool useNormMap, visNormMap, drawLamp;
 };
+
+class TestNormMapDeployer : public Test_Deployer
+{
+public:
+	TestNormMapDeployer()
+		: Test_Deployer("NormMap")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestNormMap(cam, win);
+	}
+};
+
 #endif

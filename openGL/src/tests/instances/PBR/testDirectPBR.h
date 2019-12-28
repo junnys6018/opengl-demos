@@ -53,6 +53,21 @@ private:
 	std::unique_ptr<Texture> t_Metalness;
 	std::unique_ptr<Texture> t_Roughness;
 	std::unique_ptr<Texture> t_Displacement;
-
 };
+
+class TestDirectPBRDeployer : public Test_Deployer
+{
+public:
+	TestDirectPBRDeployer()
+		: Test_Deployer("Direct-PBR")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestDirectPBR(cam, win);
+	}
+};
+
 #endif

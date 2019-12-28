@@ -57,4 +57,20 @@ private:
 	void renderPass();
 	void calcLightFromAngle();
 };
+
+class TestShadowsDeployer : public Test_Deployer
+{
+public:
+	TestShadowsDeployer()
+		: Test_Deployer("Shadows")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestShadows(cam, win);
+	}
+};
+
 #endif 

@@ -58,4 +58,35 @@ private:
 
 	void genFrameBuffers();
 };
+
+class TestBloomDeployer : public Test_Deployer
+{
+public:
+	TestBloomDeployer()
+		: Test_Deployer("Bloom"), m_blur_scale(4), m_nr_passes(8)
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestBloom(cam, win, m_blur_scale, m_nr_passes);
+	}
+
+	bool OnImguiUpdate() override
+	{
+		ImGui::PushItemWidth(-1);
+		ImGui::Text("Blur Scale:");
+		ImGui::InputScalar("##Value0", ImGuiDataType_U16, &m_blur_scale);
+		ImGui::Text("# of Blur passes");
+		ImGui::InputScalar("##Value1", ImGuiDataType_U16, &m_nr_passes);
+		ImGui::PopItemWidth();
+		return ImGui::Button("Enter");
+	}
+
+private:
+	uint16_t m_blur_scale;
+	uint16_t m_nr_passes;
+};
+
 #endif

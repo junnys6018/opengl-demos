@@ -45,4 +45,19 @@ private:
 	glm::vec3 m_dirLightColor;
 };
 
+class TestLightingDeployer : public Test_Deployer
+{
+public:
+	TestLightingDeployer()
+		: Test_Deployer("lighting")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestLighting(cam, win);
+	}
+};
+
 #endif 

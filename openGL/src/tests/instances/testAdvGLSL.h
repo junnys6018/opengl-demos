@@ -44,5 +44,19 @@ private:
 	bool m_hasNormals;
 };
 
+class TestAdvGLSLDeployer : public Test_Deployer
+{
+public:
+	TestAdvGLSLDeployer()
+		: Test_Deployer("advGLSL")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestAdvGLSL(cam, win);
+	}
+};
 
 #endif 

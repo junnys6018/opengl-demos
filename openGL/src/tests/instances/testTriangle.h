@@ -22,4 +22,20 @@ private:
 
 	glm::vec4 m_clearColor;
 };
+
+class TestTriangleDeployer : public Test_Deployer
+{
+public:
+	TestTriangleDeployer()
+		: Test_Deployer("triangle")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera*, GLFWwindow*) override
+	{
+		return new TestTriangle();
+	}
+};
+
 #endif // !TEST_TRIANGLE_H

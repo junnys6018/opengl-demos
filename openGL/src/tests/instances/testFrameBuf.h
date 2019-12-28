@@ -46,4 +46,20 @@ private:
 	unsigned int FBO, RBO, texture;
 	int flags, oldFlags;
 };
+
+class TestFrameBufDeployer : public Test_Deployer
+{
+public:
+	TestFrameBufDeployer()
+		: Test_Deployer("frameBuf")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestFrameBuf(cam, win);
+	}
+};
+
 #endif

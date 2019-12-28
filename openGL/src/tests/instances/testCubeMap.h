@@ -32,5 +32,19 @@ private:
 	unsigned int m_cubeMap;
 };
 
+class TestCubeMapDeployer : public Test_Deployer
+{
+public:
+	TestCubeMapDeployer()
+		: Test_Deployer("cubeMap")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestCubeMap(cam, win);
+	}
+};
 
 #endif 

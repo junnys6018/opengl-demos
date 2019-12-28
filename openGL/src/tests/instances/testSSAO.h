@@ -48,5 +48,19 @@ private:
 	float power;
 };
 
+class TestSSAODeployer : public Test_Deployer
+{
+public:
+	TestSSAODeployer()
+		: Test_Deployer("SSAO")
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestSSAO(cam, win);
+	}
+};
 
 #endif 

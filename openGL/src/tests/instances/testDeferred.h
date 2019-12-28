@@ -61,5 +61,31 @@ private:
 	void genLightsInRect(std::vector<PointLight>& vecLight, glm::vec3 dimensions, glm::vec3 center);
 };
 
+class TestDeferredDeployer : public Test_Deployer
+{
+public:
+	TestDeferredDeployer()
+		: Test_Deployer("Deferred"), m_nr_lights(32)
+	{
+
+	}
+
+	Test* Deploy(Base_Camera* cam, GLFWwindow* win) override
+	{
+		return new TestDeferred(cam, win, m_nr_lights);
+	}
+
+	bool OnImguiUpdate() override
+	{
+		ImGui::Text("# Lights");
+		ImGui::PushItemWidth(-1);
+		ImGui::InputScalar("##Value", ImGuiDataType_U16, &m_nr_lights);
+		ImGui::PopItemWidth();
+		return ImGui::Button("Enter");
+	}
+
+private:
+	uint16_t m_nr_lights;
+};
 
 #endif 
