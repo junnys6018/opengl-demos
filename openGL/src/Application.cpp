@@ -6,27 +6,26 @@
 
 #include "debug.h"
 
-#include "tests/__Test__.h"
 #include "architecture/test_manager.h"
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-GLFWwindow* window;
-TestManager test_mgr(&window);
+TestManager test_mgr;
 #include "callback.h"
 
-void ImGui_Init();
+void ImGui_Init(GLFWwindow*);
 void ImGui_Shutdown();
 
 int main(int argc, char* argv[])
 {
+	// Initialise GLFW
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		return -1;
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
 	// Set Window Icon
 	int width, height, nrChannels;
 	unsigned char* data = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
@@ -39,20 +38,27 @@ int main(int argc, char* argv[])
 		glfwTerminate();
 		return -1;
 	}
+
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // enable vsync
-	if (glewInit() != GLEW_OK)
-		std::cout << "GLEW init error\n";
-	GLCall(glEnable(GL_MULTISAMPLE));
-	printBasicInfo();
+
+	test_mgr.init(window);
 
 	// Set callback functions
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_pos_callback);
 	glfwSetKeyCallback(window, key_callback);
 	glfwSetScrollCallback(window, scroll_callback);
+
+	// Initialse glew
+	if (glewInit() != GLEW_OK)
+		std::cout << "GLEW init error\n";
+	GLCall(glEnable(GL_MULTISAMPLE));
 	
-	ImGui_Init();
+	// Print system infomation to terminal
+	printBasicInfo();
+	
+	ImGui_Init(window);
 	
 	test_mgr.gameLoop();
 
@@ -62,7 +68,7 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
-void ImGui_Init()
+void ImGui_Init(GLFWwindow* window)
 {
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
@@ -85,6 +91,7 @@ void ImGui_Init()
 	PrevWindowCreateCallback = ImGui::GetPlatformIO().Platform_CreateWindow;
 	ImGui::GetPlatformIO().Platform_CreateWindow = OnWindowCreate;
 }
+
 void ImGui_Shutdown()
 {
 	ImGui_ImplOpenGL3_Shutdown();

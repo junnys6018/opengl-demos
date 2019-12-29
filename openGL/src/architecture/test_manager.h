@@ -14,7 +14,9 @@
 class TestManager
 {
 public:
-	TestManager(GLFWwindow** win);
+	TestManager();
+	void init(GLFWwindow* win);
+
 	~TestManager();
 
 	void gameLoop();
@@ -25,13 +27,14 @@ private:
 	void OnImGuiRender(unsigned int fps);
 
 	std::vector<Test_Deployer*> m_tests;
+
+	// Imgui members
 	bool show_controls_window;
 	bool show_test_window;
 	bool show_pos;
 	int active_camera, old_active_camera;
 
-	// Used to initalise tests
-	GLFWwindow** m_window;
+	GLFWwindow* m_window;
 };
 
 #endif

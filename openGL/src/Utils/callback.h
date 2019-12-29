@@ -1,19 +1,23 @@
 #ifndef CALLBACK_H
 #define CALLBACK_H
+
 void error_callback(int error, const char* description)
 {
 	std::cout << "[GLFW ERROR] " << error << " DESCRIPTION: " << description << std::endl;
 }
+
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
 	if (test_mgr.m_currentTest)
 		test_mgr.m_currentTest->framebuffer_size_callback(width, height);
 }
+
 void mouse_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
 	test_mgr.m_camera->mouse_callback(xpos, ypos);
 }
+
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_F && action == GLFW_RELEASE)
@@ -36,10 +40,12 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		test_mgr.m_currentTest->key_callback(key, action);
 	test_mgr.m_camera->key_callback(window, key, action);
 }
+
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	test_mgr.m_camera->scroll_callback(window, xoffset, yoffset);
 }
+
 void printBasicInfo()
 {
 	std::cout << "HARDWARE INFO: "     <<                                 std::endl;
@@ -75,10 +81,9 @@ void OnWindowCreate(ImGuiViewport* viewPort)
 {
 	PrevWindowCreateCallback(viewPort);
 
-	int width, height, nrChannels;
-	unsigned char* img = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
-	GLFWimage icon = { width,height,img };
+	static int width, height, nrChannels;
+	static unsigned char* img = stbi_load("res/icon.png", &width, &height, &nrChannels, 4);
+	static GLFWimage icon = { width,height,img };
 	glfwSetWindowIcon(*(GLFWwindow**)(viewPort->PlatformUserData), 1, &icon);
-	stbi_image_free(img);
 }
 #endif

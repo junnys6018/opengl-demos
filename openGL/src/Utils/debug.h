@@ -4,6 +4,8 @@
 #ifndef NDEBUG
 #define GLEW_STATIC
 #include <GL\glew.h>
+
+#include <string>
 #include <iostream>
 
 #define GLCall(x) GLClearError();\
@@ -28,15 +30,14 @@ inline void GLLogCall(unsigned line, const char* file)
 		case GL_STACK_UNDERFLOW:               error = "STACK_UNDERFLOW"; break;
 		case GL_OUT_OF_MEMORY:                 error = "OUT_OF_MEMORY"; break;
 		case GL_INVALID_FRAMEBUFFER_OPERATION: error = "INVALID_FRAMEBUFFER_OPERATION"; break;
-		default:
-			break;
+		default:							   error = "ENUM NOT IMPLEMENTED, CODE: " + std::to_string(err); break;
 		}
 		std::cout << "[OPENGL ERROR] (" << error << ") LINE: " << line << " FILE: "
 			<< file << std::endl;
 	}
 }
 #else
-#define GLCall(x) x
+#define GLCall(x)
 #endif
 
 #endif

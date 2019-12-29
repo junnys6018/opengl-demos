@@ -10,20 +10,29 @@
 
 #include "debug.h"
 
-TestManager::TestManager(GLFWwindow** win)
-	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), show_pos(true), m_window(win)
+TestManager::TestManager()
+	:m_currentTest(nullptr), show_controls_window(false), show_test_window(true), show_pos(true), m_window(nullptr)
 {
 	m_camera = new Walk_Camera();
 	registerTests();
 }
+
+void TestManager::init(GLFWwindow* win)
+{
+	m_window = win;
+}
+
 TestManager::~TestManager()
 {
-
+	delete m_camera;
+	for (auto& test : m_tests)
+	{
+		delete test;
+	}
 }
 
 void TestManager::registerTests()
 {
-	auto noInit = []()->bool {return true; };
 	m_tests.push_back(new TestTriangleDeployer());
 	m_tests.push_back(new TestPlanetsDeployer());
 	m_tests.push_back(new TestLightingDeployer());
@@ -120,7 +129,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 				{
 					if (m_tests[i]->OnImguiUpdate())
 					{
-						m_currentTest = m_tests[i]->Deploy(m_camera, *m_window);
+						m_currentTest = m_tests[i]->Deploy(m_camera, m_window);
 					}
 					ImGui::EndPopup();
 				}
@@ -158,7 +167,7 @@ void TestManager::OnImGuiRender(unsigned int fps)
 			else
 				facing = "-x";
 
-			ImGui::Text("facing: %s yaw: %.0f pitch %.0f", facing, yaw, pitch);
+			ImGui::Text("facing: %s yaw: %.0f pitch: %.0f", facing, yaw, pitch);
 		}
 		if (ImGui::BeginPopupContextWindow("item context menu"))
 		{
@@ -178,7 +187,7 @@ void TestManager::gameLoop()
 	unsigned int frameCount = 0;
 	unsigned int fps = 0;
 
-	while (!glfwWindowShouldClose(*m_window))
+	while (!glfwWindowShouldClose(m_window))
 	{
 		double currentTime = glfwGetTime();
 		frameCount++;
@@ -210,9 +219,9 @@ void TestManager::gameLoop()
 		//  For this specific demo app we could also call glfwMakeContextCurrent(window) directly)
 		ImGui::UpdatePlatformWindows();
 		ImGui::RenderPlatformWindowsDefault();
-		glfwMakeContextCurrent(*m_window);
+		glfwMakeContextCurrent(m_window);
 
-		glfwSwapBuffers(*m_window);
+		glfwSwapBuffers(m_window);
 		glfwPollEvents();
 	}
 }
