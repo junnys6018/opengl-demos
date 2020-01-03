@@ -24,7 +24,12 @@ int main(int argc, char* argv[])
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit())
 		return -1;
+	// Specifies number of samples used for MSAA
 	glfwWindowHint(GLFW_SAMPLES, 4);
+
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+
 	GLFWwindow* window = glfwCreateWindow(1080, 720, "OpenGL tests", NULL, NULL);
 	// Set Window Icon
 	int width, height, nrChannels;

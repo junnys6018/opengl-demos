@@ -25,6 +25,7 @@ void TestManager::init(GLFWwindow* win)
 TestManager::~TestManager()
 {
 	delete m_camera;
+	delete m_currentTest;
 	for (auto& test : m_tests)
 	{
 		delete test;

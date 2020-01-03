@@ -12,9 +12,6 @@
 class Test
 {
 public:
-	Test() {}
-	virtual ~Test() {}
-
 	virtual void OnUpdate() {}
 	virtual void OnImGuiRender() { ImGui::Text("Hello World!"); };
 	virtual void key_callback(int key, int action) {}
@@ -24,12 +21,14 @@ public:
 class Test_Deployer
 {
 public:
-	Test_Deployer(const char* name): m_name(name) {}
-
 	const char* getName() const { return m_name; }
 
 	virtual Test* Deploy(Base_Camera*, GLFWwindow*) { return new Test(); }
 	virtual bool OnImguiUpdate() { return true; }
+
+protected:
+	Test_Deployer(const char* name): m_name(name) {}
+
 private:
 	const char* m_name;
 };
