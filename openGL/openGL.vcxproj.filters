@@ -111,6 +111,9 @@
     <ClCompile Include="src\tests\instances\PBR\testIBL_PBR.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\Utils\ScreenShot.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="res\Shaders\Example.shader" />
@@ -1399,6 +1402,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\tests\instances\PBR\testIBL_PBR.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Utils\ScreenShot.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -196,6 +196,7 @@
     <ClCompile Include="src\Utils\Camera\Walk_Camera.cpp" />
     <ClCompile Include="src\Utils\IndexBuffer.cpp" />
     <ClCompile Include="src\Utils\Object.cpp" />
+    <ClCompile Include="src\Utils\ScreenShot.cpp" />
     <ClCompile Include="src\Utils\Shader.cpp" />
     <ClCompile Include="src\tests\instances\testAdvGLSL.cpp" />
     <ClCompile Include="src\tests\instances\testAdvLight.cpp" />
@@ -414,6 +415,7 @@
     <ClInclude Include="src\Utils\Object.h" />
     <ClInclude Include="src\Utils\debug.h" />
     <ClInclude Include="src\Utils\IndexBuffer.h" />
+    <ClInclude Include="src\Utils\ScreenShot.h" />
     <ClInclude Include="src\Utils\Shader.h" />
     <ClInclude Include="src\tests\instances\test.h" />
     <ClInclude Include="src\tests\instances\testAdvGLSL.h" />

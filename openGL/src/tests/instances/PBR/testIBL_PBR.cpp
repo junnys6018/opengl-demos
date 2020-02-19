@@ -1,6 +1,8 @@
 #include "testIBL_PBR.h"
 #include "debug.h"
 
+#include "ScreenShot.h"
+
 TestIBL_PBR::TestIBL_PBR(Base_Camera* cam, GLFWwindow* win, const std::string& hdrPath)
 	:m_camera(cam), m_window(win), metalness(0.0f), roughness(0.0f), mipLevel(0.0), albedo(1.00, 0.71, 0.07),
 	renderFlags(14), renderMode(1), oldRenderMode(1), skyboxTarget(4), oldSkyboxTarget(4)
@@ -321,6 +323,11 @@ void TestIBL_PBR::OnImGuiRender()
 		if (ImGui::Button("Subway Tile", ImVec2(120.0f, 25.0f)))
 			generateTextures("res/Textures/PBR/subway_tile", 0);
 	}
+	if (ImGui::Button("ScreenShot"))
+	{
+		take_screenshot(sWidth, sHeight);
+	}
+
 	ImGui::Text("Total GPU time: %.3f ms", timer.getTime() / 1.0e6f);
 }
 

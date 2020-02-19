@@ -1,5 +1,8 @@
 #include "testBloom.h"
 #include "debug.h"
+
+#include "ScreenShot.h"
+
 TestBloom::TestBloom(Base_Camera* cam, GLFWwindow* win, uint16_t blur_scale, uint16_t nr_passes)
 	:m_camera(cam), m_window(win), BLUR_SCALE(blur_scale), NR_PASSES(nr_passes),
 	m_isWireFrame(false), exposure(0.1f), renderMode(0), old_renderMode(0)
@@ -160,14 +163,7 @@ void TestBloom::OnImGuiRender()
 	}
 	if (ImGui::Button("ScreenShot"))
 	{
-		void* data = new char[sWidth * sHeight * 4];
-		GLCall(glReadPixels(0, 0, sWidth, sHeight, GL_RGB, GL_UNSIGNED_BYTE, data));
-		stbi_flip_vertically_on_write(1);
-		if (stbi_write_png("screenshot.png", sWidth, sHeight, 3, data, sWidth * 3))
-			std::cout << "Took Screenshot\n";
-		else
-			std::cout << "Failed to take screenshot\n";
-		delete[] data;
+		take_screenshot(sWidth, sHeight);
 	}
 }
 
