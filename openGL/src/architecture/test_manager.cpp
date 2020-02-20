@@ -96,32 +96,15 @@ void TestManager::OnImGuiRender(unsigned int fps)
 					m_camera = new Static_Camera();
 			}
 			ImGui::Text("Tests:");
-			const int maxButtonCol = 8;
-			for (int i = 0; i < maxButtonCol; ++i)
+
+			for (int i = 0; i < m_tests.size(); i++)
 			{
-				unsigned int index = i;
-				while (true)
-				{
-					if (ImGui::Button(m_tests[index]->getName(), ImVec2(120.0f, 25.0f)))
-					{
-						ImGui::OpenPopup(m_tests[index]->getName());
-					}
-					index += maxButtonCol;
-					if (index < 16) // first 16 tests are non pbr
-						ImGui::SameLine(0.0f, 20.0f);
-					else break;
-				}
-			}
-			// PBR tests
-			ImGui::Separator();
-			ImGui::Text("Physically Based Rendering");
-			for (int i = 16; i != m_tests.size(); i++)
-			{
+				if (i % 2 == 1)
+					ImGui::SameLine(0.0f, 20.0f);
 				if (ImGui::Button(m_tests[i]->getName(), ImVec2(120.0f, 25.0f)))
 				{
 					ImGui::OpenPopup(m_tests[i]->getName());
 				}
-				ImGui::SameLine(0.0f, 20.0f);
 			}
 
 			for (int i = 0; i < m_tests.size(); ++i)
