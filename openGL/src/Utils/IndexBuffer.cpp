@@ -22,14 +22,3 @@ void IndexBuffer::UnBind()
 {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
 }
-
-inline unsigned int IndexBuffer::getID()
-{
-	return ID;
-}
-
-unsigned int IndexBuffer::getCount()
-{
-	return count;
-}
-

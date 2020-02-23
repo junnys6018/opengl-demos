@@ -9,8 +9,9 @@ public:
 public:
 	void Bind();
 	void UnBind();
-	unsigned int getID();
-	unsigned int getCount();
+
+	inline unsigned int getID() { return ID; }
+	inline unsigned int getCount() { return count; }
 private:
 	unsigned int ID;
 	unsigned int count; // number of indices

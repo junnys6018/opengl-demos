@@ -16,7 +16,7 @@ Texture_Init_Flags operator|(Texture_Init_Flags lhs, Texture_Init_Flags rhs);
 class Texture
 {
 public:
-	Texture(const std::string& filepath, int wrap = GL_REPEAT, Texture_Init_Flags flags = TEXTURE_INIT_FLAGS_NONE);
+	Texture(const std::string& filepath, GLenum wrap = GL_REPEAT, Texture_Init_Flags flags = TEXTURE_INIT_FLAGS_NONE);
 	Texture(float color[4]);
 	~Texture();
 public:

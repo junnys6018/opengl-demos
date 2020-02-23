@@ -27,7 +27,7 @@ void VertexBuffer::Bind() const
 
 void VertexBuffer::unBind() const
 {
-	GLCall(glBindBuffer(GL_ARRAY_BUFFER, ID));
+	GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
 unsigned int VertexBuffer::getID() const

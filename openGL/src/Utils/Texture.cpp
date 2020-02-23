@@ -7,7 +7,7 @@ Texture_Init_Flags operator|(Texture_Init_Flags lhs, Texture_Init_Flags rhs)
 	return (Texture_Init_Flags)((int)lhs | (int)rhs);
 }
 
-Texture::Texture(const std::string& filepath, int wrap, Texture_Init_Flags flags)
+Texture::Texture(const std::string& filepath, GLenum wrap, Texture_Init_Flags flags)
 {
 	if (flags & TEXTURE_INIT_FLAGS_NOFLIP)
 		stbi_set_flip_vertically_on_load(false);
