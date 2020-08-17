@@ -8,4 +8,3 @@ bin-int
 objExpander/*.obj
 objExpander/*.obj.expanded
 openGL/openGL.exe
-*.png
