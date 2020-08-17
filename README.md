@@ -14,7 +14,9 @@ Demo's and code examples I've written while learning OpenGL
 Press ESC to toggle menu  
 Scroll wheel changes FOV  
 # TODO:
-1. Refactor Engine  
-2. Skeletal Animation  
-3. Screen space reflections  
-4. Depth of field
+1. Skeletal Animation  
+2. Screen space reflections  
+3. Depth of field
+# Photos:
+![screenshot_1](photos/IBL.png) 
+![screenshot_2](photos/Bloom.png) 
