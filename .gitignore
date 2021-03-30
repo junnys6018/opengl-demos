@@ -1,6 +1,3 @@
-openGL/res/Textures
-openGL/res/Fonts
-openGL/res/Objects
 openGL/imgui.ini
 bin
 bin-int

@@ -100,7 +100,7 @@ void TestPlanets::OnUpdate()
 	{
 		glm::mat4 model_sphere = glm::mat4(1.0f);
 		model_sphere = glm::rotate(model_sphere,	// follows kepler's law
-			glm::radians(m_theta * 6.0f * sqrt(pow(1.0f / m_radii[i], 3))),
+			(float)glm::radians(m_theta * 6.0f * sqrt(pow(1.0f / m_radii[i], 3))),
 			glm::vec3(0.0f, 1.0f, 0.0f));
 		model_sphere = glm::translate(model_sphere, glm::vec3(m_radii[i], 0.0f, 0.0f));
 		model_sphere = glm::scale(model_sphere, glm::vec3(m_size[i]));
