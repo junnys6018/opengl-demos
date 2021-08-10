@@ -11,13 +11,13 @@ void error_callback(int error, const char* description)
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	glViewport(0, 0, width, height);
-	if (test_mgr.m_currentTest)
-		test_mgr.m_currentTest->framebuffer_size_callback(width, height);
+	if (s_DemoManager.m_CurrentDemo)
+		s_DemoManager.m_CurrentDemo->framebuffer_size_callback(width, height);
 }
 
 void mouse_pos_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	test_mgr.m_camera->mouse_callback(xpos, ypos);
+	s_DemoManager.m_camera->mouse_callback(xpos, ypos);
 }
 
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
@@ -38,14 +38,14 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 			glfwSwapInterval(1); // enable vsync
 		}
 	}
-	else if (test_mgr.m_currentTest)
-		test_mgr.m_currentTest->key_callback(key, action);
-	test_mgr.m_camera->key_callback(window, key, action);
+	else if (s_DemoManager.m_CurrentDemo)
+		s_DemoManager.m_CurrentDemo->key_callback(key, action);
+	s_DemoManager.m_camera->key_callback(window, key, action);
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	test_mgr.m_camera->scroll_callback(window, xoffset, yoffset);
+	s_DemoManager.m_camera->scroll_callback(window, xoffset, yoffset);
 }
 
 void printBasicInfo()

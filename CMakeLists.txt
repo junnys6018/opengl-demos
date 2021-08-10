@@ -67,5 +67,11 @@ target_include_directories(opengl-demos PUBLIC
     src/utils/camera
 )
 
+source_group(" " REGULAR_EXPRESSION "src/.*")
+source_group(demos REGULAR_EXPRESSION "src/demos/.*")
+source_group(utils REGULAR_EXPRESSION "src/utils/.*")
+source_group(utils/camera REGULAR_EXPRESSION "src/utils/camera/.*")
+source_group(architecture REGULAR_EXPRESSION "src/architecture/.*")
+
 # set working dir when debugging on visual studio
 set_property(TARGET opengl-demos PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/")

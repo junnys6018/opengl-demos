@@ -5,13 +5,13 @@
 
 #include "debug.h"
 
-#include "architecture/test_manager.h"
+#include "architecture/DemoManager.h"
 
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <imgui.h>
 
-TestManager test_mgr;
+DemoManager s_DemoManager;
 #include "callback.h"
 
 void ImGui_Init(GLFWwindow*);
@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
 	glfwMakeContextCurrent(window);
 	glfwSwapInterval(1); // enable vsync
 
-	test_mgr.init(window);
+	s_DemoManager.Initialize(window);
 
 	// Set callback functions
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
 	// Initialse glad
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
-		std::cout << "glad init error\n";
+		std::cout << "glad Initialize error\n";
 		exit(EXIT_FAILURE);
 	}
 	GLCall(glEnable(GL_MULTISAMPLE));
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
 	
 	ImGui_Init(window);
 	
-	test_mgr.gameLoop();
+	s_DemoManager.GameLoop();
 
 	ImGui_Shutdown();
 

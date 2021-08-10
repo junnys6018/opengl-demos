@@ -5,9 +5,9 @@
 
 #define ENABLE_TIMING
 // Enums
-Draw_Flags operator|(Draw_Flags lhs, Draw_Flags rhs)
+DrawFlags operator|(DrawFlags lhs, DrawFlags rhs)
 {
-	return (Draw_Flags)((int)lhs | (int)rhs);
+	return (DrawFlags)((int)lhs | (int)rhs);
 }
 Object_Init_Flags operator|(Object_Init_Flags lhs, Object_Init_Flags rhs)
 {
@@ -364,7 +364,7 @@ inline std::string Object::calc_root_dir(std::string filepath)
 	else return "";
 }
 
-void Object::Draw(const Shader& shader, Draw_Flags flags)
+void Object::Draw(const Shader& shader, DrawFlags flags)
 {
 	vertexArray->Bind();
 	shader.Use();

@@ -29,7 +29,7 @@ enum Object_Init_Flags
 	OBJECT_INIT_FLAGS_GEN_SPECULAR =        1 << 6,
 };
 Object_Init_Flags operator|(Object_Init_Flags lhs, Object_Init_Flags rhs);
-enum Draw_Flags
+enum DrawFlags
 {
 	DRAW_FLAGS_NONE = 0,
 	DRAW_FLAGS_DIFFUSE = 1,
@@ -38,7 +38,7 @@ enum Draw_Flags
 
 	DRAW_FLAGS_TRIANGLE_STRIP = 1 << 3,
 };
-Draw_Flags operator|(Draw_Flags lhs, Draw_Flags rhs);
+DrawFlags operator|(DrawFlags lhs, DrawFlags rhs);
 
 struct Vertex
 {
@@ -95,7 +95,7 @@ public:
 	std::unique_ptr<VertexBuffer> vertexBuffer;
 	std::unique_ptr<IndexBuffer> indexBuffer;
 	std::unique_ptr<VertexArray> vertexArray;
-	void Draw(const Shader& shader, Draw_Flags flags = DRAW_FLAGS_DIFFUSE);
+	void Draw(const Shader& shader, DrawFlags flags = DRAW_FLAGS_DIFFUSE);
 
 private:
 	std::vector<Material_ptr> mat_ptrs;

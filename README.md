@@ -5,7 +5,7 @@ Just a bunch of opengl demos
 # Installation 
 
 1. Clone or download the repo onto your computer
-2. Open solution in visual studio and build
+2. Build with cmake
 
 # Controls
 Press ESC to toggle menu  
