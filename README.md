@@ -1,6 +1,6 @@
-# learn-openGL
+# opengl-demos
 
-Demo's and code examples I've written while learning OpenGL
+Just a bunch of opengl demos
 
 # Installation 
 
