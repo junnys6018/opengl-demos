@@ -5,7 +5,7 @@
 #include "Shader.h"
 #include "Object.h"
 #include "AbstractCamera.h"
-#include "Utils/UniformBuffer.h"
+#include "utils/UniformBuffer.h"
 
 #include <memory>
 #include "glm/gtc/type_ptr.hpp"

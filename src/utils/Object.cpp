@@ -2,6 +2,7 @@
 #include "debug.h"
 #include <assert.h>
 #include <chrono>
+#include <cstring>
 
 #define ENABLE_TIMING
 // Enums
@@ -130,7 +131,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 		{
 			Vertex data;
 			token += 2;
-			sscanf_s(token, "%f %f %f", &data.position.x, &data.position.y, &data.position.z);
+			sscanf(token, "%f %f %f", &data.position.x, &data.position.y, &data.position.z);
 			vBuf.push_back(data);
 			continue;
 		}
@@ -139,7 +140,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 		{
 			assert(vnIndex < vBuf.size());
 			token += 3;
-			sscanf_s(token, "%f %f %f", &vBuf[vnIndex].normal.x, &vBuf[vnIndex].normal.y, &vBuf[vnIndex].normal.z);
+			sscanf(token, "%f %f %f", &vBuf[vnIndex].normal.x, &vBuf[vnIndex].normal.y, &vBuf[vnIndex].normal.z);
 			++vnIndex;
 			continue;
 		}
@@ -148,7 +149,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 		{
 			assert(vtIndex < vBuf.size());
 			token += 3;
-			sscanf_s(token, "%f %f", &vBuf[vtIndex].texCoord.s, &vBuf[vtIndex].texCoord.t);
+			sscanf(token, "%f %f", &vBuf[vtIndex].texCoord.s, &vBuf[vtIndex].texCoord.t);
 			++vtIndex;
 			continue;
 		}
@@ -159,7 +160,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 			while (token[0] != '\n' && token[0] != '\r' && token[0] != '\0')
 			{
 				unsigned int i;
-				sscanf_s(token, "%ui", &i);
+				sscanf(token, "%ui", &i);
 				iBuf.push_back(i - 1);
 				fIndex++;
 
@@ -180,7 +181,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 		{
 			char name[512];
 			token += 7;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			if (mat_ptrs.size() != 0)
 				(mat_ptrs.end() - 1)->m_count = fIndex - (mat_ptrs.end() - 1)->m_offset;
 			mat_ptrs.emplace_back(-1, fIndex, std::string(name));
@@ -191,7 +192,7 @@ const std::vector<std::string> Object::parse_obj(const std::string filepath, std
 		{
 			char name[512];
 			token += 7;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			mtlPaths.push_back(rootDir + std::string(name));
 			continue;
 		}
@@ -245,7 +246,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 		{
 			char name[512];
 			token += 7;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			materials.push_back(Material(std::string(name)));
 			continue;
 		}
@@ -254,7 +255,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 		{
 			char name[512];
 			token += 7;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			(materials.end() - 1)->genTexture(rootDir + std::string(name), GL_REPEAT, cast(flags));
 			continue;
 		}
@@ -263,7 +264,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 		{
 			char name[512];
 			token += 9;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			(materials.end() - 1)->genNormMap(rootDir + std::string(name));
 			continue;
 		}
@@ -272,7 +273,7 @@ void Object::parse_mtl(const std::string filepath, Object_Init_Flags flags)
 		{
 			char name[512];
 			token += 7;
-			sscanf_s(token, "%s", name, 512);
+			sscanf(token, "%s", name, 512);
 			(materials.end() - 1)->genSpecMap(rootDir + std::string(name));
 			continue;
 		}
